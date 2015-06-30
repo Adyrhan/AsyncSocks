@@ -39,7 +39,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="ClientConnectionAgent.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="ITcpClient.cs" />

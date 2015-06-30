@@ -15,7 +15,6 @@ namespace AsyncSocks
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
 
         public event NewClientConnectionDelegate OnNewClientConnection;
-        
 
         public bool IsRunning
         {
@@ -29,7 +28,7 @@ namespace AsyncSocks
 
         public bool WaitStarted()
         {
-            return startedEvent.WaitOne(2000);
+            return startedEvent.WaitOne();
         }
         
         public ClientConnectionAgent(ITcpListener listener)
