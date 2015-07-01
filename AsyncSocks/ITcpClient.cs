@@ -8,5 +8,6 @@ namespace AsyncSocks
     public interface ITcpClient
     {
         int Read(byte[] buffer, int offset, int lenght);
+        int Write(byte[] buffer, int offset, int lenght);
     }
 }

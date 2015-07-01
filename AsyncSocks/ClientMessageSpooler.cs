@@ -17,7 +17,7 @@ namespace AsyncSocks
             this.queue = queue;
         }
 
-        public void spool()
+        public void Spool()
         {
             byte[] message = networkMessageReader.Read();
             queue.Add(message);

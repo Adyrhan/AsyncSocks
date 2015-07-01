@@ -21,7 +21,7 @@ namespace AsyncSocks_Tests.Tests
             readerMock.Setup(x => x.Read()).Returns(Encoding.ASCII.GetBytes(messageString));
 
             ClientMessageSpooler spooler = new ClientMessageSpooler(readerMock.Object, queue);
-            spooler.spool();
+            spooler.Spool();
 
             string storedMessage = Encoding.ASCII.GetString(queue.Take());
 
