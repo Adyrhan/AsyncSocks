@@ -14,8 +14,8 @@ namespace AsyncSocks
         private MessageReceivedCallback messageReceivedCallback;
         public static AsyncTcpServer Create(IPEndPoint listeningEndPoint, MessageReceivedCallback messageReceivedCallback)
         {
-        //    if (listeningEndPoint == null) throw new ArgumentNullException("listeningEndPoint cannot be null");
-        //    if (messageReceivedCallback == null) throw new ArgumentNullException("messageReceivedCallback cannot be null");
+            if (listeningEndPoint == null) throw new ArgumentNullException("listeningEndPoint cannot be null");
+            if (messageReceivedCallback == null) throw new ArgumentNullException("messageReceivedCallback cannot be null");
             
             return new AsyncTcpServer(listeningEndPoint, messageReceivedCallback);
 

@@ -19,5 +19,22 @@ namespace AsyncSocks_Tests
             Assert.IsTrue(server != null && server is AsyncTcpServer);
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreateShouldThrowExceptionIfIPEndPointIsNull()
+        {
+            MessageReceivedCallback callback = delegate(Message message, TcpClient sender) { };
+            AsyncTcpServer server = AsyncTcpServer.Create(null, callback);
+            Assert.IsTrue(server != null && server is AsyncTcpServer);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreateShouldThrowExceptionIfCallbackIsNull()
+        {
+            AsyncTcpServer server = AsyncTcpServer.Create(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 40400), null);
+            Assert.IsTrue(server != null && server is AsyncTcpServer);
+        }
+
     }
 }
