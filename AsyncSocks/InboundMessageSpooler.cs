@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace AsyncSocks
 {
-    public class ClientMessageSpooler
+    public class InboundMessageSpooler
     {
         private INetworkMessageReader networkMessageReader;
-        private System.Collections.Concurrent.BlockingCollection<byte[]> queue;
+        private BlockingCollection<byte[]> queue;
 
-        public ClientMessageSpooler(INetworkMessageReader networkMessageReader, System.Collections.Concurrent.BlockingCollection<byte[]> queue)
+        public InboundMessageSpooler(INetworkMessageReader networkMessageReader, BlockingCollection<byte[]> queue)
         {
             // TODO: Complete member initialization
             this.networkMessageReader = networkMessageReader;

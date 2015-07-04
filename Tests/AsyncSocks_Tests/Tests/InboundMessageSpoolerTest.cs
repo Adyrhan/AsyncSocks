@@ -8,7 +8,7 @@ using System.Text;
 namespace AsyncSocks_Tests.Tests
 {
     [TestClass]
-    public class ClientMessageSpoolerTest
+    public class InboundMessageSpoolerTest
     {
         [TestMethod]
         public void SpoolShouldAddMessageInQueue()
@@ -20,7 +20,7 @@ namespace AsyncSocks_Tests.Tests
 
             readerMock.Setup(x => x.Read()).Returns(Encoding.ASCII.GetBytes(messageString));
 
-            ClientMessageSpooler spooler = new ClientMessageSpooler(readerMock.Object, queue);
+            InboundMessageSpooler spooler = new InboundMessageSpooler(readerMock.Object, queue);
             spooler.Spool();
 
             string storedMessage = Encoding.ASCII.GetString(queue.Take());

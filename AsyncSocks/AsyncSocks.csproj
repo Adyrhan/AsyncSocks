@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientConnectionAgent.cs" />
-    <Compile Include="ClientMessageSpooler.cs" />
+    <Compile Include="InboundMessageSpooler.cs" />
     <Compile Include="INetworkMessageReader.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="ITcpClient.cs" />
