@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
@@ -41,8 +42,10 @@ namespace AsyncSocks
             if (thread != null && thread.IsAlive)
             {
                 runnable.Stop();
+                thread.Interrupt();
                 thread.Join();
             }
         }
+
     }
 }

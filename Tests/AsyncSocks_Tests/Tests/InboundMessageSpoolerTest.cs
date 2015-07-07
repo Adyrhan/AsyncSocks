@@ -4,12 +4,30 @@ using Moq;
 using AsyncSocks;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AsyncSocks_Tests.Tests
 {
     [TestClass]
     public class InboundMessageSpoolerTest
     {
+
+        class AsyncThreadRunner
+        {
+            private ThreadRunner runner;
+
+            public AsyncThreadRunner(ThreadRunner runner)
+            {
+                this.runner = runner;
+            }
+
+            public async void Stop()
+            {
+                await Task.Run(() => runner.Stop());
+            }
+        }
+
+
         [TestMethod]
         public void SpoolShouldAddMessageInQueue()
         {
@@ -27,5 +45,7 @@ namespace AsyncSocks_Tests.Tests
 
             Assert.AreEqual(messageString, storedMessage);
         }
+
+        
     }
 }

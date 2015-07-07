@@ -5,12 +5,28 @@ using AsyncSocks;
 using Moq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AsyncSocks_Tests
 {
     [TestClass]
     public class OutboundMessageSpoolerTest
     {
+        class AsyncThreadRunner
+        {
+            private ThreadRunner runner;
+            
+            public AsyncThreadRunner(ThreadRunner runner)
+            {
+                this.runner = runner;
+            }
+            
+            public async void Stop()
+            {
+                await Task.Run(() => runner.Stop());
+            }
+        }
+        
         private OutboundMessageSpooler spooler;
         private Mock<ITcpClient> tcpClientMock;
         private BlockingCollection<byte[]> queue;
@@ -61,6 +77,18 @@ namespace AsyncSocks_Tests
 
         }
 
-        
+        [TestMethod]
+        public void StopShouldStopSpooler()
+        {
+            ThreadRunner runner = new ThreadRunner(spooler);
+            AsyncThreadRunner asyncRunner = new AsyncThreadRunner(runner);
+            
+            runner.Start();
+            asyncRunner.Stop();
+            runner.Thread.Join(2000);
+            
+            Assert.IsFalse(runner.Thread.IsAlive);
+
+        }
     }
 }
