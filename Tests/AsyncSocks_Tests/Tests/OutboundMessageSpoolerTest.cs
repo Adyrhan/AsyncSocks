@@ -6,26 +6,13 @@ using Moq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncSocks_Tests.Helpers;
 
 namespace AsyncSocks_Tests
 {
     [TestClass]
     public class OutboundMessageSpoolerTest
     {
-        class AsyncThreadRunner
-        {
-            private ThreadRunner runner;
-            
-            public AsyncThreadRunner(ThreadRunner runner)
-            {
-                this.runner = runner;
-            }
-            
-            public async void Stop()
-            {
-                await Task.Run(() => runner.Stop());
-            }
-        }
         
         private OutboundMessageSpooler spooler;
         private Mock<ITcpClient> tcpClientMock;
@@ -81,7 +68,7 @@ namespace AsyncSocks_Tests
         public void StopShouldStopSpooler()
         {
             ThreadRunner runner = new ThreadRunner(spooler);
-            AsyncThreadRunner asyncRunner = new AsyncThreadRunner(runner);
+            AsyncStoppingThreadRunner asyncRunner = new AsyncStoppingThreadRunner(runner);
             
             runner.Start();
             asyncRunner.Stop();

@@ -5,27 +5,13 @@ using AsyncSocks;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Threading.Tasks;
+using AsyncSocks_Tests.Helpers;
 
 namespace AsyncSocks_Tests.Tests
 {
     [TestClass]
     public class InboundMessageSpoolerTest
     {
-
-        class AsyncThreadRunner
-        {
-            private ThreadRunner runner;
-
-            public AsyncThreadRunner(ThreadRunner runner)
-            {
-                this.runner = runner;
-            }
-
-            public async void Stop()
-            {
-                await Task.Run(() => runner.Stop());
-            }
-        }
 
         private InboundMessageSpooler spooler;
         private BlockingCollection<byte[]> queue;
@@ -53,6 +39,21 @@ namespace AsyncSocks_Tests.Tests
             Assert.AreEqual(messageString, storedMessage);
         }
 
-        
+        [TestMethod]
+        public void ShouldImplementIRunnable()
+        {
+            Assert.IsTrue(spooler is IRunnable);
+        }
+
+        [TestMethod]
+        public void StopShouldStopSpooler()
+        {
+            ThreadRunner runner = new ThreadRunner(spooler);
+            AsyncStoppingThreadRunner asyncRunner = new AsyncStoppingThreadRunner(runner);
+            runner.Start();
+            asyncRunner.Stop();
+            runner.Thread.Join(2000);
+            Assert.IsFalse(runner.Thread.IsAlive);
+        }
     }
 }

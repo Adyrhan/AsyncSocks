@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Helpers\AsyncStoppingThreadRunner.cs" />
     <Compile Include="Tests\AsyncServerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\ThreadRunnerTest.cs" />
