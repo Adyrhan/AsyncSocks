@@ -27,18 +27,25 @@ namespace AsyncSocks_Tests.Tests
             }
         }
 
+        private InboundMessageSpooler spooler;
+        private BlockingCollection<byte[]> queue;
+        private Mock<INetworkMessageReader> readerMock;
+
+        [TestInitialize]
+        public void BeforeEach()
+        {
+            readerMock = new Mock<INetworkMessageReader>();
+            queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
+            spooler = new InboundMessageSpooler(readerMock.Object, queue);
+        }
 
         [TestMethod]
         public void SpoolShouldAddMessageInQueue()
         {
-            Mock<INetworkMessageReader> readerMock = new Mock<INetworkMessageReader>();
-            BlockingCollection<byte[]> queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
-            
             string messageString = "This is a test message";
 
             readerMock.Setup(x => x.Read()).Returns(Encoding.ASCII.GetBytes(messageString));
 
-            InboundMessageSpooler spooler = new InboundMessageSpooler(readerMock.Object, queue);
             spooler.Spool();
 
             string storedMessage = Encoding.ASCII.GetString(queue.Take());
