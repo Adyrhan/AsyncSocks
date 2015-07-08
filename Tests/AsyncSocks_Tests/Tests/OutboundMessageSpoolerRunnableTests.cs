@@ -32,7 +32,7 @@ namespace AsyncSocks_Tests
             string messageString = "This is a test message";
             byte[] messageBytes = Encoding.ASCII.GetBytes(messageString);
 
-            tcpClientMock.Setup(x => x.Write(messageBytes, 0, messageBytes.Length)).Returns(messageBytes.Length).Verifiable();
+            tcpClientMock.Setup(x => x.Write(messageBytes, 0, messageBytes.Length)).Verifiable();
 
             queue.Add(messageBytes);
 
@@ -51,7 +51,7 @@ namespace AsyncSocks_Tests
             AutoResetEvent spoolerCalled = new AutoResetEvent(false);
 
             queue.Add(new byte[5]{0,1,2,3,4});
-            tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).Callback(() => spoolerCalled.Set()).Returns(5).Verifiable(); // If Write is called, it means Spool also has been called.
+            tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).Callback(() => spoolerCalled.Set()).Verifiable(); // If Write is called, it means Spool also has been called.
 
             ThreadRunner runner = new ThreadRunner(spooler);
 
