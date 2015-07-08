@@ -14,7 +14,7 @@ namespace AsyncSocks_Tests
     public class OutboundMessageSpoolerTest
     {
         
-        private OutboundMessageSpooler spooler;
+        private OutboundMessageSpoolerRunnable spooler;
         private Mock<ITcpClient> tcpClientMock;
         private BlockingCollection<byte[]> queue;
 
@@ -23,7 +23,7 @@ namespace AsyncSocks_Tests
         {
             queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
             tcpClientMock = new Mock<ITcpClient>();
-            spooler = new OutboundMessageSpooler(tcpClientMock.Object, queue);
+            spooler = new OutboundMessageSpoolerRunnable(tcpClientMock.Object, queue);
         }
         
         [TestMethod]
@@ -54,10 +54,9 @@ namespace AsyncSocks_Tests
             tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).Callback(() => spoolerCalled.Set()).Returns(5).Verifiable(); // If Write is called, it means Spool also has been called.
 
             ThreadRunner runner = new ThreadRunner(spooler);
+
             runner.Start();
-            
             spoolerCalled.WaitOne(2000);
-            
             runner.Stop();
 
             tcpClientMock.Verify();

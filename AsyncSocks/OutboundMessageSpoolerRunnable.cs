@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class OutboundMessageSpooler : IRunnable
+    public class OutboundMessageSpoolerRunnable : IRunnable
     {
         private ITcpClient tcpClient;
         private BlockingCollection<byte[]> queue;
@@ -15,7 +15,7 @@ namespace AsyncSocks
         private bool running;
         private bool shouldStop;
 
-        public OutboundMessageSpooler(ITcpClient tcpClient, BlockingCollection<byte[]> queue)
+        public OutboundMessageSpoolerRunnable(ITcpClient tcpClient, BlockingCollection<byte[]> queue)
         {
             this.tcpClient = tcpClient;
             this.queue = queue;
