@@ -11,7 +11,7 @@ using AsyncSocks_Tests.Helpers;
 namespace AsyncSocks_Tests
 {
     [TestClass]
-    public class OutboundMessageSpoolerTest
+    public class OutboundMessageSpoolerRunnableTests
     {
         
         private OutboundMessageSpoolerRunnable spooler;
