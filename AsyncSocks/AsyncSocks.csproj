@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="BaseTcpClient.cs" />
     <Compile Include="ClientConnectionAgent.cs" />
-    <Compile Include="InboundMessageSpooler.cs" />
+    <Compile Include="InboundMessageSpoolerRunnable.cs" />
     <Compile Include="INetworkMessageReader.cs" />
     <Compile Include="IRunnable.cs" />
     <Compile Include="ITcpClient.cs" />

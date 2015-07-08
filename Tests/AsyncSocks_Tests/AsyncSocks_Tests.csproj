@@ -59,7 +59,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\ThreadRunnerTest.cs" />
     <Compile Include="Tests\ClientConnectionAgentTest.cs" />
-    <Compile Include="Tests\InboundMessageSpoolerTest.cs" />
+    <Compile Include="Tests\InboundMessageSpoolerRunnableTest.cs" />
     <Compile Include="Tests\NetworkMessageReaderTests.cs" />
     <Compile Include="Tests\OutboundMessageSpoolerRunnableTests.cs" />
     <Compile Include="Tests\OutboundMessageSpoolerTests.cs" />

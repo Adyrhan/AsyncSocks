@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class InboundMessageSpooler : IRunnable
+    public class InboundMessageSpoolerRunnable : IRunnable
     {
         private INetworkMessageReader networkMessageReader;
         private BlockingCollection<byte[]> queue;
@@ -15,7 +15,7 @@ namespace AsyncSocks
         private bool shouldStop;
         private bool running;
 
-        public InboundMessageSpooler(INetworkMessageReader networkMessageReader, BlockingCollection<byte[]> queue)
+        public InboundMessageSpoolerRunnable(INetworkMessageReader networkMessageReader, BlockingCollection<byte[]> queue)
         {
             // TODO: Complete member initialization
             this.networkMessageReader = networkMessageReader;
@@ -32,6 +32,10 @@ namespace AsyncSocks
         {
             running = true;
             startedEvent.Set();
+            while (!shouldStop)
+            {
+                Spool();
+            }
             running = false;
         }
 
