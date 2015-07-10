@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class InboundMessageSpooler : ThreadRunner
+    public class InboundMessageSpooler : ThreadRunner, IInboundMessageSpooler
     {
         public static InboundMessageSpooler Create(ITcpClient tcpClient)
         {

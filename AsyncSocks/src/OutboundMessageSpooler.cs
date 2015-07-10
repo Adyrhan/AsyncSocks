@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class OutboundMessageSpooler : ThreadRunner
+    public class OutboundMessageSpooler : ThreadRunner, IOutboundMessageSpooler
     {
         public OutboundMessageSpooler(IOutboundMessageSpoolerRunnable runnable) : base(runnable) {}
 
@@ -15,6 +15,11 @@ namespace AsyncSocks
             BlockingCollection<byte[]> queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
             OutboundMessageSpoolerRunnable runnable = new OutboundMessageSpoolerRunnable(tcpClient, queue);
             return new OutboundMessageSpooler(runnable);
+        }
+
+        public object Enqueue(byte[] messageBytes)
+        {
+            throw new NotImplementedException();
         }
     }
 }
