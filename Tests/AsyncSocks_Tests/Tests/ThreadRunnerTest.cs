@@ -41,5 +41,15 @@ namespace AsyncSocks_Tests
             }
         }
            
+        [TestMethod]
+        public void StartAndStopShouldStartAndStopThread()
+        {
+            ThreadRunner runner = new ThreadRunner(new TestableRunnable());
+            Assert.IsFalse(runner.IsRunning());
+            runner.Start();
+            Assert.IsTrue(runner.IsRunning());
+            runner.Stop();
+            Assert.IsFalse(runner.IsRunning());
+        }
     }
 }
