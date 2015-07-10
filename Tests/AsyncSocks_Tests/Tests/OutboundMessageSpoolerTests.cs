@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AsyncSocks;
 using Moq;
+using System.Text;
+using System.Collections.Concurrent;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -10,13 +12,15 @@ namespace AsyncSocks_Tests.Tests
     {
         private OutboundMessageSpooler spooler;
         private Mock<IOutboundMessageSpoolerRunnable> runnableMock;
+        private BlockingCollection<byte[]> queue;
 
         [TestInitialize]
         public void BeforeEach()
         {
             runnableMock = new Mock<IOutboundMessageSpoolerRunnable>();
             var runnable = runnableMock.Object;
-            spooler = new OutboundMessageSpooler(runnable);
+            queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
+            spooler = new OutboundMessageSpooler(runnable, queue);
         }
 
         [TestMethod]
@@ -33,7 +37,15 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(spooler is ThreadRunner);
         }
 
+        [TestMethod]
+        public void EnqueueShouldAddMessageToQueue()
+        {
+            byte[] messageBytes = Encoding.ASCII.GetBytes("This is a test message");
+            
+            spooler.Enqueue(messageBytes);
 
+            Assert.AreEqual(messageBytes, queue.Take());
+        }
         
     }
 }

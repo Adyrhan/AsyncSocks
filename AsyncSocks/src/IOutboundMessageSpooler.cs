@@ -7,6 +7,6 @@ namespace AsyncSocks
 {
     public interface IOutboundMessageSpooler
     {
-        object Enqueue(byte[] messageBytes);
+        void Enqueue(byte[] messageBytes);
     }
 }
