@@ -9,11 +9,13 @@ namespace AsyncSocks
     {
         private IInboundMessageSpooler inboundSpooler;
         private IOutboundMessageSpooler outboundSpooler;
+        private ITcpClient tcpClient;
 
-        public PeerConnection(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler)
+        public PeerConnection(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, ITcpClient tcpClient)
         {
             this.inboundSpooler = inboundSpooler;
             this.outboundSpooler = outboundSpooler;
+            this.tcpClient = tcpClient;
         }
 
         public void SendMessage(byte[] messageBytes)

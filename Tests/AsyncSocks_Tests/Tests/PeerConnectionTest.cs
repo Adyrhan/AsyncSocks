@@ -9,17 +9,28 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class PeerConnectionTest
     {
-        [TestMethod]
-        public void SendMessageShouldTellOutboundMessageSpoolerToEnqueueTheMessage()
+        private Mock<IInboundMessageSpooler> inboundSpoolerMock;
+        private Mock<IOutboundMessageSpooler> outboundSpoolerMock;
+        private Mock<ITcpClient> tcpClientMock;
+        private PeerConnection connection;
+
+        [TestInitialize]
+        public void BeforeEach()
         {
-            var inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
-            var outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
+            inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
+            outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
+            tcpClientMock = new Mock<ITcpClient>();
 
             var inboundSpooler = inboundSpoolerMock.Object;
             var outboundSpooler = outboundSpoolerMock.Object;
+            var tcpClient = tcpClientMock.Object;
 
-            PeerConnection connection = new PeerConnection(inboundSpooler, outboundSpooler);
+            connection = new PeerConnection(inboundSpooler, outboundSpooler, tcpClient);
+        }
 
+        [TestMethod]
+        public void SendMessageShouldTellOutboundMessageSpoolerToEnqueueTheMessage()
+        {
             byte[] messageBytes = Encoding.ASCII.GetBytes("This is a test message");
 
             outboundSpoolerMock.Setup(x => x.Enqueue(messageBytes)).Verifiable();
@@ -28,5 +39,11 @@ namespace AsyncSocks_Tests.Tests
 
             outboundSpoolerMock.Verify();
         }
+
+        //[TestMethod]
+        //public void CloseShouldStopSpoolersAndCloseConnectionWithPeer()
+        //{
+        //    //inboundSpoolerMock.Setup(x => x.)
+        //}
     }
 }
