@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\PeerConnection.cs" />
+    <Compile Include="src\IInboundMessageSpooler.cs" />
+    <Compile Include="src\IOutboundMessageSpooler.cs" />
     <Compile Include="src\BaseTcpClient.cs" />
     <Compile Include="src\ClientConnectionAgent.cs" />
     <Compile Include="src\IInboundMessageSpoolerRunnable.cs" />
@@ -49,7 +52,6 @@
     <Compile Include="src\IRunnable.cs" />
     <Compile Include="src\ITcpClient.cs" />
     <Compile Include="src\ITcpListener.cs" />
-    <Compile Include="src\MessageParser.cs" />
     <Compile Include="src\NetworkMessageReader.cs" />
     <Compile Include="src\OutboundMessageSpooler.cs" />
     <Compile Include="src\OutboundMessageSpoolerRunnable.cs" />
