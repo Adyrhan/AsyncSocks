@@ -9,10 +9,19 @@ namespace AsyncSocks_Tests
     [TestClass]
     public class NetworkMessageReaderTests
     {
+        private NetworkMessageReader reader;
+        private Mock<ITcpClient> tcpClientMock;
+
+        [TestInitialize]
+        public void BeforeEach()
+        {
+            tcpClientMock = new Mock<ITcpClient>();
+            reader = new NetworkMessageReader(tcpClientMock.Object);
+        }
+        
         [TestMethod]
         public void ReadShouldReturnFullMessage()
         {
-            Mock<ITcpClient> tcpClientMock = new Mock<ITcpClient>();
             string messageString = "This is a test message";
 
             Func<byte[], int, int, int> readImpl1 = (byte[] buffer, int offset, int lenght) => 
@@ -38,11 +47,16 @@ namespace AsyncSocks_Tests
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 4)).Returns(readImpl1).Verifiable();
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, messageString.Length)).Returns(readImpl2).Verifiable();
 
-            NetworkMessageReader reader = new NetworkMessageReader(tcpClientMock.Object);
             byte[] readMessage = reader.Read();
 
             Assert.AreEqual(messageString, Encoding.ASCII.GetString(readMessage));
             
+        }
+
+        [TestMethod]
+        public void ShouldImplementINetworkMessageReader()
+        {
+            Assert.IsTrue(reader is INetworkMessageReader);
         }
     }
 }
