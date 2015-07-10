@@ -2,55 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace AsyncSocks
 {
-    public delegate void NewClientConnectionDelegate(ITcpClient client);
-    public class ClientConnectionAgent : IRunnable
+    public class ClientConnectionAgent : ThreadRunner, IClientConnectionAgent
     {
-        private ITcpListener listener;        
-        private bool running;
-        private bool shouldStop;
-        private AutoResetEvent startedEvent = new AutoResetEvent(false);
-
         public event NewClientConnectionDelegate OnNewClientConnection;
+        private IClientConnectionAgentRunnable runnable;
 
-        public bool IsRunning
+        public ClientConnectionAgent(IClientConnectionAgentRunnable runnable) : base(runnable)
         {
-            get { return running; }
+            // TODO: Complete member initialization
+            this.runnable = runnable;
+            runnable.OnNewClientConnection += runnable_OnNewClientConnection;
         }
 
-        public void Stop()
+        private void runnable_OnNewClientConnection(ITcpClient client)
         {
-            shouldStop = true;
-        }
-
-        public bool WaitStarted()
-        {
-            return startedEvent.WaitOne();
-        }
-        
-        public ClientConnectionAgent(ITcpListener listener)
-        {
-            this.listener = listener;
-        }
-
-        public void AcceptClientConnection()
-        {
-            ITcpClient client = listener.AcceptTcpClient();
             OnNewClientConnection(client);
-        }
-
-        public void Run()
-        {
-            running = true;
-            startedEvent.Set();
-            while (!shouldStop)
-            {
-                AcceptClientConnection();
-            }
-            running = false;
         }
     }
 }

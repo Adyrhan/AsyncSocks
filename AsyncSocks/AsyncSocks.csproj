@@ -39,11 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ClientConnectionAgent.cs" />
+    <Compile Include="src\IClientConnectionAgent.cs" />
+    <Compile Include="src\IClientConnectionAgentRunnable.cs" />
     <Compile Include="src\PeerConnection.cs" />
     <Compile Include="src\IInboundMessageSpooler.cs" />
     <Compile Include="src\IOutboundMessageSpooler.cs" />
     <Compile Include="src\BaseTcpClient.cs" />
-    <Compile Include="src\ClientConnectionAgent.cs" />
+    <Compile Include="src\ClientConnectionAgentRunnable.cs" />
     <Compile Include="src\IInboundMessageSpoolerRunnable.cs" />
     <Compile Include="src\InboundMessageSpooler.cs" />
     <Compile Include="src\InboundMessageSpoolerRunnable.cs" />

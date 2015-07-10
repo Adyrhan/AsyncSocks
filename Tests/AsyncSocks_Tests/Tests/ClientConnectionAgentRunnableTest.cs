@@ -8,12 +8,12 @@ using System.Threading;
 namespace AsyncSocks_Tests
 {
     [TestClass]
-    public class ClientConnectionAgentTest
+    public class ClientConnectionAgentRunnableTest
     {
         [TestMethod]
         public void ShouldImplementIRunnable()
         {
-            ClientConnectionAgent agent = new ClientConnectionAgent(new Mock<ITcpListener>().Object);
+            ClientConnectionAgentRunnable agent = new ClientConnectionAgentRunnable(new Mock<ITcpListener>().Object);
             Assert.IsTrue(agent is IRunnable);
         }
         
@@ -27,7 +27,7 @@ namespace AsyncSocks_Tests
             tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object).Verifiable();
             newClientCallbackMock.Setup(x => x(tcpClientMock.Object)).Verifiable();
             
-            ClientConnectionAgent agent = new ClientConnectionAgent(tcpListenerMock.Object);
+            ClientConnectionAgentRunnable agent = new ClientConnectionAgentRunnable(tcpListenerMock.Object);
             agent.OnNewClientConnection += newClientCallbackMock.Object;
             agent.AcceptClientConnection();
 
@@ -42,7 +42,7 @@ namespace AsyncSocks_Tests
             Mock<ITcpListener> tcpListenerMock = new Mock<ITcpListener>();
             Mock<NewClientConnectionDelegate> newClientCallbackMock = new Mock<NewClientConnectionDelegate>();
             
-            ClientConnectionAgent agent = new ClientConnectionAgent(tcpListenerMock.Object);
+            ClientConnectionAgentRunnable agent = new ClientConnectionAgentRunnable(tcpListenerMock.Object);
             ThreadRunner runner = new ThreadRunner(agent);
             AutoResetEvent AcceptClientConnectionWasCalled = new AutoResetEvent(false);
 
