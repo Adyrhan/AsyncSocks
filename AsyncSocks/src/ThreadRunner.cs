@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public class ThreadRunner
+    public class ThreadRunner : IThreadRunner
     {
         private IRunnable runnable;
         private Thread thread;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IInboundMessageSpooler
+    public interface IInboundMessageSpooler : IThreadRunner
     {
     }
 }

@@ -37,5 +37,6 @@ namespace AsyncSocks_Tests.Tests
             var runnable = runnableMock.Object;
             InboundMessageSpooler spooler = new InboundMessageSpooler(runnable);
         }
+
     }
 }

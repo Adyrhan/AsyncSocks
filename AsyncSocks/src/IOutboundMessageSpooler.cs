@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IOutboundMessageSpooler
+    public interface IOutboundMessageSpooler : IThreadRunner
     {
         void Enqueue(byte[] messageBytes);
     }
