@@ -63,6 +63,7 @@
     <Compile Include="Tests\NetworkMessageReaderTests.cs" />
     <Compile Include="Tests\OutboundMessageSpoolerRunnableTests.cs" />
     <Compile Include="Tests\OutboundMessageSpoolerTests.cs" />
+    <Compile Include="Tests\InboundMessageSpoolerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -8,21 +8,32 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class OutboundMessageSpoolerTests
     {
+        private OutboundMessageSpooler spooler;
+        private Mock<IOutboundMessageSpoolerRunnable> runnableMock;
+
+        [TestInitialize]
+        public void BeforeEach()
+        {
+            runnableMock = new Mock<IOutboundMessageSpoolerRunnable>();
+            var runnable = runnableMock.Object;
+            spooler = new OutboundMessageSpooler(runnable);
+        }
+
         [TestMethod]
         public void CreateShouldReturnANewInstance()
         {
             var tcpClientMock = new Mock<ITcpClient>();
-            OutboundMessageSpooler spooler = OutboundMessageSpooler.Create(tcpClientMock.Object);
-            Assert.IsTrue(spooler != null && spooler is OutboundMessageSpooler);
+            var spooler2 = OutboundMessageSpooler.Create(tcpClientMock.Object);
+            Assert.IsTrue(spooler2 != null && spooler2 is OutboundMessageSpooler);
         }
 
         [TestMethod]
-        public void InstanceShouldBehaveLikeAThreadRunner() 
+        public void InstanceShouldBehaveLikeAThreadRunner()
         {
-            var tcpClientMock = new Mock<ITcpClient>();
-            OutboundMessageSpooler spooler = OutboundMessageSpooler.Create(tcpClientMock.Object);
             Assert.IsTrue(spooler is ThreadRunner);
         }
 
+
+        
     }
 }

@@ -40,9 +40,9 @@ namespace AsyncSocks_Tests
         }
 
         [TestMethod]
-        public void ShouldImplementIRunnable()
+        public void ShouldImplementIRunnableAndIOuboundMessageSpoolerRunnable()
         {
-            Assert.IsTrue(spooler is IRunnable);
+            Assert.IsTrue(spooler is IRunnable && spooler is IOutboundMessageSpoolerRunnable);
         }
 
         [TestMethod]

@@ -8,9 +8,7 @@ namespace AsyncSocks
 {
     public class OutboundMessageSpooler : ThreadRunner
     {
-        private OutboundMessageSpoolerRunnable runnable;
-
-        public OutboundMessageSpooler(OutboundMessageSpoolerRunnable runnable) : base(runnable) {}
+        public OutboundMessageSpooler(IOutboundMessageSpoolerRunnable runnable) : base(runnable) {}
 
         public static OutboundMessageSpooler Create(ITcpClient tcpClient)
         {
