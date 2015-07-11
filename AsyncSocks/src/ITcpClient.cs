@@ -9,5 +9,6 @@ namespace AsyncSocks
     {
         int Read(byte[] buffer, int offset, int lenght);
         void Write(byte[] buffer, int offset, int lenght);
+        void Close();
     }
 }

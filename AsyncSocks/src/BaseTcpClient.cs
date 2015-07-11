@@ -24,5 +24,10 @@ namespace AsyncSocks
         {
             tcpClient.GetStream().Write(buffer, offset, lenght);
         }
+
+        public void Close()
+        {
+            tcpClient.Close();
+        }
     }
 }

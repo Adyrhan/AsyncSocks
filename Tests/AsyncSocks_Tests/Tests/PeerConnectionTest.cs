@@ -40,10 +40,30 @@ namespace AsyncSocks_Tests.Tests
             outboundSpoolerMock.Verify();
         }
 
-        //[TestMethod]
-        //public void CloseShouldStopSpoolersAndCloseConnectionWithPeer()
-        //{
-        //    //inboundSpoolerMock.Setup(x => x.)
-        //}
+        [TestMethod]
+        public void StartSpoolersShouldStartInboundAndOutboundMessageSpooling()
+        {
+            inboundSpoolerMock.Setup(x => x.Start()).Verifiable();
+            outboundSpoolerMock.Setup(x => x.Start()).Verifiable();
+            
+            connection.StartSpoolers();
+            
+            inboundSpoolerMock.Verify();
+            outboundSpoolerMock.Verify();
+        }
+
+        [TestMethod]
+        public void CloseShouldStopSpoolersAndCloseConnectionWithPeer()
+        {
+            inboundSpoolerMock.Setup(x => x.Stop()).Verifiable();
+            outboundSpoolerMock.Setup(x => x.Stop()).Verifiable();
+            tcpClientMock.Setup(x => x.Close()).Verifiable();
+
+            connection.Close();
+
+            inboundSpoolerMock.Verify();
+            outboundSpoolerMock.Verify();
+            tcpClientMock.Verify();
+        }
     }
 }

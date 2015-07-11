@@ -22,5 +22,19 @@ namespace AsyncSocks
         {
             outboundSpooler.Enqueue(messageBytes);
         }
+
+        public void StartSpoolers()
+        {
+            inboundSpooler.Start();
+            outboundSpooler.Start();
+        }
+
+        public void Close()
+        {
+            inboundSpooler.Stop();
+            outboundSpooler.Stop();
+
+            tcpClient.Close();
+        }
     }
 }
