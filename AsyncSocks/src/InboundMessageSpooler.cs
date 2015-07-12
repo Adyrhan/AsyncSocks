@@ -18,5 +18,10 @@ namespace AsyncSocks
 
         public InboundMessageSpooler(IInboundMessageSpoolerRunnable runnable) : base(runnable) { }
 
+
+        public BlockingCollection<byte[]> Queue
+        {
+            get { return ((IInboundMessageSpoolerRunnable) Runnable).Queue; }
+        }
     }
 }

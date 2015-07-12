@@ -52,5 +52,14 @@ namespace AsyncSocks
         {
             get { return running; }
         }
+
+
+        public BlockingCollection<byte[]> Queue
+        {
+            get
+            {
+                return queue;
+            }
+        }
     }
 }
