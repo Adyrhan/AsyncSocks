@@ -27,5 +27,14 @@ namespace AsyncSocks
             this.dict = dict;
             this.connFactory = factory;
         }
+
+        public void CloseAllConnetions()
+        {
+            foreach(KeyValuePair<IPEndPoint, IPeerConnection> entry in dict)
+            {
+                entry.Value.Close();
+            }
+            dict.Clear();
+        }
     }
 }

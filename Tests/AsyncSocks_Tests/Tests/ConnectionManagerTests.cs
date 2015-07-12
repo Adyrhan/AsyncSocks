@@ -57,5 +57,55 @@ namespace AsyncSocks_Tests.Tests
             Assert.AreEqual(endPoint, dict[endPoint].RemoteEndPoint); 
         }
 
+        [TestMethod]
+        public void CloseAllConnectionsShouldCloseConnections()
+        {
+            var connections = new List<ClientSocketConnectionFixture>();
+            for(int i = 0; i < 10; i++)
+            {
+                var client = new Mock<ITcpClient>();
+                var socket = new Mock<ISocket>();
+                var conn = new Mock<IPeerConnection>();
+
+                client.Setup(x => x.Client).Returns(socket.Object);
+                socket.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80." + i.ToString()), 80));
+                
+                conn.Setup(x => x.Close()).Verifiable();
+
+                connectionFactoryMock.Setup(
+                    x => x.Create(
+                        It.IsAny<IInboundMessageSpooler>(),
+                        It.IsAny<IOutboundMessageSpooler>(),
+                        client.Object
+                    )
+                ).Returns(conn.Object);
+
+                
+                ClientSocketConnectionFixture fixture;
+                fixture.client = client;
+                fixture.connection = conn;
+                fixture.socket = socket;
+
+                connections.Add(fixture);
+
+                connManager.Add(client.Object);
+            }
+            connManager.CloseAllConnetions();
+
+            foreach(ClientSocketConnectionFixture conn in connections)
+            {
+                conn.client.Verify();
+                conn.socket.Verify();
+                conn.connection.Verify();
+            }
+        }
+
+    }
+
+    public struct ClientSocketConnectionFixture
+    {
+        public Mock<ITcpClient> client;
+        public Mock<ISocket> socket;
+        public Mock<IPeerConnection> connection;
     }
 }
