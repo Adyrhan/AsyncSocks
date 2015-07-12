@@ -39,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPeerConnectionFactory.cs" />
+    <Compile Include="src\IPeerConnectionFactory.cs" />
     <Compile Include="src\ConnectionManager.cs" />
     <Compile Include="src\BaseSocket.cs" />
     <Compile Include="src\ISocket.cs" />
