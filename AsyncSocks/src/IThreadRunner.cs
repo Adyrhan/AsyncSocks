@@ -12,5 +12,6 @@ namespace AsyncSocks
         Thread Thread { get; }
         void Start();
         void Stop();
+        IRunnable Runnable { get; }
     }
 }

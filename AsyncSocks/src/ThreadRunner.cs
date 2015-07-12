@@ -27,6 +27,8 @@ namespace AsyncSocks
             get { return thread; }
         }
 
+        public IRunnable Runnable { get { return runnable; } }
+
         public void Start()
         {
             if (thread == null || !thread.IsAlive)
