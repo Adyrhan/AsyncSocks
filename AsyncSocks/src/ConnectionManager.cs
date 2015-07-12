@@ -8,20 +8,24 @@ namespace AsyncSocks
 {
     public class ConnectionManager
     {
-        private Dictionary<IPEndPoint, PeerConnection> dict;
+        private Dictionary<IPEndPoint, IPeerConnection> dict;
+        private IPeerConnectionFactory connFactory;
 
         public void Add(ITcpClient tcpClient)
         {
             var inboundSpooler = InboundMessageSpooler.Create(tcpClient);
             var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
-            var connection = new PeerConnection(inboundSpooler, outboundSpooler, tcpClient);
+            var connection = connFactory.Create(inboundSpooler, outboundSpooler, tcpClient);
 
             dict[(IPEndPoint) tcpClient.Client.RemoteEndPoint] = connection;
+
+            connection.StartSpoolers();
         }
 
-        public ConnectionManager(Dictionary<IPEndPoint, PeerConnection> dict)
+        public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict, IPeerConnectionFactory factory)
         {
             this.dict = dict;
+            this.connFactory = factory;
         }
     }
 }
