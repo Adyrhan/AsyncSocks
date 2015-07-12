@@ -42,5 +42,10 @@ namespace AsyncSocks
         {
             get { return tcpClient.Client.RemoteEndPoint; }
         }
+
+        public bool IsActive()
+        {
+            return (inboundSpooler.IsRunning() && outboundSpooler.IsRunning());
+        }
     }
 }

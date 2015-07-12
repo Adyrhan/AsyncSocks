@@ -14,5 +14,6 @@ namespace AsyncSocks
         void Close();
 
         EndPoint RemoteEndPoint { get; }
+        bool IsActive();
     }
 }

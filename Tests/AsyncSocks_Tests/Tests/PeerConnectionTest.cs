@@ -77,5 +77,28 @@ namespace AsyncSocks_Tests.Tests
             clientMock.Setup(x => x.RemoteEndPoint).Returns(endPoint).Verifiable();
             Assert.AreEqual(endPoint, connection.RemoteEndPoint);
         }
+
+        [TestMethod]
+        public void IsActiveShouldReturnTrueIfBothSpoolersAreRunning()
+        {
+            bool inboundSpoolerStarted = false;
+            bool outboundSpoolerStarted = false;
+
+            inboundSpoolerMock.Setup(x => x.Start()).Callback(() => inboundSpoolerStarted = true).Verifiable();
+            outboundSpoolerMock.Setup(x => x.Start()).Callback(() => outboundSpoolerStarted = true).Verifiable();
+
+            inboundSpoolerMock.Setup(x => x.IsRunning()).Returns(() => { return inboundSpoolerStarted;}).Verifiable();
+            outboundSpoolerMock.Setup(x => x.IsRunning()).Returns(() => { return outboundSpoolerStarted;}).Verifiable();
+
+            connection.StartSpoolers();
+
+            bool active = connection.IsActive();
+            
+            inboundSpoolerMock.Verify();
+            outboundSpoolerMock.Verify();
+
+            Assert.IsTrue(active);
+            
+        }
     }
 }

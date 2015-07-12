@@ -39,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConnectionManager.cs" />
+    <Compile Include="src\ConnectionManager.cs" />
     <Compile Include="src\BaseSocket.cs" />
     <Compile Include="src\ISocket.cs" />
     <Compile Include="src\ClientConnectionAgent.cs" />
