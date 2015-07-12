@@ -29,5 +29,10 @@ namespace AsyncSocks
         {
             tcpClient.Close();
         }
+
+        public ISocket Client
+        {
+            get { return new BaseSocket(tcpClient.Client); }
+        }
     }
 }

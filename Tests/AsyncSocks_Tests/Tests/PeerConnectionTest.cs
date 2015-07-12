@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AsyncSocks;
 using Moq;
 using System.Text;
+using System.Net;
+using System.Net.Sockets;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -12,7 +14,7 @@ namespace AsyncSocks_Tests.Tests
         private Mock<IInboundMessageSpooler> inboundSpoolerMock;
         private Mock<IOutboundMessageSpooler> outboundSpoolerMock;
         private Mock<ITcpClient> tcpClientMock;
-        private PeerConnection connection;
+        private IPeerConnection connection;
 
         [TestInitialize]
         public void BeforeEach()
@@ -64,6 +66,16 @@ namespace AsyncSocks_Tests.Tests
             inboundSpoolerMock.Verify();
             outboundSpoolerMock.Verify();
             tcpClientMock.Verify();
+        }
+
+        [TestMethod]
+        public void RemoteEndPointPropertyShouldReturnValuesAccordingToTcpClientObject()
+        {
+            var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
+            var clientMock = new Mock<ISocket>();
+            tcpClientMock.Setup(x => x.Client).Returns(clientMock.Object).Verifiable();
+            clientMock.Setup(x => x.RemoteEndPoint).Returns(endPoint).Verifiable();
+            Assert.AreEqual(endPoint, connection.RemoteEndPoint);
         }
     }
 }

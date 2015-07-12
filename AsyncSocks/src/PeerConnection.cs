@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace AsyncSocks
 {
-    public class PeerConnection
+    public class PeerConnection : IPeerConnection
     {
         private IInboundMessageSpooler inboundSpooler;
         private IOutboundMessageSpooler outboundSpooler;
@@ -35,6 +36,11 @@ namespace AsyncSocks
             outboundSpooler.Stop();
 
             tcpClient.Close();
+        }
+
+        public EndPoint RemoteEndPoint
+        {
+            get { return tcpClient.Client.RemoteEndPoint; }
         }
     }
 }

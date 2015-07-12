@@ -39,9 +39,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionManager.cs" />
+    <Compile Include="src\BaseSocket.cs" />
+    <Compile Include="src\ISocket.cs" />
     <Compile Include="src\ClientConnectionAgent.cs" />
     <Compile Include="src\IClientConnectionAgent.cs" />
     <Compile Include="src\IClientConnectionAgentRunnable.cs" />
+    <Compile Include="src\IPeerConnection.cs" />
     <Compile Include="src\IThreadRunner.cs" />
     <Compile Include="src\PeerConnection.cs" />
     <Compile Include="src\IInboundMessageSpooler.cs" />
