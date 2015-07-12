@@ -65,6 +65,7 @@
     <Compile Include="src\OutboundMessageSpooler.cs" />
     <Compile Include="src\OutboundMessageSpoolerRunnable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\PeerConnectionFactory.cs" />
     <Compile Include="src\ThreadRunner.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
