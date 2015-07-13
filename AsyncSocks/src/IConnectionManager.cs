@@ -9,5 +9,7 @@ namespace AsyncSocks
     {
         void Add(ITcpClient tcpClient);
         void CloseAllConnetions();
+
+        event NewClientMessageDelegate OnNewClientMessageReceived;
     }
 }

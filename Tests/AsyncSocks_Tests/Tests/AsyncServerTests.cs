@@ -4,6 +4,8 @@ using AsyncSocks;
 using System.Collections.Generic;
 using System.Net;
 using Moq;
+using System.Text;
+using System.Threading;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -40,6 +42,29 @@ namespace AsyncSocks_Tests.Tests
             server.Stop();
             clientConnectionAgentMock.Verify();
             connectionManagerMock.Verify();
+        }
+
+        [TestMethod]
+        public void OnClientMessageReceivedCallbackShouldBeCalledWhenConnectionManagerFiresTheEvent()
+        {
+            var peerConnectionMock = new Mock<IPeerConnection>();
+            var messageReceivedEvent = new AutoResetEvent(false);
+
+            NewClientMessageDelegate newMessage = delegate(IPeerConnection sender, byte[] message)
+            {
+                messageReceivedEvent.Set();
+            };
+
+            server.OnNewMessageReceived += newMessage;
+
+            connectionManagerMock.Raise(
+                x => x.OnNewClientMessageReceived += null, 
+                peerConnectionMock.Object, 
+                Encoding.ASCII.GetBytes("Test message!")
+            );
+
+            Assert.IsTrue(messageReceivedEvent.WaitOne(2000));
+
         }
     }
 }

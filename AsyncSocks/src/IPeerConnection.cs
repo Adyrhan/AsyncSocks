@@ -16,4 +16,5 @@ namespace AsyncSocks
         EndPoint RemoteEndPoint { get; }
         bool IsActive();
     }
+    public delegate void NewClientMessageDelegate(IPeerConnection sender, byte[] message);
 }

@@ -11,6 +11,8 @@ namespace AsyncSocks
         private Dictionary<IPEndPoint, IPeerConnection> dict;
         private IPeerConnectionFactory connFactory;
 
+        public event NewClientMessageDelegate OnNewClientMessageReceived;
+
         public void Add(ITcpClient tcpClient)
         {
             var inboundSpooler = InboundMessageSpooler.Create(tcpClient);
