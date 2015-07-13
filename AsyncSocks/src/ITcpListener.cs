@@ -8,5 +8,8 @@ namespace AsyncSocks
     public interface ITcpListener
     {
         ITcpClient AcceptTcpClient();
+        void Stop();
+        void Start();
     }
+
 }

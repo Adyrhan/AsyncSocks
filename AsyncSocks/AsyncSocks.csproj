@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\BaseTcpListener.cs" />
     <Compile Include="src\IPeerConnectionFactory.cs" />
     <Compile Include="src\ConnectionManager.cs" />
     <Compile Include="src\BaseSocket.cs" />
