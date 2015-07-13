@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    class PeerConnectionFactory : IPeerConnectionFactory
+    public class PeerConnectionFactory : IPeerConnectionFactory
     {
         public IPeerConnection Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, ITcpClient tcpClient)
         {
