@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class ConnectionManager
+    public class ConnectionManager : IConnectionManager
     {
         private Dictionary<IPEndPoint, IPeerConnection> dict;
         private IPeerConnectionFactory connFactory;

@@ -5,8 +5,9 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IClientConnectionAgent : IThreadRunner
+    public interface IConnectionManager
     {
-        event NewClientConnectionDelegate OnNewClientConnection;
+        void Add(ITcpClient tcpClient);
+        void CloseAllConnetions();
     }
 }
