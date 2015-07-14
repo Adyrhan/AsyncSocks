@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMessagePoller.cs" />
+    <Compile Include="IMessagePollerRunnable.cs" />
+    <Compile Include="MessagePoller.cs" />
     <Compile Include="src\AsyncServer.cs" />
     <Compile Include="src\IConnectionManager.cs" />
     <Compile Include="src\BaseTcpListener.cs" />
