@@ -13,7 +13,6 @@ namespace AsyncSocks_Tests.Tests
     public class ConnectionManagerTests
     {
         private IConnectionManager connManager;
-        private Mock<Dictionary<IPEndPoint, PeerConnection>> dictMock;
         private Dictionary<IPEndPoint, IPeerConnection> dict;
         private Mock<IPeerConnectionFactory> connectionFactoryMock;
         private Mock<IMessagePoller> messagePollerMock;
@@ -21,7 +20,6 @@ namespace AsyncSocks_Tests.Tests
         [TestInitialize]
         public void BeforeEach()
         {
-            dictMock = new Mock<Dictionary<IPEndPoint, PeerConnection>>();
             messagePollerMock = new Mock<IMessagePoller>();
             dict = new Dictionary<IPEndPoint, IPeerConnection>();
             connectionFactoryMock = new Mock<IPeerConnectionFactory>();
