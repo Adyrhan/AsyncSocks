@@ -12,7 +12,7 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class ConnectionManagerTests
     {
-        private ConnectionManager connManager;
+        private IConnectionManager connManager;
         private Mock<Dictionary<IPEndPoint, PeerConnection>> dictMock;
         private Dictionary<IPEndPoint, IPeerConnection> dict;
         private Mock<IPeerConnectionFactory> connectionFactoryMock;
