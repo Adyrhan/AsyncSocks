@@ -12,4 +12,6 @@ namespace AsyncSocks
 
         event NewClientMessageDelegate OnNewClientMessageReceived;
     }
+
+    public delegate void NewClientMessageDelegate(IPeerConnection sender, byte[] message);
 }

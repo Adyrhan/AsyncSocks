@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMessagePoller.cs" />
     <Compile Include="src\AsyncServer.cs" />
     <Compile Include="src\IConnectionManager.cs" />
     <Compile Include="src\BaseTcpListener.cs" />

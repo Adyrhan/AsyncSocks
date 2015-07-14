@@ -10,6 +10,7 @@ namespace AsyncSocks
     {
         private Dictionary<IPEndPoint, IPeerConnection> dict;
         private IPeerConnectionFactory connFactory;
+        private IMessagePoller poller;
 
         public event NewClientMessageDelegate OnNewClientMessageReceived;
 
@@ -24,10 +25,11 @@ namespace AsyncSocks
             connection.StartSpoolers();
         }
 
-        public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict, IPeerConnectionFactory factory)
+        public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict, IPeerConnectionFactory factory, IMessagePoller poller)
         {
             this.dict = dict;
             this.connFactory = factory;
+            this.poller = poller;
         }
 
         public void CloseAllConnetions()

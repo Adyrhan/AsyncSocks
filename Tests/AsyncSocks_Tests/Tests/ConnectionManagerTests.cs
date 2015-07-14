@@ -4,6 +4,8 @@ using AsyncSocks;
 using Moq;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
+using System.Threading;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -14,14 +16,16 @@ namespace AsyncSocks_Tests.Tests
         private Mock<Dictionary<IPEndPoint, PeerConnection>> dictMock;
         private Dictionary<IPEndPoint, IPeerConnection> dict;
         private Mock<IPeerConnectionFactory> connectionFactoryMock;
+        private Mock<IMessagePoller> messagePollerMock;
 
         [TestInitialize]
         public void BeforeEach()
         {
             dictMock = new Mock<Dictionary<IPEndPoint, PeerConnection>>();
+            messagePollerMock = new Mock<IMessagePoller>();
             dict = new Dictionary<IPEndPoint, IPeerConnection>();
             connectionFactoryMock = new Mock<IPeerConnectionFactory>();
-            connManager = new ConnectionManager(dict, connectionFactoryMock.Object);
+            connManager = new ConnectionManager(dict, connectionFactoryMock.Object, messagePollerMock.Object);
         }
         
         [TestMethod]
@@ -100,6 +104,41 @@ namespace AsyncSocks_Tests.Tests
             }
         }
 
+        [TestMethod]
+        public void OnNewClientMessageReceivedCallbacksShouldBeCalledWhenEventIsFiredByAPeerConnectionInstance()
+        {
+            var callbackCalledEvent = new AutoResetEvent(true);
+            var tcpClientMock = new Mock<ITcpClient>();
+            var socketMock = new Mock<ISocket>();
+            var peerConnectionMock = new Mock<IPeerConnection>();
+            
+            connectionFactoryMock.Setup(
+                x => x.Create(
+                    It.IsAny<IInboundMessageSpooler>(), 
+                    It.IsAny<IOutboundMessageSpooler>(), 
+                    tcpClientMock.Object
+                )
+            ).Returns(peerConnectionMock.Object).Verifiable();
+
+            tcpClientMock.Setup(x => x.Client).Returns(socketMock.Object);
+            socketMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80));
+
+            connManager.Add(tcpClientMock.Object);
+
+            NewClientMessageDelegate callback = delegate(IPeerConnection sender, byte[] message)
+            {
+                callbackCalledEvent.Set();
+            };
+
+            connManager.OnNewClientMessageReceived += callback;
+
+            messagePollerMock.Raise(x => x.OnNewClientMessageReceived += null, peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
+
+            bool called = callbackCalledEvent.WaitOne(2000);
+
+            connectionFactoryMock.Verify();
+            Assert.IsTrue(called);
+        }
     }
 
     public struct ClientSocketConnectionFixture
