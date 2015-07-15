@@ -55,6 +55,7 @@
     <Compile Include="src\IClientConnectionAgentRunnable.cs" />
     <Compile Include="src\IPeerConnection.cs" />
     <Compile Include="src\IThreadRunner.cs" />
+    <Compile Include="src\NetworkMessage.cs" />
     <Compile Include="src\PeerConnection.cs" />
     <Compile Include="src\IInboundMessageSpooler.cs" />
     <Compile Include="src\IOutboundMessageSpooler.cs" />

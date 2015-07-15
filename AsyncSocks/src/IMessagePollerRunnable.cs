@@ -8,5 +8,7 @@ namespace AsyncSocks
     public interface IMessagePollerRunnable : IRunnable
     {
         event NewClientMessageDelegate OnNewMessageReceived;
+
+        void Poll();
     }
 }
