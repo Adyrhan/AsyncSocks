@@ -68,6 +68,7 @@
     <Compile Include="Tests\ConnectionManagerTests.cs" />
     <Compile Include="Tests\AsyncServerTests.cs" />
     <Compile Include="Tests\MessagePollerTests.cs" />
+    <Compile Include="Tests\MessagePollerRunnableTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
