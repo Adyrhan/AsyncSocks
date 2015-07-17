@@ -69,6 +69,7 @@
     <Compile Include="Tests\AsyncServerTests.cs" />
     <Compile Include="Tests\MessagePollerTests.cs" />
     <Compile Include="Tests\MessagePollerRunnableTests.cs" />
+    <Compile Include="Tests\temp_ConcurrentDictionaryLockingTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

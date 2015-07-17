@@ -27,5 +27,10 @@ namespace AsyncSocks
         }
 
         public event NewClientMessageDelegate OnNewClientMessageReceived;
+
+        public static IMessagePoller Create(BlockingCollection<byte[]> blockingCollection)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

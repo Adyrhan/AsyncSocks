@@ -32,13 +32,17 @@ namespace AsyncSocks_Tests.Tests
             var tcpClientMock = new Mock<ITcpClient>();
             var socketMock = new Mock<ISocket>();
             var peerConnectionMock = new Mock<IPeerConnection>();
+            var inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
+            var outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
+            var messagePollerMock = new Mock<IMessagePoller>();
             
             var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
 
             connectionFactoryMock.Setup(
                 x => x.Create(
-                    It.IsAny<IInboundMessageSpooler>(), 
-                    It.IsAny<IOutboundMessageSpooler>(), 
+                    inboundSpoolerMock.Object,
+                    outboundSpoolerMock.Object,
+                    messagePollerMock.Object,
                     tcpClientMock.Object
                 )
             ).Returns(peerConnectionMock.Object).Verifiable();
@@ -46,10 +50,10 @@ namespace AsyncSocks_Tests.Tests
             tcpClientMock.Setup(x => x.Client).Returns(socketMock.Object).Verifiable();
             socketMock.Setup(x => x.RemoteEndPoint).Returns(endPoint).Verifiable();
 
-            peerConnectionMock.Setup(x => x.StartSpoolers()).Verifiable();
+            peerConnectionMock.Setup(x => x.Start()).Verifiable();
             peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(endPoint);
 
-            connManager.Add(tcpClientMock.Object);
+            connManager.Add(inboundSpoolerMock.Object, outboundSpoolerMock.Object, messagePollerMock.Object, tcpClientMock.Object);
 
             tcpClientMock.Verify();
             socketMock.Verify();
@@ -69,6 +73,10 @@ namespace AsyncSocks_Tests.Tests
                 var socket = new Mock<ISocket>();
                 var conn = new Mock<IPeerConnection>();
 
+                var inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
+                var outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
+                var messagePollerMock = new Mock<IMessagePoller>();
+
                 client.Setup(x => x.Client).Returns(socket.Object);
                 socket.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80." + i.ToString()), 80));
                 
@@ -76,13 +84,13 @@ namespace AsyncSocks_Tests.Tests
 
                 connectionFactoryMock.Setup(
                     x => x.Create(
-                        It.IsAny<IInboundMessageSpooler>(),
-                        It.IsAny<IOutboundMessageSpooler>(),
+                        inboundSpoolerMock.Object,
+                        outboundSpoolerMock.Object,
+                        messagePollerMock.Object,
                         client.Object
                     )
                 ).Returns(conn.Object);
 
-                
                 ClientSocketConnectionFixture fixture;
                 fixture.client = client;
                 fixture.connection = conn;
@@ -90,7 +98,7 @@ namespace AsyncSocks_Tests.Tests
 
                 connections.Add(fixture);
 
-                connManager.Add(client.Object);
+                connManager.Add(inboundSpoolerMock.Object, outboundSpoolerMock.Object, messagePollerMock.Object, client.Object);
             }
             connManager.CloseAllConnetions();
 
@@ -109,11 +117,15 @@ namespace AsyncSocks_Tests.Tests
             var tcpClientMock = new Mock<ITcpClient>();
             var socketMock = new Mock<ISocket>();
             var peerConnectionMock = new Mock<IPeerConnection>();
+            var inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
+            var outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
+            var messagePollerMock = new Mock<IMessagePoller>();
             
             connectionFactoryMock.Setup(
                 x => x.Create(
-                    It.IsAny<IInboundMessageSpooler>(), 
-                    It.IsAny<IOutboundMessageSpooler>(), 
+                    inboundSpoolerMock.Object,
+                    outboundSpoolerMock.Object,
+                    messagePollerMock.Object,
                     tcpClientMock.Object
                 )
             ).Returns(peerConnectionMock.Object).Verifiable();
@@ -121,7 +133,7 @@ namespace AsyncSocks_Tests.Tests
             tcpClientMock.Setup(x => x.Client).Returns(socketMock.Object);
             socketMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80));
 
-            connManager.Add(tcpClientMock.Object);
+            connManager.Add(inboundSpoolerMock.Object, outboundSpoolerMock.Object, messagePollerMock.Object, tcpClientMock.Object);
 
             NewClientMessageDelegate callback = delegate(IPeerConnection sender, byte[] message)
             {

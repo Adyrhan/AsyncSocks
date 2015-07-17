@@ -18,11 +18,8 @@ namespace AsyncSocks
         {
             var inboundSpooler = InboundMessageSpooler.Create(tcpClient);
             var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
-            var connection = connFactory.Create(inboundSpooler, outboundSpooler, tcpClient);
-
-            dict[(IPEndPoint) tcpClient.Client.RemoteEndPoint] = connection;
-
-            connection.StartSpoolers();
+            var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
+            Add(inboundSpooler, outboundSpooler, poller, tcpClient);
         }
 
         public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict, IPeerConnectionFactory factory, IMessagePoller poller)
@@ -39,6 +36,15 @@ namespace AsyncSocks
                 entry.Value.Close();
             }
             dict.Clear();
+        }
+
+
+        public void Add(IInboundMessageSpooler inbound, IOutboundMessageSpooler outbound, IMessagePoller poller, ITcpClient tcpClient)
+        {
+            var connection = connFactory.Create(inbound, outbound, poller, tcpClient);
+            dict[(IPEndPoint)tcpClient.Client.RemoteEndPoint] = connection;
+
+            connection.Start();
         }
     }
 }
