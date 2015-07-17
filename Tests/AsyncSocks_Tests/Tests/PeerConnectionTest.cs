@@ -5,6 +5,7 @@ using Moq;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -110,6 +111,34 @@ namespace AsyncSocks_Tests.Tests
 
             Assert.IsTrue(active);
             
+        }
+
+        [TestMethod]
+        public void OnNewMessageReceivedIsFiredWhenMessagePollerEventDoes()
+        {
+            AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
+            var messageBytes = Encoding.ASCII.GetBytes("This is a test");
+
+            IPeerConnection senderArgument = null;
+            byte[] messageArgument = null;
+
+            var callback = new NewClientMessageDelegate(delegate(IPeerConnection sender, byte[] message)
+            {
+                senderArgument = sender;
+                messageArgument = message;
+                callbackCalledEvent.Set();
+            });
+
+            connection.OnNewMessageReceived += callback;
+
+            messagePollerMock.Raise(x => x.OnNewClientMessageReceived += null, null, messageBytes);
+
+            bool callbackCalled = callbackCalledEvent.WaitOne(2000);
+
+            Assert.IsTrue(callbackCalled);
+            Assert.AreEqual(null, senderArgument);
+            Assert.AreEqual(messageBytes, messageArgument);
+
         }
 
         

@@ -19,6 +19,15 @@ namespace AsyncSocks
             this.outboundSpooler = outboundSpooler;
             this.poller = poller;
             this.tcpClient = tcpClient;
+            poller.OnNewClientMessageReceived += poller_OnNewClientMessageReceived;
+        }
+
+        private void poller_OnNewClientMessageReceived(IPeerConnection sender, byte[] message)
+        {
+            if (OnNewMessageReceived != null)
+            {
+                OnNewMessageReceived(sender, message);
+            }
         }
 
         public void SendMessage(byte[] messageBytes)
