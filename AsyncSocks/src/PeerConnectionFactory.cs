@@ -8,9 +8,10 @@ namespace AsyncSocks
 {
     public class PeerConnectionFactory : IPeerConnectionFactory
     {
-        public IPeerConnection Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, ITcpClient tcpClient)
+        public IPeerConnection Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, ITcpClient tcpClient)
         {
-            return new PeerConnection(InboundMessageSpooler.Create(tcpClient), OutboundMessageSpooler.Create(tcpClient), tcpClient);
+            return new PeerConnection(inboundSpooler, outboundSpooler, messagePoller, tcpClient);
         }
+
     }
 }

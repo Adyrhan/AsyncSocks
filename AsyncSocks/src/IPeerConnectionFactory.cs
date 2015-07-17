@@ -7,6 +7,6 @@ namespace AsyncSocks
 {
     public interface IPeerConnectionFactory
     {
-        IPeerConnection Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, ITcpClient tcpClient);
+        IPeerConnection Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, ITcpClient tcpClient);
     }
 }

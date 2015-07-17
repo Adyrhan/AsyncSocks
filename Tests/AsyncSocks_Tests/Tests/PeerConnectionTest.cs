@@ -13,6 +13,7 @@ namespace AsyncSocks_Tests.Tests
     {
         private Mock<IInboundMessageSpooler> inboundSpoolerMock;
         private Mock<IOutboundMessageSpooler> outboundSpoolerMock;
+        private Mock<IMessagePoller> messagePollerMock;
         private Mock<ITcpClient> tcpClientMock;
         private IPeerConnection connection;
 
@@ -21,13 +22,15 @@ namespace AsyncSocks_Tests.Tests
         {
             inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
             outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
+            messagePollerMock = new Mock<IMessagePoller>();
             tcpClientMock = new Mock<ITcpClient>();
 
             var inboundSpooler = inboundSpoolerMock.Object;
             var outboundSpooler = outboundSpoolerMock.Object;
             var tcpClient = tcpClientMock.Object;
+            var messagePoller = messagePollerMock.Object;
 
-            connection = new PeerConnection(inboundSpooler, outboundSpooler, tcpClient);
+            connection = new PeerConnection(inboundSpooler, outboundSpooler, messagePoller, tcpClient);
         }
 
         [TestMethod]
@@ -43,15 +46,17 @@ namespace AsyncSocks_Tests.Tests
         }
 
         [TestMethod]
-        public void StartSpoolersShouldStartInboundAndOutboundMessageSpooling()
+        public void StartShouldStartInboundAndOutboundMessageSpoolingAndMessagePolling()
         {
             inboundSpoolerMock.Setup(x => x.Start()).Verifiable();
             outboundSpoolerMock.Setup(x => x.Start()).Verifiable();
+            messagePollerMock.Setup(x => x.Start()).Verifiable();
             
-            connection.StartSpoolers();
+            connection.Start();
             
             inboundSpoolerMock.Verify();
             outboundSpoolerMock.Verify();
+            messagePollerMock.Verify();
         }
 
         [TestMethod]
@@ -60,12 +65,14 @@ namespace AsyncSocks_Tests.Tests
             inboundSpoolerMock.Setup(x => x.Stop()).Verifiable();
             outboundSpoolerMock.Setup(x => x.Stop()).Verifiable();
             tcpClientMock.Setup(x => x.Close()).Verifiable();
+            messagePollerMock.Setup(x => x.Stop()).Verifiable();
 
             connection.Close();
 
             inboundSpoolerMock.Verify();
             outboundSpoolerMock.Verify();
             tcpClientMock.Verify();
+            messagePollerMock.Verify();
         }
 
         [TestMethod]
@@ -90,7 +97,7 @@ namespace AsyncSocks_Tests.Tests
             inboundSpoolerMock.Setup(x => x.IsRunning()).Returns(() => { return inboundSpoolerStarted;}).Verifiable();
             outboundSpoolerMock.Setup(x => x.IsRunning()).Returns(() => { return outboundSpoolerStarted;}).Verifiable();
 
-            connection.StartSpoolers();
+            connection.Start();
 
             bool active = connection.IsActive();
             
@@ -100,5 +107,7 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(active);
             
         }
+
+        
     }
 }

@@ -11,11 +11,13 @@ namespace AsyncSocks
         private IInboundMessageSpooler inboundSpooler;
         private IOutboundMessageSpooler outboundSpooler;
         private ITcpClient tcpClient;
+        private IMessagePoller poller;
 
-        public PeerConnection(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, ITcpClient tcpClient)
+        public PeerConnection(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, ITcpClient tcpClient)
         {
             this.inboundSpooler = inboundSpooler;
             this.outboundSpooler = outboundSpooler;
+            this.poller = poller;
             this.tcpClient = tcpClient;
         }
 
@@ -24,14 +26,16 @@ namespace AsyncSocks
             outboundSpooler.Enqueue(messageBytes);
         }
 
-        public void StartSpoolers()
+        public void Start()
         {
             inboundSpooler.Start();
             outboundSpooler.Start();
+            poller.Start();
         }
 
         public void Close()
         {
+            poller.Stop();
             inboundSpooler.Stop();
             outboundSpooler.Stop();
 

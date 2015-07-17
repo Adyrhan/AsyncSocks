@@ -10,7 +10,7 @@ namespace AsyncSocks
     public interface IPeerConnection
     {
         void SendMessage(byte[] messageBytes);
-        void StartSpoolers();
+        void Start();
         void Close();
 
         EndPoint RemoteEndPoint { get; }
