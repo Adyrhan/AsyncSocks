@@ -49,7 +49,10 @@ namespace AsyncSocks
 
         public bool IsActive()
         {
-            return (inboundSpooler.IsRunning() && outboundSpooler.IsRunning());
+            return (inboundSpooler.IsRunning() && outboundSpooler.IsRunning() && poller.IsRunning());
         }
+
+
+        public event NewClientMessageDelegate OnNewMessageReceived;
     }
 }

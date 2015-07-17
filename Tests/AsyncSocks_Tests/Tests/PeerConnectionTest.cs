@@ -86,16 +86,19 @@ namespace AsyncSocks_Tests.Tests
         }
 
         [TestMethod]
-        public void IsActiveShouldReturnTrueIfBothSpoolersAreRunning()
+        public void IsActiveShouldReturnTrueIfBothSpoolersAndMessagePollerAreRunning()
         {
             bool inboundSpoolerStarted = false;
             bool outboundSpoolerStarted = false;
+            bool messagePollerStarted = false;
 
             inboundSpoolerMock.Setup(x => x.Start()).Callback(() => inboundSpoolerStarted = true).Verifiable();
             outboundSpoolerMock.Setup(x => x.Start()).Callback(() => outboundSpoolerStarted = true).Verifiable();
+            messagePollerMock.Setup(x => x.Start()).Callback(() => messagePollerStarted = true).Verifiable();
 
             inboundSpoolerMock.Setup(x => x.IsRunning()).Returns(() => { return inboundSpoolerStarted;}).Verifiable();
             outboundSpoolerMock.Setup(x => x.IsRunning()).Returns(() => { return outboundSpoolerStarted;}).Verifiable();
+            messagePollerMock.Setup(x => x.IsRunning()).Returns(() => { return messagePollerStarted; }).Verifiable();
 
             connection.Start();
 
@@ -103,6 +106,7 @@ namespace AsyncSocks_Tests.Tests
             
             inboundSpoolerMock.Verify();
             outboundSpoolerMock.Verify();
+            messagePollerMock.Verify();
 
             Assert.IsTrue(active);
             

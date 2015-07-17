@@ -15,6 +15,8 @@ namespace AsyncSocks
 
         EndPoint RemoteEndPoint { get; }
         bool IsActive();
+
+        event NewClientMessageDelegate OnNewMessageReceived;
     }
     
 }
