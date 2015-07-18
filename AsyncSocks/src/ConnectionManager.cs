@@ -9,14 +9,12 @@ namespace AsyncSocks
     public class ConnectionManager : IConnectionManager
     {
         private Dictionary<IPEndPoint, IPeerConnection> dict;
-        private IMessagePoller poller;
 
         public event NewClientMessageDelegate OnNewClientMessageReceived;
 
-        public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict, IMessagePoller poller)
+        public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict)
         {
             this.dict = dict;
-            this.poller = poller;
         }
 
         public void CloseAllConnetions()
@@ -32,6 +30,15 @@ namespace AsyncSocks
         {
             dict[(IPEndPoint) peerConnection.RemoteEndPoint] = peerConnection;
             peerConnection.Start();
+            peerConnection.OnNewMessageReceived += peerConnection_OnNewMessageReceived;
+        }
+
+        void peerConnection_OnNewMessageReceived(IPeerConnection sender, byte[] message)
+        {
+            if (OnNewClientMessageReceived != null)
+            {
+                OnNewClientMessageReceived(sender, message);
+            }
         }
     }
 }

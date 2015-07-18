@@ -14,14 +14,12 @@ namespace AsyncSocks_Tests.Tests
     {
         private IConnectionManager connManager;
         private Dictionary<IPEndPoint, IPeerConnection> dict;
-        private Mock<IMessagePoller> messagePollerMock;
 
         [TestInitialize]
         public void BeforeEach()
         {
-            messagePollerMock = new Mock<IMessagePoller>();
             dict = new Dictionary<IPEndPoint, IPeerConnection>();
-            connManager = new ConnectionManager(dict, messagePollerMock.Object);
+            connManager = new ConnectionManager(dict);
         }
 
         [TestMethod]
@@ -70,7 +68,7 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void OnNewClientMessageReceivedCallbacksShouldBeCalledWhenEventIsFiredByAPeerConnectionInstance()
         {
-            var callbackCalledEvent = new AutoResetEvent(true);
+            var callbackCalledEvent = new AutoResetEvent(false);
             var peerConnectionMock = new Mock<IPeerConnection>();
 
             peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80));
@@ -84,7 +82,7 @@ namespace AsyncSocks_Tests.Tests
 
             connManager.OnNewClientMessageReceived += callback;
 
-            messagePollerMock.Raise(x => x.OnNewClientMessageReceived += null, peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
+            peerConnectionMock.Raise(x => x.OnNewMessageReceived += null, peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
 
             bool called = callbackCalledEvent.WaitOne(2000);
 
