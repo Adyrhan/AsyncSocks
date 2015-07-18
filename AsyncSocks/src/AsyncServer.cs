@@ -26,11 +26,11 @@ namespace AsyncSocks
             this.clientConnectionAgent.OnNewClientConnection += clientConnectionAgent_OnNewClientConnection;
         }
 
-        void clientConnectionAgent_OnNewClientConnection(ITcpClient client)
+        void clientConnectionAgent_OnNewClientConnection(IPeerConnection client)
         {
             if (OnNewClientConnected != null) 
             {
-                OnNewClientConnected(new PeerConnectionFactory().Create(client));
+                OnNewClientConnected(client);
             }
         }
 
