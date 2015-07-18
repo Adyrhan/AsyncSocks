@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IAsyncServer.cs" />
     <Compile Include="MessagePoller.cs" />
     <Compile Include="src\IMessagePoller.cs" />
     <Compile Include="src\IMessagePollerRunnable.cs" />
