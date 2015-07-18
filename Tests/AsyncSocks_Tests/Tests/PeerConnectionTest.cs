@@ -136,7 +136,7 @@ namespace AsyncSocks_Tests.Tests
             bool callbackCalled = callbackCalledEvent.WaitOne(2000);
 
             Assert.IsTrue(callbackCalled);
-            Assert.AreEqual(null, senderArgument);
+            Assert.AreEqual(connection, senderArgument);
             Assert.AreEqual(messageBytes, messageArgument);
 
         }

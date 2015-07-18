@@ -13,6 +13,8 @@ namespace AsyncSocks
         private ITcpClient tcpClient;
         private IMessagePoller poller;
 
+        public event NewClientMessageDelegate OnNewMessageReceived;
+
         public PeerConnection(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, ITcpClient tcpClient)
         {
             this.inboundSpooler = inboundSpooler;
@@ -26,7 +28,7 @@ namespace AsyncSocks
         {
             if (OnNewMessageReceived != null)
             {
-                OnNewMessageReceived(sender, message);
+                OnNewMessageReceived(this, message);
             }
         }
 
@@ -60,10 +62,6 @@ namespace AsyncSocks
         {
             return (inboundSpooler.IsRunning() && outboundSpooler.IsRunning() && poller.IsRunning());
         }
-
-
-        public event NewClientMessageDelegate OnNewMessageReceived;
-
 
         public ITcpClient TcpClient
         {
