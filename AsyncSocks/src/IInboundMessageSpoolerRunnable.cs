@@ -10,6 +10,6 @@ namespace AsyncSocks
     public interface IInboundMessageSpoolerRunnable : IRunnable
     {
         void Spool();
-        BlockingCollection<byte[]> Queue { get; }
+        BlockingCollection<NetworkMessage> Queue { get; }
     }
 }

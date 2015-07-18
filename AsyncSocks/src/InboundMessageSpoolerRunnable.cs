@@ -10,12 +10,12 @@ namespace AsyncSocks
     public class InboundMessageSpoolerRunnable : IInboundMessageSpoolerRunnable
     {
         private INetworkMessageReader networkMessageReader;
-        private BlockingCollection<byte[]> queue;
+        private BlockingCollection<NetworkMessage> queue;
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
         private bool shouldStop;
         private bool running;
 
-        public InboundMessageSpoolerRunnable(INetworkMessageReader networkMessageReader, BlockingCollection<byte[]> queue)
+        public InboundMessageSpoolerRunnable(INetworkMessageReader networkMessageReader, BlockingCollection<NetworkMessage> queue)
         {
             this.networkMessageReader = networkMessageReader;
             this.queue = queue;
@@ -24,7 +24,7 @@ namespace AsyncSocks
         public void Spool()
         {
             byte[] message = networkMessageReader.Read();
-            queue.Add(message);
+            queue.Add(new NetworkMessage(null, message));
         }
 
         public void Run()
@@ -54,7 +54,7 @@ namespace AsyncSocks
         }
 
 
-        public BlockingCollection<byte[]> Queue
+        public BlockingCollection<NetworkMessage> Queue
         {
             get
             {

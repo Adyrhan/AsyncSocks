@@ -8,6 +8,6 @@ namespace AsyncSocks
 {
     public interface IInboundMessageSpooler : IThreadRunner
     {
-        BlockingCollection<byte[]> Queue { get; }
+        BlockingCollection<NetworkMessage> Queue { get; }
     }
 }

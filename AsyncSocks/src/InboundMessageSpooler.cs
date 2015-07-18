@@ -11,7 +11,7 @@ namespace AsyncSocks
         public static InboundMessageSpooler Create(ITcpClient tcpClient)
         {
             NetworkMessageReader reader = new NetworkMessageReader(tcpClient);
-            BlockingCollection<byte[]> queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
+            BlockingCollection<NetworkMessage> queue = new BlockingCollection<NetworkMessage>(new ConcurrentQueue<NetworkMessage>());
             InboundMessageSpoolerRunnable runnable = new InboundMessageSpoolerRunnable(reader, queue);
             return new InboundMessageSpooler(runnable);
         }
@@ -19,7 +19,7 @@ namespace AsyncSocks
         public InboundMessageSpooler(IInboundMessageSpoolerRunnable runnable) : base(runnable) { }
 
 
-        public BlockingCollection<byte[]> Queue
+        public BlockingCollection<NetworkMessage> Queue
         {
             get { return ((IInboundMessageSpoolerRunnable) Runnable).Queue; }
         }
