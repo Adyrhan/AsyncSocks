@@ -15,14 +15,14 @@ namespace AsyncSocks_Tests.Tests
     {
 
         private InboundMessageSpoolerRunnable spooler;
-        private BlockingCollection<byte[]> queue;
+        private BlockingCollection<NetworkMessage> queue;
         private Mock<INetworkMessageReader> readerMock;
 
         [TestInitialize]
         public void BeforeEach()
         {
             readerMock = new Mock<INetworkMessageReader>();
-            queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
+            queue = new BlockingCollection<NetworkMessage>(new ConcurrentQueue<NetworkMessage>());
             spooler = new InboundMessageSpoolerRunnable(readerMock.Object, queue);
         }
 
@@ -35,7 +35,7 @@ namespace AsyncSocks_Tests.Tests
 
             spooler.Spool();
 
-            string storedMessage = Encoding.ASCII.GetString(queue.Take());
+            string storedMessage = Encoding.ASCII.GetString(queue.Take().Message);
 
             Assert.AreEqual(messageString, storedMessage);
         }
