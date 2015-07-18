@@ -9,23 +9,13 @@ namespace AsyncSocks
     public class ConnectionManager : IConnectionManager
     {
         private Dictionary<IPEndPoint, IPeerConnection> dict;
-        private IPeerConnectionFactory connFactory;
         private IMessagePoller poller;
 
         public event NewClientMessageDelegate OnNewClientMessageReceived;
 
-        public void Add(ITcpClient tcpClient)
-        {
-            var inboundSpooler = InboundMessageSpooler.Create(tcpClient);
-            var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
-            var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
-            Add(inboundSpooler, outboundSpooler, poller, tcpClient);
-        }
-
-        public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict, IPeerConnectionFactory factory, IMessagePoller poller)
+        public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict, IMessagePoller poller)
         {
             this.dict = dict;
-            this.connFactory = factory;
             this.poller = poller;
         }
 
@@ -38,13 +28,10 @@ namespace AsyncSocks
             dict.Clear();
         }
 
-
-        public void Add(IInboundMessageSpooler inbound, IOutboundMessageSpooler outbound, IMessagePoller poller, ITcpClient tcpClient)
+        public void Add(IPeerConnection peerConnection)
         {
-            var connection = connFactory.Create(inbound, outbound, poller, tcpClient);
-            dict[(IPEndPoint)tcpClient.Client.RemoteEndPoint] = connection;
-
-            connection.Start();
+            dict[(IPEndPoint) peerConnection.RemoteEndPoint] = peerConnection;
+            peerConnection.Start();
         }
     }
 }

@@ -7,11 +7,11 @@ namespace AsyncSocks
 {
     public interface IConnectionManager
     {
-        void Add(ITcpClient tcpClient);
-        void Add(IInboundMessageSpooler inbound, IOutboundMessageSpooler outbound, IMessagePoller poller, ITcpClient client);
         void CloseAllConnetions();
 
         event NewClientMessageDelegate OnNewClientMessageReceived;
+
+        void Add(IPeerConnection peerConnection);
     }
 
     public delegate void NewClientMessageDelegate(IPeerConnection sender, byte[] message);
