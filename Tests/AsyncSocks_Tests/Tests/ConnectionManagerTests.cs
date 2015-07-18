@@ -23,43 +23,6 @@ namespace AsyncSocks_Tests.Tests
             dict = new Dictionary<IPEndPoint, IPeerConnection>();
             connManager = new ConnectionManager(dict, messagePollerMock.Object);
         }
-        
-        //[TestMethod]
-        //public void AddShouldCreateANewPeerConnectionFromTcpClientAndAddsItToItsList()
-        //{
-        //    var tcpClientMock = new Mock<ITcpClient>();
-        //    var socketMock = new Mock<ISocket>();
-        //    var peerConnectionMock = new Mock<IPeerConnection>();
-        //    var inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
-        //    var outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
-        //    var messagePollerMock = new Mock<IMessagePoller>();
-            
-        //    var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
-
-        //    //connectionFactoryMock.Setup(
-        //    //    x => x.Create(
-        //    //        inboundSpoolerMock.Object,
-        //    //        outboundSpoolerMock.Object,
-        //    //        messagePollerMock.Object,
-        //    //        tcpClientMock.Object
-        //    //    )
-        //    //).Returns(peerConnectionMock.Object).Verifiable();
-
-        //    tcpClientMock.Setup(x => x.Client).Returns(socketMock.Object).Verifiable();
-        //    socketMock.Setup(x => x.RemoteEndPoint).Returns(endPoint).Verifiable();
-
-        //    peerConnectionMock.Setup(x => x.Start()).Verifiable();
-        //    peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(endPoint);
-
-        //    connManager.Add(inboundSpoolerMock.Object, outboundSpoolerMock.Object, messagePollerMock.Object, tcpClientMock.Object);
-
-        //    tcpClientMock.Verify();
-        //    socketMock.Verify();
-        //    connectionFactoryMock.Verify();
-        //    peerConnectionMock.Verify();
-
-        //    Assert.AreEqual(endPoint, dict[endPoint].RemoteEndPoint); 
-        //}
 
         [TestMethod]
         public void AddShouldAddPeerConnectionObjectToItsDictionary()
