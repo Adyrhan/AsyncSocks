@@ -13,5 +13,14 @@ namespace AsyncSocks
             return new PeerConnection(inboundSpooler, outboundSpooler, messagePoller, tcpClient);
         }
 
+        public IPeerConnection Create(ITcpClient tcpClient)
+        {
+            var inboundSpooler = InboundMessageSpooler.Create(tcpClient);
+            var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
+            var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
+
+            return new PeerConnection(inboundSpooler, outboundSpooler, messagePoller, tcpClient);
+        }
+
     }
 }
