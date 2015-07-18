@@ -13,8 +13,10 @@ namespace AsyncSocks
         private bool running;
         private bool shouldStop;
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
+        private IPeerConnectionFactory connectionFactory;
 
-        public event NewClientConnectionDelegate OnNewClientConnection;
+        public event NewPeerConnectionDelegate OnNewClientConnection;
+        
 
         public bool IsRunning
         {
@@ -31,15 +33,19 @@ namespace AsyncSocks
             return startedEvent.WaitOne();
         }
         
-        public ClientConnectionAgentRunnable(ITcpListener listener)
+        public ClientConnectionAgentRunnable(ITcpListener listener, IPeerConnectionFactory connectionFactory)
         {
             this.listener = listener;
+            this.connectionFactory = connectionFactory;
         }
 
         public void AcceptClientConnection()
         {
             ITcpClient client = listener.AcceptTcpClient();
-            OnNewClientConnection(client);
+            if (OnNewClientConnection != null)
+            {
+                OnNewClientConnection(connectionFactory.Create(client));
+            }
         }
 
         public void Run()

@@ -10,10 +10,21 @@ namespace AsyncSocks_Tests
     [TestClass]
     public class ClientConnectionAgentRunnableTest
     {
+        private Mock<ITcpListener> tcpListenerMock;
+        private IClientConnectionAgentRunnable agent;
+        private Mock<IPeerConnectionFactory> connectionFactoryMock;
+
+        [TestInitialize]
+        public void BeforeEach()
+        {
+            tcpListenerMock = new Mock<ITcpListener>();
+            connectionFactoryMock = new Mock<IPeerConnectionFactory>();
+            agent = new ClientConnectionAgentRunnable(tcpListenerMock.Object, connectionFactoryMock.Object);
+        }
+        
         [TestMethod]
         public void ShouldImplementIRunnable()
         {
-            ClientConnectionAgentRunnable agent = new ClientConnectionAgentRunnable(new Mock<ITcpListener>().Object);
             Assert.IsTrue(agent is IRunnable);
         }
         
@@ -21,33 +32,34 @@ namespace AsyncSocks_Tests
         public void ShouldCallDelegateWhenNewClientConnects()
         {
             Mock<ITcpClient> tcpClientMock = new Mock<ITcpClient>();
-            Mock<ITcpListener> tcpListenerMock = new Mock<ITcpListener>();
-            Mock<NewClientConnectionDelegate> newClientCallbackMock = new Mock<NewClientConnectionDelegate>();
+            Mock<IPeerConnection> peerConnectionMock = new Mock<IPeerConnection>();
+            Mock<NewPeerConnectionDelegate> newClientCallbackMock = new Mock<NewPeerConnectionDelegate>();
 
             tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object).Verifiable();
-            newClientCallbackMock.Setup(x => x(tcpClientMock.Object)).Verifiable();
+            connectionFactoryMock.Setup(x => x.Create(tcpClientMock.Object)).Returns(peerConnectionMock.Object).Verifiable();
+            newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Verifiable();
             
-            ClientConnectionAgentRunnable agent = new ClientConnectionAgentRunnable(tcpListenerMock.Object);
             agent.OnNewClientConnection += newClientCallbackMock.Object;
             agent.AcceptClientConnection();
 
             tcpListenerMock.Verify();
             newClientCallbackMock.Verify();
+            connectionFactoryMock.Verify();
         }
 
         [TestMethod]
         public void RunShouldCallAcceptClientConnection()
         {
+            Mock<IPeerConnection> peerConnectionMock = new Mock<IPeerConnection>();
             Mock<ITcpClient> tcpClientMock = new Mock<ITcpClient>();
-            Mock<ITcpListener> tcpListenerMock = new Mock<ITcpListener>();
-            Mock<NewClientConnectionDelegate> newClientCallbackMock = new Mock<NewClientConnectionDelegate>();
+            Mock<NewPeerConnectionDelegate> newClientCallbackMock = new Mock<NewPeerConnectionDelegate>();
             
-            ClientConnectionAgentRunnable agent = new ClientConnectionAgentRunnable(tcpListenerMock.Object);
             ThreadRunner runner = new ThreadRunner(agent);
             AutoResetEvent AcceptClientConnectionWasCalled = new AutoResetEvent(false);
 
             tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object);
-            newClientCallbackMock.Setup(x => x(tcpClientMock.Object)).Callback(() => AcceptClientConnectionWasCalled.Set());      
+            connectionFactoryMock.Setup(x => x.Create(tcpClientMock.Object)).Returns(peerConnectionMock.Object).Verifiable();
+            newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Callback(() => AcceptClientConnectionWasCalled.Set());      
             agent.OnNewClientConnection += newClientCallbackMock.Object;
             
             runner.Start();

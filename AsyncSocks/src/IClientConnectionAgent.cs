@@ -7,6 +7,6 @@ namespace AsyncSocks
 {
     public interface IClientConnectionAgent : IThreadRunner
     {
-        event NewClientConnectionDelegate OnNewClientConnection;
+        event NewPeerConnectionDelegate OnNewClientConnection;
     }
 }

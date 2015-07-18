@@ -8,6 +8,6 @@ namespace AsyncSocks
     public interface IClientConnectionAgentRunnable : IRunnable
     {
         void AcceptClientConnection();
-        event NewClientConnectionDelegate OnNewClientConnection;
+        event NewPeerConnectionDelegate OnNewClientConnection;
     }
 }
