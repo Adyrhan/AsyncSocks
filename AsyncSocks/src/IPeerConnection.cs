@@ -17,6 +17,8 @@ namespace AsyncSocks
         bool IsActive();
 
         event NewClientMessageDelegate OnNewMessageReceived;
+
+        ITcpClient TcpClient { get; }
     }
     
 }

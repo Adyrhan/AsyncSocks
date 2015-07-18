@@ -63,5 +63,11 @@ namespace AsyncSocks
 
 
         public event NewClientMessageDelegate OnNewMessageReceived;
+
+
+        public ITcpClient TcpClient
+        {
+            get { return tcpClient; }
+        }
     }
 }

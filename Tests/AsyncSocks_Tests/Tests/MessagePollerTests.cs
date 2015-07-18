@@ -19,7 +19,7 @@ namespace AsyncSocks_Tests.Tests
         {
             queue = new BlockingCollection<byte[]>();
             runnable = new Mock<IMessagePollerRunnable>();
-            poller = new MessagePoller(runnable.Object, queue);
+            poller = new MessagePoller(runnable.Object);
         }
 
 

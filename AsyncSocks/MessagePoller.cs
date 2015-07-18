@@ -8,12 +8,10 @@ namespace AsyncSocks
 {
     public class MessagePoller : ThreadRunner, IMessagePoller
     {
-        private BlockingCollection<byte[]> queue;
         private IMessagePollerRunnable runnable;
 
-        public MessagePoller(IMessagePollerRunnable runnable, BlockingCollection<byte[]> queue) : base(runnable)
+        public MessagePoller(IMessagePollerRunnable runnable) : base(runnable)
         {
-            this.queue = queue;
             this.runnable = runnable;
             runnable.OnNewMessageReceived += runnable_OnNewMessageReceived;
         }
@@ -28,9 +26,15 @@ namespace AsyncSocks
 
         public event NewClientMessageDelegate OnNewClientMessageReceived;
 
-        public static IMessagePoller Create(BlockingCollection<byte[]> blockingCollection)
+        public static IMessagePoller Create(BlockingCollection<NetworkMessage> queue)
         {
-            throw new NotImplementedException();
+            return new MessagePoller(new MessagePollerRunnable(queue));
+        }
+
+
+        public BlockingCollection<NetworkMessage> Queue
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 }
