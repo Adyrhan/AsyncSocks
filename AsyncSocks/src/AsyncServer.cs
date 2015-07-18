@@ -5,6 +5,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
+    public delegate void NewPeerConnectionDelegate(IPeerConnection client);
     public class AsyncServer
     {
         private IClientConnectionAgent clientConnectionAgent;
@@ -12,6 +13,7 @@ namespace AsyncSocks
         private ITcpListener tcpListener;
 
         public event NewClientMessageDelegate OnNewMessageReceived;
+        public event NewPeerConnectionDelegate OnNewClientConnected;
 
         public AsyncServer(IClientConnectionAgent clientConnectionAgent, IConnectionManager connectionManager, ITcpListener tcpListener)
         {
@@ -20,6 +22,16 @@ namespace AsyncSocks
             this.connectionManager = connectionManager;
             this.tcpListener = tcpListener;
             this.connectionManager.OnNewClientMessageReceived += connectionManager_OnNewClientMessageReceived;
+
+            this.clientConnectionAgent.OnNewClientConnection += clientConnectionAgent_OnNewClientConnection;
+        }
+
+        void clientConnectionAgent_OnNewClientConnection(ITcpClient client)
+        {
+            if (OnNewClientConnected != null) 
+            {
+                OnNewClientConnected(new PeerConnectionFactory().Create(client));
+            }
         }
 
         private void connectionManager_OnNewClientMessageReceived(IPeerConnection sender, byte[] message)

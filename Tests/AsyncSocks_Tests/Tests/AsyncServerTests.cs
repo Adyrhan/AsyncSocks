@@ -66,5 +66,30 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(messageReceivedEvent.WaitOne(2000));
 
         }
+
+        [TestMethod]
+        public void OnNewClientConnectedShouldFireUpWhenClientConnectionAgentDoes()
+        {
+            var callbackCalledEvent = new AutoResetEvent(false);
+            var tcpClientMock = new Mock<ITcpClient>();
+
+            IPeerConnection peerConnectionArgument = null;
+
+            var callback = new NewPeerConnectionDelegate(delegate(IPeerConnection client)
+            {
+                peerConnectionArgument = client;
+                callbackCalledEvent.Set();
+
+            });
+
+            server.OnNewClientConnected += callback;
+
+            clientConnectionAgentMock.Raise(x => x.OnNewClientConnection += null, tcpClientMock.Object);
+
+            Assert.IsTrue(callbackCalledEvent.WaitOne(2000), "Delegate not called");
+            Assert.AreEqual(tcpClientMock.Object, peerConnectionArgument.TcpClient);
+        }
+
+        
     }
 }
