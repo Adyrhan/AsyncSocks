@@ -21,5 +21,12 @@ namespace AsyncSocks
         {
             OnNewClientConnection(client);
         }
+
+        public static ClientConnectionAgent Create(ITcpListener listener)
+        {
+            PeerConnectionFactory factory = new PeerConnectionFactory();
+            ClientConnectionAgentRunnable runnable = new ClientConnectionAgentRunnable(listener, factory);
+            return new ClientConnectionAgent(runnable);
+        }
     }
 }
