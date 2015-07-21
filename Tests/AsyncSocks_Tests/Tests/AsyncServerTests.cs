@@ -91,6 +91,12 @@ namespace AsyncSocks_Tests.Tests
             Assert.AreEqual(peerConnectionMock.Object, peerConnectionArgument);
         }
 
-        
+        [TestMethod]
+        public void StaticFactoryCreateShouldCreateInstance()
+        {
+            var instance = AsyncServer.Create(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 80));
+
+            Assert.IsTrue(instance != null && instance is AsyncServer);
+        }
     }
 }
