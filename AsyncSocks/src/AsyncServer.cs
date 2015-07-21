@@ -30,6 +30,7 @@ namespace AsyncSocks
 
         void clientConnectionAgent_OnNewClientConnection(IPeerConnection client)
         {
+            connectionManager.Add(client);
             if (OnNewClientConnected != null) 
             {
                 OnNewClientConnected(client);

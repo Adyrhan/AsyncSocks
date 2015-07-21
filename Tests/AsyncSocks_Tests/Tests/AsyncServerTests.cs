@@ -84,11 +84,15 @@ namespace AsyncSocks_Tests.Tests
 
             server.OnNewClientConnected += callback;
 
+            connectionManagerMock.Setup(x => x.Add(peerConnectionMock.Object)).Verifiable();
 
             clientConnectionAgentMock.Raise(x => x.OnNewClientConnection += null, peerConnectionMock.Object);
+            
 
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000), "Delegate not called");
             Assert.AreEqual(peerConnectionMock.Object, peerConnectionArgument);
+
+            connectionManagerMock.Verify();
         }
 
         [TestMethod]
