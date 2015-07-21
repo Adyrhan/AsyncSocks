@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 
 namespace AsyncSocks
 {
     public delegate void NewPeerConnectionDelegate(IPeerConnection client);
-    public class AsyncServer
+    public class AsyncServer : IAsyncServer
     {
         private IClientConnectionAgent clientConnectionAgent;
         private IConnectionManager connectionManager;
@@ -51,6 +53,14 @@ namespace AsyncSocks
         {
             clientConnectionAgent.Stop();
             connectionManager.CloseAllConnetions();
+        }
+
+        public static AsyncServer Create(IPEndPoint localEndPoint)
+        {
+            BaseTcpListener tcpListener = new BaseTcpListener(new TcpListener(localEndPoint));
+            ClientConnectionAgent clientConnectionAgent = ClientConnectionAgent.Create(tcpListener);
+            ConnectionManager connectionManager = new ConnectionManager(new Dictionary<IPEndPoint, IPeerConnection>());
+            return new AsyncServer(clientConnectionAgent, connectionManager, tcpListener);
         }
     }
 }
