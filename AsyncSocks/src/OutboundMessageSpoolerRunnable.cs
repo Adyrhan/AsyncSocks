@@ -23,8 +23,16 @@ namespace AsyncSocks
 
         public void Spool()
         {
-            byte[] message = queue.Take();
-            tcpClient.Write(message, 0, message.Length);
+            try
+            {
+                byte[] message = queue.Take();
+                tcpClient.Write(message, 0, message.Length);
+            }
+            catch (ThreadInterruptedException)
+            {
+
+            }
+            
         }
 
         public void Run()

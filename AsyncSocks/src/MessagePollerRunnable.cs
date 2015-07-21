@@ -49,10 +49,17 @@ namespace AsyncSocks
 
         public void Poll()
         {
-            NetworkMessage message = queue.Take();
-            if (OnNewMessageReceived != null)
+            try
             {
-                OnNewMessageReceived(message.Sender, message.Message);
+                NetworkMessage message = queue.Take();
+                if (OnNewMessageReceived != null)
+                {
+                    OnNewMessageReceived(message.Sender, message.Message);
+                }
+            }
+            catch (ThreadInterruptedException)
+            {
+                
             }
         }
     }

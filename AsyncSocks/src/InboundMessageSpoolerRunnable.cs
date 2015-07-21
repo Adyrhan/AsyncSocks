@@ -23,8 +23,15 @@ namespace AsyncSocks
 
         public void Spool()
         {
-            byte[] message = networkMessageReader.Read();
-            queue.Add(new NetworkMessage(null, message));
+            try
+            {
+                byte[] message = networkMessageReader.Read();
+                queue.Add(new NetworkMessage(null, message));
+            }
+            catch (ThreadInterruptedException)
+            {
+                
+            }
         }
 
         public void Run()
