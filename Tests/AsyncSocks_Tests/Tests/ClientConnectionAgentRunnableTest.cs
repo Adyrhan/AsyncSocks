@@ -57,9 +57,11 @@ namespace AsyncSocks_Tests
             ThreadRunner runner = new ThreadRunner(agent);
             AutoResetEvent AcceptClientConnectionWasCalled = new AutoResetEvent(false);
 
-            tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object);
+            tcpListenerMock.Setup(x => x.Start()).Verifiable();
+            tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object).Verifiable();
             connectionFactoryMock.Setup(x => x.Create(tcpClientMock.Object)).Returns(peerConnectionMock.Object).Verifiable();
-            newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Callback(() => AcceptClientConnectionWasCalled.Set());      
+            newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Callback(() => AcceptClientConnectionWasCalled.Set());
+            tcpListenerMock.Setup(x => x.Stop()).Verifiable();
             agent.OnNewClientConnection += newClientCallbackMock.Object;
             
             runner.Start();

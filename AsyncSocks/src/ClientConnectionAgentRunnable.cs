@@ -16,7 +16,6 @@ namespace AsyncSocks
         private IPeerConnectionFactory connectionFactory;
 
         public event NewPeerConnectionDelegate OnNewClientConnection;
-        
 
         public bool IsRunning
         {
@@ -52,10 +51,12 @@ namespace AsyncSocks
         {
             running = true;
             startedEvent.Set();
+            listener.Start();
             while (!shouldStop)
             {
                 AcceptClientConnection();
             }
+            listener.Stop();
             running = false;
         }
     }
