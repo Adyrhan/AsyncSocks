@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using AsyncSocks;
 using System.Text;
+using System.Net.Sockets;
 
 namespace AsyncSocks_Tests
 {
@@ -51,6 +52,22 @@ namespace AsyncSocks_Tests
 
             Assert.AreEqual(messageString, Encoding.ASCII.GetString(readMessage));
             
+        }
+
+        [TestMethod]
+        public void ZeroByteMessageFromTcpClientShouldReturnNullNotifyingDisconnection()
+        {
+            Func<byte[], int, int, int> readImpl1 = (byte[] buffer, int offset, int lenght) =>
+            {
+                return 0;
+            };
+
+            tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 4)).Returns(readImpl1).Verifiable();
+
+            byte[] readMessage = reader.Read();
+
+            Assert.IsNull(readMessage);
+
         }
 
         [TestMethod]
