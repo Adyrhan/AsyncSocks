@@ -14,7 +14,7 @@ namespace AsyncSocks_Tests.Tests
     public class InboundMessageSpoolerRunnableTest
     {
 
-        private InboundMessageSpoolerRunnable spooler;
+        private IInboundMessageSpoolerRunnable spooler;
         private BlockingCollection<NetworkMessage> queue;
         private Mock<INetworkMessageReader> readerMock;
 
@@ -68,6 +68,27 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(spoolCalledEvent.WaitOne(2000));
             runner.Stop();
 
+        }
+
+        [TestMethod]
+        public void ShouldFirePeerDisconnectedEventWhenNetworkMessageReaderReturnsNull()
+        {
+            AutoResetEvent disconnectedEventFired = new AutoResetEvent(false);
+
+            spooler.OnPeerDisconnected += delegate(IPeerConnection peer)
+            {
+                disconnectedEventFired.Set();
+            };
+
+            readerMock.Setup(x => x.Read()).Returns(() => null).Verifiable();
+
+            ThreadRunner runner = new ThreadRunner(spooler);
+            runner.Start();
+
+            Assert.IsTrue(disconnectedEventFired.WaitOne(2000));
+
+            runner.Stop();
+            
         }
     }
 }

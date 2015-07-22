@@ -12,8 +12,10 @@ namespace AsyncSocks
         private INetworkMessageReader networkMessageReader;
         private BlockingCollection<NetworkMessage> queue;
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
-        private bool shouldStop;
-        private bool running;
+        private volatile bool shouldStop;
+        private volatile bool running;
+
+        public event PeerDisconnected OnPeerDisconnected;
 
         public InboundMessageSpoolerRunnable(INetworkMessageReader networkMessageReader, BlockingCollection<NetworkMessage> queue)
         {
@@ -26,7 +28,20 @@ namespace AsyncSocks
             try
             {
                 byte[] message = networkMessageReader.Read();
-                queue.Add(new NetworkMessage(null, message));
+                
+                if (message == null)
+                {
+                    var onPeerDisconnected = OnPeerDisconnected;
+                    if (onPeerDisconnected != null)
+                    {
+                        onPeerDisconnected(null);
+                        shouldStop = true;
+                    }
+                }
+                else
+                {
+                    queue.Add(new NetworkMessage(null, message));
+                }
             }
             catch (ThreadInterruptedException)
             {

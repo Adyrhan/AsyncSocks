@@ -6,6 +6,8 @@ using System.Text;
 
 namespace AsyncSocks
 {
+    public delegate void PeerDisconnected(IPeerConnection peer);
+
     public class PeerConnection : IPeerConnection
     {
         private IInboundMessageSpooler inboundSpooler;

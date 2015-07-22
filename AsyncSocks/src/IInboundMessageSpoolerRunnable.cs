@@ -9,6 +9,7 @@ namespace AsyncSocks
 {
     public interface IInboundMessageSpoolerRunnable : IRunnable
     {
+        event PeerDisconnected OnPeerDisconnected;
         void Spool();
         BlockingCollection<NetworkMessage> Queue { get; }
     }
