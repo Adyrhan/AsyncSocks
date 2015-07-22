@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
@@ -25,6 +26,7 @@ namespace AsyncSocks
         public void Stop()
         {
             shouldStop = true;
+            listener.Stop();
         }
 
         public bool WaitStarted()
@@ -40,10 +42,17 @@ namespace AsyncSocks
 
         public void AcceptClientConnection()
         {
-            ITcpClient client = listener.AcceptTcpClient();
-            if (OnNewClientConnection != null)
+            try
             {
-                OnNewClientConnection(connectionFactory.Create(client));
+                ITcpClient client = listener.AcceptTcpClient();
+                if (OnNewClientConnection != null)
+                {
+                    OnNewClientConnection(connectionFactory.Create(client));
+                }
+            }
+            catch (SocketException)
+            {
+                shouldStop = true;
             }
         }
 
@@ -56,7 +65,7 @@ namespace AsyncSocks
             {
                 AcceptClientConnection();
             }
-            listener.Stop();
+            
             running = false;
         }
     }

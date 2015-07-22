@@ -18,7 +18,9 @@ namespace AsyncSocks
 
         public ITcpClient AcceptTcpClient()
         {
-            return new BaseTcpClient(listener.AcceptTcpClient());
+            
+            TcpClient client = listener.AcceptTcpClient();
+            return new BaseTcpClient(client);
         }
 
         public void Stop()
