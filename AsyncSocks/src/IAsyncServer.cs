@@ -8,7 +8,7 @@ namespace AsyncSocks
 {
     public interface IAsyncServer
     {
-        event NewClientMessageDelegate OnNewMessageReceived;
+        event NewClientMessageReceived OnNewMessageReceived;
         void Start();
         void Stop();
     }

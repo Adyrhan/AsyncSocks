@@ -122,7 +122,7 @@ namespace AsyncSocks_Tests.Tests
             IPeerConnection senderArgument = null;
             byte[] messageArgument = null;
 
-            var callback = new NewClientMessageDelegate(delegate(IPeerConnection sender, byte[] message)
+            var callback = new NewClientMessageReceived(delegate(IPeerConnection sender, byte[] message)
             {
                 senderArgument = sender;
                 messageArgument = message;
@@ -139,6 +139,28 @@ namespace AsyncSocks_Tests.Tests
             Assert.AreEqual(connection, senderArgument);
             Assert.AreEqual(messageBytes, messageArgument);
 
+        }
+
+        [TestMethod]
+        public void ShouldFireOnPeerDisconnectedEventWhenInboundMessageSpoolerDoesIt()
+        {
+            AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
+
+
+            IPeerConnection peerArgument = null;
+            var callback = new PeerDisconnected(delegate (IPeerConnection peer)
+            {
+                peerArgument = peer;
+                callbackCalledEvent.Set();
+            });
+
+            connection.OnPeerDisconnected += callback;
+
+            IPeerConnection nullPeer = null;
+            inboundSpoolerMock.Raise(x => x.OnPeerDisconnected += null, nullPeer);
+
+            Assert.IsTrue(callbackCalledEvent.WaitOne(2000), "Callback not called");
+            Assert.AreEqual(connection, peerArgument);
         }
 
         

@@ -28,7 +28,7 @@ namespace AsyncSocks_Tests.Tests
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewClientMessageDelegate(delegate(IPeerConnection sender, byte[] message)
+            var callback = new NewClientMessageReceived(delegate(IPeerConnection sender, byte[] message)
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, sender);
@@ -52,7 +52,7 @@ namespace AsyncSocks_Tests.Tests
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewClientMessageDelegate(delegate(IPeerConnection sender, byte[] message)
+            var callback = new NewClientMessageReceived(delegate(IPeerConnection sender, byte[] message)
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, sender);

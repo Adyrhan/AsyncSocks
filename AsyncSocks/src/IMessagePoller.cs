@@ -8,7 +8,7 @@ namespace AsyncSocks
 {
     public interface IMessagePoller : IThreadRunner
     {
-        event NewClientMessageDelegate OnNewClientMessageReceived;
+        event NewClientMessageReceived OnNewClientMessageReceived;
         BlockingCollection<NetworkMessage> Queue { get; }
     }
 }

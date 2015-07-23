@@ -50,7 +50,7 @@ namespace AsyncSocks_Tests.Tests
             var peerConnectionMock = new Mock<IPeerConnection>();
             var messageReceivedEvent = new AutoResetEvent(false);
 
-            NewClientMessageDelegate newMessage = delegate(IPeerConnection sender, byte[] message)
+            NewClientMessageReceived newMessage = delegate(IPeerConnection sender, byte[] message)
             {
                 messageReceivedEvent.Set();
             };

@@ -14,7 +14,7 @@ namespace AsyncSocks
         private IConnectionManager connectionManager;
         private ITcpListener tcpListener;
 
-        public event NewClientMessageDelegate OnNewMessageReceived;
+        public event NewClientMessageReceived OnNewMessageReceived;
         public event NewPeerConnectionDelegate OnNewClientConnected;
 
         public AsyncServer(IClientConnectionAgent clientConnectionAgent, IConnectionManager connectionManager, ITcpListener tcpListener)

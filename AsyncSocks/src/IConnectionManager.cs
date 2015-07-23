@@ -9,10 +9,10 @@ namespace AsyncSocks
     {
         void CloseAllConnetions();
 
-        event NewClientMessageDelegate OnNewClientMessageReceived;
+        event NewClientMessageReceived OnNewClientMessageReceived;
 
         void Add(IPeerConnection peerConnection);
     }
 
-    public delegate void NewClientMessageDelegate(IPeerConnection sender, byte[] message);
+    public delegate void NewClientMessageReceived(IPeerConnection sender, byte[] message);
 }

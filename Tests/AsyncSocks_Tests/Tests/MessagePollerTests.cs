@@ -28,7 +28,7 @@ namespace AsyncSocks_Tests.Tests
         {
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            NewClientMessageDelegate callback = delegate(IPeerConnection sender, byte[] message)
+            NewClientMessageReceived callback = delegate(IPeerConnection sender, byte[] message)
             {
                 callbackCalledEvent.Set();
 

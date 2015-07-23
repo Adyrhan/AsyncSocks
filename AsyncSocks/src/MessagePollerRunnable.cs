@@ -45,7 +45,7 @@ namespace AsyncSocks
             return startedEvent.WaitOne(2000);
         }
 
-        public event NewClientMessageDelegate OnNewMessageReceived;
+        public event NewClientMessageReceived OnNewMessageReceived;
 
         public void Poll()
         {
