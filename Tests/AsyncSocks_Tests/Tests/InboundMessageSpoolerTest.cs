@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using AsyncSocks;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -36,6 +37,25 @@ namespace AsyncSocks_Tests.Tests
             var runnableMock = new Mock<IInboundMessageSpoolerRunnable>();
             var runnable = runnableMock.Object;
             InboundMessageSpooler spooler = new InboundMessageSpooler(runnable);
+        }
+
+        [TestMethod]
+        public void PeerDisconnectedFiresUpWhenRunnableEventDoes()
+        {
+            var runnableMock = new Mock<IInboundMessageSpoolerRunnable>();
+            var spooler = new InboundMessageSpooler(runnableMock.Object);
+
+            AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
+            spooler.OnPeerDisconnected += delegate (IPeerConnection peer)
+            {
+                callbackCalledEvent.Set();
+            };
+
+            IPeerConnection nullConn = null;
+
+            runnableMock.Raise(x => x.OnPeerDisconnected += null, nullConn);
+
+            Assert.IsTrue(callbackCalledEvent.WaitOne(2000));
         }
 
     }

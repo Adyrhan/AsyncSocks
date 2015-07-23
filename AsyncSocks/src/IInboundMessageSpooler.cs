@@ -9,5 +9,6 @@ namespace AsyncSocks
     public interface IInboundMessageSpooler : IThreadRunner
     {
         BlockingCollection<NetworkMessage> Queue { get; }
+        event PeerDisconnected OnPeerDisconnected;
     }
 }
