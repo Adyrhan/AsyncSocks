@@ -88,5 +88,39 @@ namespace AsyncSocks_Tests.Tests
 
             Assert.IsTrue(called);
         }
+
+        [TestMethod]
+        public void ShouldFireOnPeerDisconnectedEventWhenPeerConnectionDoesIt()
+        {
+            var callbackCalledEvent = new AutoResetEvent(false);
+
+            connManager.OnPeerDisconnected += delegate (IPeerConnection peer)
+            {
+                callbackCalledEvent.Set();
+            };
+
+            var peerConnectionMock = new Mock<IPeerConnection>();
+            peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80));
+            connManager.Add(peerConnectionMock.Object);
+
+            peerConnectionMock.Raise(x => x.OnPeerDisconnected += null, peerConnectionMock.Object);
+
+            Assert.IsTrue(callbackCalledEvent.WaitOne(2000));
+        }
+
+        [TestMethod]
+        public void ShouldRemovePeerConnectionFromDictWhenInstanceFiresOnPeerDisconnectedEvent()
+        {
+            var peerConnectionMock = new Mock<IPeerConnection>();
+            var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
+            peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(endPoint);
+            connManager.Add(peerConnectionMock.Object);
+
+            Assert.IsTrue(dict.ContainsKey(endPoint));
+
+            peerConnectionMock.Raise(x => x.OnPeerDisconnected += null, peerConnectionMock.Object);
+
+            Assert.IsFalse(dict.ContainsKey(endPoint));
+        }
     }
 }

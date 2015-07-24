@@ -10,6 +10,7 @@ namespace AsyncSocks
         void CloseAllConnetions();
 
         event NewClientMessageReceived OnNewClientMessageReceived;
+        event PeerDisconnected OnPeerDisconnected;
 
         void Add(IPeerConnection peerConnection);
     }

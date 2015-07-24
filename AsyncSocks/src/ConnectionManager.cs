@@ -11,6 +11,7 @@ namespace AsyncSocks
         private Dictionary<IPEndPoint, IPeerConnection> dict;
 
         public event NewClientMessageReceived OnNewClientMessageReceived;
+        public event PeerDisconnected OnPeerDisconnected;
 
         public ConnectionManager(Dictionary<IPEndPoint, IPeerConnection> dict)
         {
@@ -30,8 +31,21 @@ namespace AsyncSocks
         {
             dict[(IPEndPoint) peerConnection.RemoteEndPoint] = peerConnection;
             peerConnection.OnNewMessageReceived += peerConnection_OnNewMessageReceived;
+            peerConnection.OnPeerDisconnected += PeerConnection_OnPeerDisconnected;
             peerConnection.Start();
             
+        }
+
+        private void PeerConnection_OnPeerDisconnected(IPeerConnection peer)
+        {
+            dict.Remove((IPEndPoint)peer.RemoteEndPoint);
+
+            var onPeerDisconnected = OnPeerDisconnected;
+
+            if (onPeerDisconnected != null)
+            {
+                onPeerDisconnected(peer);
+            }
         }
 
         void peerConnection_OnNewMessageReceived(IPeerConnection sender, byte[] message)
