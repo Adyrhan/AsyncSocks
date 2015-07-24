@@ -39,6 +39,7 @@ namespace AsyncSocks_Tests.Tests
 
             AutoResetEvent connectedEvent = new AutoResetEvent(false);
             AutoResetEvent messageReceivedEvent = new AutoResetEvent(false);
+            AutoResetEvent disconnectedEvent = new AutoResetEvent(false);
 
             server.OnNewClientConnected += delegate(IPeerConnection incomingClient)
             {
@@ -51,6 +52,11 @@ namespace AsyncSocks_Tests.Tests
                 incomingMessage = Encoding.ASCII.GetString(message);
                 incomingEndPoint = (IPEndPoint)sender.RemoteEndPoint;
                 messageReceivedEvent.Set();
+            };
+
+            server.OnPeerDisconnected += delegate(IPeerConnection peer)
+            {
+                disconnectedEvent.Set();
             };
 
             client.Connect(clientEndPoint);
@@ -83,6 +89,8 @@ namespace AsyncSocks_Tests.Tests
             Assert.AreEqual(client.Client.LocalEndPoint, incomingEndPoint, "Endpoints doesn't match in OnNewMessageReceived delegate");
 
             client.Close();
+
+            Assert.IsTrue(disconnectedEvent.WaitOne(2000));
 
         }
 
