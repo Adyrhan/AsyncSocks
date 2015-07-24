@@ -12,7 +12,7 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class AsyncServerTests
     {
-        private AsyncServer server;
+        private IAsyncServer server;
         private Mock<IConnectionManager> connectionManagerMock;
         private Mock<IClientConnectionAgent> clientConnectionAgentMock;
         private Mock<ITcpListener> tcpListenerMock;
@@ -101,6 +101,26 @@ namespace AsyncSocks_Tests.Tests
             var instance = AsyncServer.Create(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 80));
 
             Assert.IsTrue(instance != null && instance is AsyncServer);
+        }
+
+        [TestMethod]
+        public void OnPeerDisconnectedEventShouldFireWhenConnectionManagerDoesIt()
+        {
+            AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
+
+            IPeerConnection peerArgument = null;
+            server.OnPeerDisconnected += new PeerDisconnected(delegate (IPeerConnection peer)
+            {
+                peerArgument = peer;
+                callbackCalledEvent.Set();
+            });
+
+            var peerConnectionMock = new Mock<IPeerConnection>();
+
+            connectionManagerMock.Raise(x => x.OnPeerDisconnected += null, peerConnectionMock.Object);
+
+            Assert.IsTrue(callbackCalledEvent.WaitOne(2000));
+            Assert.AreEqual(peerConnectionMock.Object, peerArgument, "PeerConnection instance is not the same as expected");
         }
     }
 }

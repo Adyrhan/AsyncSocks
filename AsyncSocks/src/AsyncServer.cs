@@ -16,6 +16,7 @@ namespace AsyncSocks
 
         public event NewClientMessageReceived OnNewMessageReceived;
         public event NewPeerConnectionDelegate OnNewClientConnected;
+        public event PeerDisconnected OnPeerDisconnected;
 
         public AsyncServer(IClientConnectionAgent clientConnectionAgent, IConnectionManager connectionManager, ITcpListener tcpListener)
         {
@@ -24,8 +25,18 @@ namespace AsyncSocks
             this.connectionManager = connectionManager;
             this.tcpListener = tcpListener;
             this.connectionManager.OnNewClientMessageReceived += connectionManager_OnNewClientMessageReceived;
-
+            this.connectionManager.OnPeerDisconnected += ConnectionManager_OnPeerDisconnected;
             this.clientConnectionAgent.OnNewClientConnection += clientConnectionAgent_OnNewClientConnection;
+        }
+
+        private void ConnectionManager_OnPeerDisconnected(IPeerConnection peer)
+        {
+            var onPeerDisconnected = OnPeerDisconnected;
+
+            if (onPeerDisconnected != null)
+            {
+                onPeerDisconnected(peer);
+            }
         }
 
         void clientConnectionAgent_OnNewClientConnection(IPeerConnection client)
