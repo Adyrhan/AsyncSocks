@@ -40,7 +40,6 @@ namespace AsyncSocks_Tests.Tests
             byte[] messageBytes = Encoding.ASCII.GetBytes("This is a test message");
 
             outboundSpoolerMock.Setup(x => x.Enqueue(messageBytes)).Verifiable();
-            
             connection.SendMessage(messageBytes);
 
             outboundSpoolerMock.Verify();
@@ -81,8 +80,10 @@ namespace AsyncSocks_Tests.Tests
         {
             var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
             var clientMock = new Mock<ISocket>();
+
             tcpClientMock.Setup(x => x.Client).Returns(clientMock.Object).Verifiable();
             clientMock.Setup(x => x.RemoteEndPoint).Returns(endPoint).Verifiable();
+
             Assert.AreEqual(endPoint, connection.RemoteEndPoint);
         }
 
@@ -145,7 +146,6 @@ namespace AsyncSocks_Tests.Tests
         public void ShouldFireOnPeerDisconnectedEventWhenInboundMessageSpoolerDoesIt()
         {
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
-
 
             IAsyncClient peerArgument = null;
             var callback = new PeerDisconnected(delegate (IAsyncClient peer)
