@@ -23,7 +23,7 @@ namespace AsyncSocks
             runnable.OnPeerDisconnected += Runnable_OnPeerDisconnected;
         }
 
-        private void Runnable_OnPeerDisconnected(IPeerConnection peer)
+        private void Runnable_OnPeerDisconnected(IAsyncClient peer)
         {
             var onPeerDisconnected = OnPeerDisconnected;
 

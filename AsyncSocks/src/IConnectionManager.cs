@@ -12,8 +12,8 @@ namespace AsyncSocks
         event NewClientMessageReceived OnNewClientMessageReceived;
         event PeerDisconnected OnPeerDisconnected;
 
-        void Add(IPeerConnection peerConnection);
+        void Add(IAsyncClient peerConnection);
     }
 
-    public delegate void NewClientMessageReceived(IPeerConnection sender, byte[] message);
+    public delegate void NewClientMessageReceived(IAsyncClient sender, byte[] message);
 }

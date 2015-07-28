@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 
 namespace AsyncSocks
 {
-    public delegate void PeerDisconnected(IPeerConnection peer);
+    public delegate void PeerDisconnected(IAsyncClient peer);
 
-    public class PeerConnection : IPeerConnection
+    public class AsyncClient : IAsyncClient
     {
         private IInboundMessageSpooler inboundSpooler;
         private IOutboundMessageSpooler outboundSpooler;
@@ -18,7 +19,7 @@ namespace AsyncSocks
         public event NewClientMessageReceived OnNewMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
 
-        public PeerConnection(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, ITcpClient tcpClient)
+        public AsyncClient(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, ITcpClient tcpClient)
         {
             this.inboundSpooler = inboundSpooler;
             this.outboundSpooler = outboundSpooler;
@@ -28,7 +29,7 @@ namespace AsyncSocks
             inboundSpooler.OnPeerDisconnected += InboundSpooler_OnPeerDisconnected;
         }
 
-        private void InboundSpooler_OnPeerDisconnected(IPeerConnection peer)
+        private void InboundSpooler_OnPeerDisconnected(IAsyncClient peer)
         {
             var onPeerDisconnected = OnPeerDisconnected;
             if (onPeerDisconnected != null)
@@ -37,7 +38,7 @@ namespace AsyncSocks
             }
         }
 
-        private void poller_OnNewClientMessageReceived(IPeerConnection sender, byte[] message)
+        private void poller_OnNewClientMessageReceived(IAsyncClient sender, byte[] message)
         {
             if (OnNewMessageReceived != null)
             {
@@ -80,5 +81,7 @@ namespace AsyncSocks
         {
             get { return tcpClient; }
         }
+
+        
     }
 }

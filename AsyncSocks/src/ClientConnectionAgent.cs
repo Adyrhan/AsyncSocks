@@ -17,7 +17,7 @@ namespace AsyncSocks
             runnable.OnNewClientConnection += runnable_OnNewClientConnection;
         }
 
-        private void runnable_OnNewClientConnection(IPeerConnection client)
+        private void runnable_OnNewClientConnection(IAsyncClient client)
         {
             OnNewClientConnection(client);
         }

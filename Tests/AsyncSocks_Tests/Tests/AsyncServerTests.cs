@@ -47,10 +47,10 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void OnClientMessageReceivedCallbackShouldBeCalledWhenConnectionManagerFiresTheEvent()
         {
-            var peerConnectionMock = new Mock<IPeerConnection>();
+            var peerConnectionMock = new Mock<IAsyncClient>();
             var messageReceivedEvent = new AutoResetEvent(false);
 
-            NewClientMessageReceived newMessage = delegate(IPeerConnection sender, byte[] message)
+            NewClientMessageReceived newMessage = delegate(IAsyncClient sender, byte[] message)
             {
                 messageReceivedEvent.Set();
             };
@@ -71,11 +71,11 @@ namespace AsyncSocks_Tests.Tests
         public void OnNewClientConnectedShouldFireUpWhenClientConnectionAgentDoes()
         {
             var callbackCalledEvent = new AutoResetEvent(false);
-            var peerConnectionMock = new Mock<IPeerConnection>();
+            var peerConnectionMock = new Mock<IAsyncClient>();
 
-            IPeerConnection peerConnectionArgument = null;
+            IAsyncClient peerConnectionArgument = null;
 
-            var callback = new NewPeerConnectionDelegate(delegate(IPeerConnection client)
+            var callback = new NewPeerConnectionDelegate(delegate(IAsyncClient client)
             {
                 peerConnectionArgument = client;
                 callbackCalledEvent.Set();
@@ -108,14 +108,14 @@ namespace AsyncSocks_Tests.Tests
         {
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
 
-            IPeerConnection peerArgument = null;
-            server.OnPeerDisconnected += new PeerDisconnected(delegate (IPeerConnection peer)
+            IAsyncClient peerArgument = null;
+            server.OnPeerDisconnected += new PeerDisconnected(delegate (IAsyncClient peer)
             {
                 peerArgument = peer;
                 callbackCalledEvent.Set();
             });
 
-            var peerConnectionMock = new Mock<IPeerConnection>();
+            var peerConnectionMock = new Mock<IAsyncClient>();
 
             connectionManagerMock.Raise(x => x.OnPeerDisconnected += null, peerConnectionMock.Object);
 

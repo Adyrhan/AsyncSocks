@@ -16,7 +16,7 @@ namespace AsyncSocks
             runnable.OnNewMessageReceived += runnable_OnNewMessageReceived;
         }
 
-        private void runnable_OnNewMessageReceived(IPeerConnection sender, byte[] message)
+        private void runnable_OnNewMessageReceived(IAsyncClient sender, byte[] message)
         {
             if (OnNewClientMessageReceived != null)
             {

@@ -75,7 +75,7 @@ namespace AsyncSocks_Tests.Tests
         {
             AutoResetEvent disconnectedEventFired = new AutoResetEvent(false);
 
-            spooler.OnPeerDisconnected += delegate(IPeerConnection peer)
+            spooler.OnPeerDisconnected += delegate(IAsyncClient peer)
             {
                 disconnectedEventFired.Set();
             };

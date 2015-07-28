@@ -32,7 +32,7 @@ namespace AsyncSocks_Tests
         public void ShouldCallDelegateWhenNewClientConnects()
         {
             Mock<ITcpClient> tcpClientMock = new Mock<ITcpClient>();
-            Mock<IPeerConnection> peerConnectionMock = new Mock<IPeerConnection>();
+            Mock<IAsyncClient> peerConnectionMock = new Mock<IAsyncClient>();
             Mock<NewPeerConnectionDelegate> newClientCallbackMock = new Mock<NewPeerConnectionDelegate>();
 
             tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object).Verifiable();
@@ -50,7 +50,7 @@ namespace AsyncSocks_Tests
         [TestMethod]
         public void RunShouldCallAcceptClientConnection()
         {
-            Mock<IPeerConnection> peerConnectionMock = new Mock<IPeerConnection>();
+            Mock<IAsyncClient> peerConnectionMock = new Mock<IAsyncClient>();
             Mock<ITcpClient> tcpClientMock = new Mock<ITcpClient>();
             Mock<NewPeerConnectionDelegate> newClientCallbackMock = new Mock<NewPeerConnectionDelegate>();
             

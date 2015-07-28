@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public interface IPeerConnection
+    public interface IAsyncClient
     {
         void SendMessage(byte[] messageBytes);
         void Start();

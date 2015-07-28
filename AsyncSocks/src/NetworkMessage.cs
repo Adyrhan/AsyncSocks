@@ -8,16 +8,16 @@ namespace AsyncSocks
 {
     public class NetworkMessage
     {
-        private IPeerConnection sender;
+        private IAsyncClient sender;
         private byte[] message;
 
-        public NetworkMessage(IPeerConnection sender, byte[] message)
+        public NetworkMessage(IAsyncClient sender, byte[] message)
         {
             this.sender = sender;
             this.message = message;
         }
 
-        public IPeerConnection Sender { get { return sender;  } }
+        public IAsyncClient Sender { get { return sender;  } }
         public byte[] Message { get { return message;  } }
     }
 }

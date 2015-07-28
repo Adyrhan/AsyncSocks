@@ -24,12 +24,12 @@ namespace AsyncSocks_Tests.Tests
         public void ShouldFireOnNewClientConnectionEventWhenANewConnectionHappens()
         {
             AutoResetEvent newClientEventFired = new AutoResetEvent(false);
-            NewPeerConnectionDelegate newClientConnectionDelegate = delegate(IPeerConnection client)
+            NewPeerConnectionDelegate newClientConnectionDelegate = delegate(IAsyncClient client)
             {
                 newClientEventFired.Set();
             };
 
-            var peerConnectionMock = new Mock<IPeerConnection>().Object;
+            var peerConnectionMock = new Mock<IAsyncClient>().Object;
 
             agent.OnNewClientConnection += newClientConnectionDelegate;
             agent.Start();

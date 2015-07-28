@@ -24,11 +24,11 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void PollShouldGetAMessageFromQueueAndRaiseOnNewMessageReceivedEvent()
         {
-            var connectionMock = new Mock<IPeerConnection>();
+            var connectionMock = new Mock<IAsyncClient>();
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewClientMessageReceived(delegate(IPeerConnection sender, byte[] message)
+            var callback = new NewClientMessageReceived(delegate(IAsyncClient sender, byte[] message)
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, sender);
@@ -48,11 +48,11 @@ namespace AsyncSocks_Tests.Tests
         public void RunShouldCallPool()
         {
             var runner = new ThreadRunner(runnable);
-            var connectionMock = new Mock<IPeerConnection>();
+            var connectionMock = new Mock<IAsyncClient>();
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewClientMessageReceived(delegate(IPeerConnection sender, byte[] message)
+            var callback = new NewClientMessageReceived(delegate(IAsyncClient sender, byte[] message)
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, sender);

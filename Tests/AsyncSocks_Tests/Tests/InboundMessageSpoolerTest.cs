@@ -46,12 +46,12 @@ namespace AsyncSocks_Tests.Tests
             var spooler = new InboundMessageSpooler(runnableMock.Object);
 
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
-            spooler.OnPeerDisconnected += delegate (IPeerConnection peer)
+            spooler.OnPeerDisconnected += delegate (IAsyncClient peer)
             {
                 callbackCalledEvent.Set();
             };
 
-            IPeerConnection nullConn = null;
+            IAsyncClient nullConn = null;
 
             runnableMock.Raise(x => x.OnPeerDisconnected += null, nullConn);
 

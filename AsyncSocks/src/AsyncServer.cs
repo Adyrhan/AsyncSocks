@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public delegate void NewPeerConnectionDelegate(IPeerConnection client);
+    public delegate void NewPeerConnectionDelegate(IAsyncClient client);
     public class AsyncServer : IAsyncServer
     {
         private IClientConnectionAgent clientConnectionAgent;
@@ -29,7 +29,7 @@ namespace AsyncSocks
             this.clientConnectionAgent.OnNewClientConnection += clientConnectionAgent_OnNewClientConnection;
         }
 
-        private void ConnectionManager_OnPeerDisconnected(IPeerConnection peer)
+        private void ConnectionManager_OnPeerDisconnected(IAsyncClient peer)
         {
             var onPeerDisconnected = OnPeerDisconnected;
 
@@ -39,7 +39,7 @@ namespace AsyncSocks
             }
         }
 
-        void clientConnectionAgent_OnNewClientConnection(IPeerConnection client)
+        void clientConnectionAgent_OnNewClientConnection(IAsyncClient client)
         {
             connectionManager.Add(client);
             if (OnNewClientConnected != null) 
@@ -48,7 +48,7 @@ namespace AsyncSocks
             }
         }
 
-        private void connectionManager_OnNewClientMessageReceived(IPeerConnection sender, byte[] message)
+        private void connectionManager_OnNewClientMessageReceived(IAsyncClient sender, byte[] message)
         {
             if (OnNewMessageReceived != null)
             {
@@ -71,7 +71,7 @@ namespace AsyncSocks
         {
             BaseTcpListener tcpListener = new BaseTcpListener(new TcpListener(localEndPoint));
             ClientConnectionAgent clientConnectionAgent = ClientConnectionAgent.Create(tcpListener);
-            ConnectionManager connectionManager = new ConnectionManager(new Dictionary<IPEndPoint, IPeerConnection>());
+            ConnectionManager connectionManager = new ConnectionManager(new Dictionary<IPEndPoint, IAsyncClient>());
             return new AsyncServer(clientConnectionAgent, connectionManager, tcpListener);
         }
     }
