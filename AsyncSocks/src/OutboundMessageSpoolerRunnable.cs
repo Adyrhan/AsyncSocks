@@ -26,7 +26,25 @@ namespace AsyncSocks
             try
             {
                 byte[] message = queue.Take();
-                tcpClient.Write(message, 0, message.Length);
+                byte[] size = BitConverter.GetBytes(message.Length);
+
+                int totalSize = size.Length + message.Length;
+
+                byte[] packetBytes = new byte[totalSize];
+
+                for (int i = 0; i < totalSize; i++)
+                {
+                    if (i < size.Length)
+                    {
+                        packetBytes[i] = size[i];
+                    }
+                    else
+                    {
+                        packetBytes[i] = message[i - size.Length];
+                    }
+                }
+
+                tcpClient.Write(packetBytes, 0, totalSize);
             }
             catch (ThreadInterruptedException)
             {

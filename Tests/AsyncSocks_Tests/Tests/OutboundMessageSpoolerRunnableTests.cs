@@ -32,11 +32,17 @@ namespace AsyncSocks_Tests
             string messageString = "This is a test message";
             byte[] messageBytes = Encoding.ASCII.GetBytes(messageString);
 
-            tcpClientMock.Setup(x => x.Write(messageBytes, 0, messageBytes.Length)).Verifiable();
+            byte[] size = BitConverter.GetBytes(messageBytes.Length);
+
+            int totalLength = size.Length + messageBytes.Length;
+
+            tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), 0, totalLength)).Verifiable();
 
             queue.Add(messageBytes);
 
             spooler.Spool();
+
+            tcpClientMock.Verify();
         }
 
         [TestMethod]
