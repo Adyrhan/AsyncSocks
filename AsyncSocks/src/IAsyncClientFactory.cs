@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IPeerConnectionFactory
+    public interface IAsyncClientFactory
     {
         IAsyncClient Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, ITcpClient tcpClient);
         IAsyncClient Create(ITcpClient tcpClient);

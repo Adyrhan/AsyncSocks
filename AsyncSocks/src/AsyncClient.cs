@@ -85,7 +85,13 @@ namespace AsyncSocks
         public static AsyncClient Create(IPEndPoint remoteIpAddress)
         {
             BaseTcpClient client = new BaseTcpClient(new TcpClient(remoteIpAddress));
-            return (AsyncClient)new PeerConnectionFactory().Create(client);
+            return (AsyncClient)new AsyncClientFactory().Create(client);
+        }
+
+        public static AsyncClient Create()
+        {
+            BaseTcpClient client = new BaseTcpClient(new TcpClient());
+            return (AsyncClient)new AsyncClientFactory().Create(client);
         }
     }
 }

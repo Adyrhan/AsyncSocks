@@ -162,6 +162,17 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000), "Callback not called");
             Assert.AreEqual(connection, peerArgument);
         }
+
+        [TestMethod]
+        public void ConnectShouldCallConnectOnTcpClientObjectStartSpoolersAndPoller()
+        {
+            tcpClientMock.Setup(x => x.Connect(It.IsAny<IPEndPoint>())).Verifiable();
+            inboundSpoolerMock.Setup(x => x.Start()).Verifiable();
+            outboundSpoolerMock.Setup(x => x.Start()).Verifiable();
+            messagePollerMock.Setup(x => x.Start()).Verifiable();
+
+            connection.Connect();
+        }
         
     }
 }

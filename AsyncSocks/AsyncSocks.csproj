@@ -47,14 +47,14 @@
     <Compile Include="src\AsyncServer.cs" />
     <Compile Include="src\IConnectionManager.cs" />
     <Compile Include="src\BaseTcpListener.cs" />
-    <Compile Include="src\IPeerConnectionFactory.cs" />
+    <Compile Include="src\IAsyncClientFactory.cs" />
     <Compile Include="src\ConnectionManager.cs" />
     <Compile Include="src\BaseSocket.cs" />
     <Compile Include="src\ISocket.cs" />
     <Compile Include="src\ClientConnectionAgent.cs" />
     <Compile Include="src\IClientConnectionAgent.cs" />
     <Compile Include="src\IClientConnectionAgentRunnable.cs" />
-    <Compile Include="src\IPeerConnection.cs" />
+    <Compile Include="src\IAsyncClient.cs" />
     <Compile Include="src\IThreadRunner.cs" />
     <Compile Include="src\NetworkMessage.cs" />
     <Compile Include="src\AsyncClient.cs" />

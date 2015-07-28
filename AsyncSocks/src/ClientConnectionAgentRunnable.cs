@@ -14,7 +14,7 @@ namespace AsyncSocks
         private bool running;
         private bool shouldStop;
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
-        private IPeerConnectionFactory connectionFactory;
+        private IAsyncClientFactory connectionFactory;
 
         public event NewPeerConnectionDelegate OnNewClientConnection;
 
@@ -34,7 +34,7 @@ namespace AsyncSocks
             return startedEvent.WaitOne();
         }
         
-        public ClientConnectionAgentRunnable(ITcpListener listener, IPeerConnectionFactory connectionFactory)
+        public ClientConnectionAgentRunnable(ITcpListener listener, IAsyncClientFactory connectionFactory)
         {
             this.listener = listener;
             this.connectionFactory = connectionFactory;

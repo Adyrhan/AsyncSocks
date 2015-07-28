@@ -12,13 +12,13 @@ namespace AsyncSocks_Tests
     {
         private Mock<ITcpListener> tcpListenerMock;
         private IClientConnectionAgentRunnable agent;
-        private Mock<IPeerConnectionFactory> connectionFactoryMock;
+        private Mock<IAsyncClientFactory> connectionFactoryMock;
 
         [TestInitialize]
         public void BeforeEach()
         {
             tcpListenerMock = new Mock<ITcpListener>();
-            connectionFactoryMock = new Mock<IPeerConnectionFactory>();
+            connectionFactoryMock = new Mock<IAsyncClientFactory>();
             agent = new ClientConnectionAgentRunnable(tcpListenerMock.Object, connectionFactoryMock.Object);
         }
         
