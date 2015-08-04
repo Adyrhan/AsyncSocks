@@ -23,6 +23,14 @@ namespace AsyncSocks
             get { return running; }
         }
 
+        public ITcpListener TcpListener
+        {
+            get
+            {
+                return listener;
+            }
+        }
+
         public void Stop()
         {
             shouldStop = true;

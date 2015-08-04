@@ -12,11 +12,13 @@ namespace AsyncSocks_Tests.Tests
     public class AsyncServerIntegrationTests
     {
         private AsyncServer server;
+        private IPEndPoint serverEndPoint;
 
         [TestInitialize]
         public void BeforeEach()
         {
-            server = AsyncServer.Create(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 40000));
+            serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 40000);
+            server = AsyncServer.Create(serverEndPoint);
             server.Start();
         }
 
@@ -29,7 +31,6 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void AsyncServerIntegrationTest()
         {
-            IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 40000);
             TcpClient client = new TcpClient();
 
             string originalMessage = "This is a test";
@@ -59,7 +60,7 @@ namespace AsyncSocks_Tests.Tests
                 disconnectedEvent.Set();
             };
 
-            client.Connect(clientEndPoint);
+            client.Connect(serverEndPoint);
             bool didConnect = connectedEvent.WaitOne(2000);
 
             Assert.IsTrue(didConnect, "Server delegate for connection not called");
@@ -92,6 +93,14 @@ namespace AsyncSocks_Tests.Tests
 
             Assert.IsTrue(disconnectedEvent.WaitOne(2000));
 
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SocketException))]
+        public void ServerTryingToStartWithAlreadyUsedPort()
+        {
+            var serverUsingAlreadyUsedPort = AsyncServer.Create(serverEndPoint);
+            serverUsingAlreadyUsedPort.Start();
         }
 
     }

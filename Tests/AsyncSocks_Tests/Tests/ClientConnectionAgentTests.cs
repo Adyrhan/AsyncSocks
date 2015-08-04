@@ -11,11 +11,15 @@ namespace AsyncSocks_Tests.Tests
     {
         private ClientConnectionAgent agent;
         private Mock<IClientConnectionAgentRunnable> runnableMock;
+        private Mock<ITcpListener> tcpListenerMock;
 
         [TestInitialize]
         public void BeforeEach()
         {
+            tcpListenerMock = new Mock<ITcpListener>();
             runnableMock = new Mock<IClientConnectionAgentRunnable>();
+            runnableMock.Setup(x => x.TcpListener).Returns(tcpListenerMock.Object);
+            
             var runnable = runnableMock.Object;
             agent = new ClientConnectionAgent(runnable);
         }
@@ -39,6 +43,14 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(newClientEventFired.WaitOne(2000));
 
             agent.Stop();
+        }
+
+        [TestMethod]
+        public void StartMethodShouldStartTcpListener()
+        {
+            tcpListenerMock.Setup(x => x.Start()).Verifiable();
+            agent.Start();
+            tcpListenerMock.Verify();
         }
     }
 }

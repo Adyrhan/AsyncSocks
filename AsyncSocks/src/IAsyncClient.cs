@@ -12,6 +12,7 @@ namespace AsyncSocks
         void SendMessage(byte[] messageBytes);
         void Start();
         void Connect();
+        void Connect(IPEndPoint remoteEndPoint);
         void Close();
 
         EndPoint RemoteEndPoint { get; }

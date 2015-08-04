@@ -7,6 +7,8 @@ namespace AsyncSocks
 {
     public interface IClientConnectionAgentRunnable : IRunnable
     {
+        ITcpListener TcpListener { get; }
+
         void AcceptClientConnection();
         event NewPeerConnectionDelegate OnNewClientConnection;
     }

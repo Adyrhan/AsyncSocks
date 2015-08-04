@@ -29,7 +29,7 @@ namespace AsyncSocks
 
         public IRunnable Runnable { get { return runnable; } }
 
-        public void Start()
+        public virtual void Start()
         {
             if (thread == null || !thread.IsAlive)
             {

@@ -166,12 +166,17 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ConnectShouldCallConnectOnTcpClientObjectStartSpoolersAndPoller()
         {
-            tcpClientMock.Setup(x => x.Connect(It.IsAny<IPEndPoint>())).Verifiable();
+            tcpClientMock.Setup(x => x.Connect()).Verifiable();
             inboundSpoolerMock.Setup(x => x.Start()).Verifiable();
             outboundSpoolerMock.Setup(x => x.Start()).Verifiable();
             messagePollerMock.Setup(x => x.Start()).Verifiable();
 
             connection.Connect();
+
+            tcpClientMock.Verify();
+            inboundSpoolerMock.Verify();
+            outboundSpoolerMock.Verify();
+            messagePollerMock.Verify();
         }
         
     }

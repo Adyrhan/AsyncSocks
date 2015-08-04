@@ -28,5 +28,11 @@ namespace AsyncSocks
             ClientConnectionAgentRunnable runnable = new ClientConnectionAgentRunnable(listener, factory);
             return new ClientConnectionAgent(runnable);
         }
+
+        public override void Start()
+        {
+            runnable.TcpListener.Start();
+            base.Start();
+        }
     }
 }

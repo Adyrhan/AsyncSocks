@@ -93,5 +93,17 @@ namespace AsyncSocks
             BaseTcpClient client = new BaseTcpClient(new TcpClient());
             return (AsyncClient)new AsyncClientFactory().Create(client);
         }
+
+        public void Connect()
+        {
+            tcpClient.Connect();
+            Start();
+        }
+
+        public void Connect(IPEndPoint remoteEndPoint)
+        {
+            tcpClient.Connect(remoteEndPoint);
+            Start();
+        }
     }
 }
