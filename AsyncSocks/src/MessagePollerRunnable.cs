@@ -63,10 +63,27 @@ namespace AsyncSocks
             }
         }
 
+        #region IDisposable Support
+        private bool disposedValue = false; // Para detectar llamadas redundantes
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    startedEvent.Dispose();
+                    queue.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
         public void Dispose()
         {
-            startedEvent.Dispose();
-            queue.Dispose();
+            Dispose(true);
         }
+        #endregion
     }
 }

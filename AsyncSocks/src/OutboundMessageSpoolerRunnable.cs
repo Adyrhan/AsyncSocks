@@ -79,10 +79,28 @@ namespace AsyncSocks
             return startEvent.WaitOne();
         }
 
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ((IDisposable)queue).Dispose();
+                    startEvent.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
         public void Dispose()
         {
-            ((IDisposable)queue).Dispose();
-            startEvent.Dispose();
+            Dispose(true);
         }
+        #endregion
+
     }
 }
