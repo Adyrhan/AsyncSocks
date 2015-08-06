@@ -30,11 +30,5 @@ namespace AsyncSocks
         {
             return new MessagePoller(new MessagePollerRunnable(queue));
         }
-
-
-        public BlockingCollection<NetworkMessage> Queue
-        {
-            get { throw new NotImplementedException(); }
-        }
     }
 }
