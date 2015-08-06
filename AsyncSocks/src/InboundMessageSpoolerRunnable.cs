@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class InboundMessageSpoolerRunnable : IInboundMessageSpoolerRunnable
+    public class InboundMessageSpoolerRunnable : IInboundMessageSpoolerRunnable, IDisposable
     {
         private INetworkMessageReader networkMessageReader;
         private BlockingCollection<NetworkMessage> queue;
@@ -75,7 +75,6 @@ namespace AsyncSocks
             get { return running; }
         }
 
-
         public BlockingCollection<NetworkMessage> Queue
         {
             get
@@ -83,5 +82,28 @@ namespace AsyncSocks
                 return queue;
             }
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // Para detectar llamadas redundantes
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ((IDisposable)queue).Dispose();
+                    startedEvent.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }

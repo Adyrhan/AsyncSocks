@@ -8,7 +8,7 @@ using System.Threading;
 namespace AsyncSocks
 {
     public delegate void NewClientConnectionDelegate(ITcpClient client);
-    public class ClientConnectionAgentRunnable : IClientConnectionAgentRunnable
+    public class ClientConnectionAgentRunnable : IClientConnectionAgentRunnable, IDisposable
     {
         private ITcpListener listener;        
         private bool running;
@@ -76,5 +76,28 @@ namespace AsyncSocks
             
             running = false;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // Para detectar llamadas redundantes
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    startedEvent.Dispose();
+
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }

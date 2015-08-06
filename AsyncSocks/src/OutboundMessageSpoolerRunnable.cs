@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class OutboundMessageSpoolerRunnable : IOutboundMessageSpoolerRunnable
+    public class OutboundMessageSpoolerRunnable : IOutboundMessageSpoolerRunnable, IDisposable
     {
         private ITcpClient tcpClient;
         private BlockingCollection<byte[]> queue;
@@ -77,6 +77,12 @@ namespace AsyncSocks
         public bool WaitStarted()
         {
             return startEvent.WaitOne();
+        }
+
+        public void Dispose()
+        {
+            ((IDisposable)queue).Dispose();
+            startEvent.Dispose();
         }
     }
 }

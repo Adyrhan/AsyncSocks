@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class MessagePollerRunnable : IMessagePollerRunnable
+    public class MessagePollerRunnable : IMessagePollerRunnable, IDisposable
     {
         private BlockingCollection<NetworkMessage> queue;
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
@@ -61,6 +61,12 @@ namespace AsyncSocks
             {
                 
             }
+        }
+
+        public void Dispose()
+        {
+            startedEvent.Dispose();
+            queue.Dispose();
         }
     }
 }
