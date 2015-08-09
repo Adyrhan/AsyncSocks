@@ -35,16 +35,29 @@ namespace AsyncSocks_Tests
             Mock<IAsyncClient> peerConnectionMock = new Mock<IAsyncClient>();
             Mock<NewClientConnected> newClientCallbackMock = new Mock<NewClientConnected>();
 
+            var ev = new NewClientConnectedEventArgs(peerConnectionMock.Object);
+
             tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object).Verifiable();
             connectionFactoryMock.Setup(x => x.Create(tcpClientMock.Object)).Returns(peerConnectionMock.Object).Verifiable();
-            newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Verifiable();
-            
-            agent.OnNewClientConnection += newClientCallbackMock.Object;
+            //newClientCallbackMock.Setup(x => x(It.IsAny<object>(), It.IsAny<NewClientConnectedEventArgs>())).Verifiable();
+
+            object senderParam = null;
+            NewClientConnectedEventArgs eParam = null;
+
+            agent.OnNewClientConnection += delegate (object sender, NewClientConnectedEventArgs e)
+            {
+                senderParam = sender;
+                eParam = e;
+            };
+
             agent.AcceptClientConnection();
 
             tcpListenerMock.Verify();
-            newClientCallbackMock.Verify();
+            //newClientCallbackMock.Verify();
             connectionFactoryMock.Verify();
+
+            Assert.AreEqual(agent, senderParam);
+            Assert.AreEqual(ev.Client, eParam.Client);
         }
 
         [TestMethod]
@@ -60,9 +73,12 @@ namespace AsyncSocks_Tests
             tcpListenerMock.Setup(x => x.Start()).Verifiable();
             tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object).Verifiable();
             connectionFactoryMock.Setup(x => x.Create(tcpClientMock.Object)).Returns(peerConnectionMock.Object).Verifiable();
-            newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Callback(() => AcceptClientConnectionWasCalled.Set());
+            //newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Callback(() => AcceptClientConnectionWasCalled.Set());
             tcpListenerMock.Setup(x => x.Stop()).Verifiable();
-            agent.OnNewClientConnection += newClientCallbackMock.Object;
+            agent.OnNewClientConnection += delegate (object sender, NewClientConnectedEventArgs e)
+            {
+                AcceptClientConnectionWasCalled.Set();
+            };
             
             runner.Start();
 
@@ -71,7 +87,7 @@ namespace AsyncSocks_Tests
             runner.Stop();
 
             tcpListenerMock.Verify();
-            newClientCallbackMock.Verify();
+            //newClientCallbackMock.Verify();
         }
     }
 }

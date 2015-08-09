@@ -42,9 +42,9 @@ namespace AsyncSocks_Tests.Tests
             AutoResetEvent messageReceivedEvent = new AutoResetEvent(false);
             AutoResetEvent disconnectedEvent = new AutoResetEvent(false);
 
-            server.OnNewClientConnected += delegate(IAsyncClient incomingClient)
+            server.OnNewClientConnected += delegate(object sender, NewClientConnectedEventArgs e)
             {
-                incomingEndPoint = (IPEndPoint)incomingClient.RemoteEndPoint;
+                incomingEndPoint = (IPEndPoint)e.Client.RemoteEndPoint;
                 connectedEvent.Set();
             };
 

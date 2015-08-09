@@ -73,9 +73,9 @@ namespace AsyncSocks_Tests.Tests
 
             IAsyncClient peerConnectionArgument = null;
 
-            var callback = new NewClientConnected(delegate(IAsyncClient client)
+            var callback = new NewClientConnected(delegate(object sender, NewClientConnectedEventArgs e)
             {
-                peerConnectionArgument = client;
+                peerConnectionArgument = e.Client;
                 callbackCalledEvent.Set();
 
             });
@@ -84,7 +84,9 @@ namespace AsyncSocks_Tests.Tests
 
             connectionManagerMock.Setup(x => x.Add(peerConnectionMock.Object)).Verifiable();
 
-            clientConnectionAgentMock.Raise(x => x.OnNewClientConnection += null, peerConnectionMock.Object);
+            var ev = new NewClientConnectedEventArgs(peerConnectionMock.Object);
+
+            clientConnectionAgentMock.Raise(x => x.OnNewClientConnection += null, ev);
             
 
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000), "Delegate not called");

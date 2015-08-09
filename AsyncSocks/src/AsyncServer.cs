@@ -38,12 +38,12 @@ namespace AsyncSocks
             }
         }
 
-        void clientConnectionAgent_OnNewClientConnection(IAsyncClient client)
+        void clientConnectionAgent_OnNewClientConnection(object sender, NewClientConnectedEventArgs e)
         {
-            connectionManager.Add(client);
+            connectionManager.Add(e.Client);
             if (OnNewClientConnected != null) 
             {
-                OnNewClientConnected(client);
+                OnNewClientConnected(this, e);
             }
         }
 

@@ -55,7 +55,8 @@ namespace AsyncSocks
                 ITcpClient client = listener.AcceptTcpClient();
                 if (OnNewClientConnection != null)
                 {
-                    OnNewClientConnection(connectionFactory.Create(client));
+                    var e = new NewClientConnectedEventArgs(connectionFactory.Create(client));
+                    OnNewClientConnection(this, e);
                 }
             }
             catch (SocketException)

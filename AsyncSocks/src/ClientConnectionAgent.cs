@@ -17,9 +17,13 @@ namespace AsyncSocks
             runnable.OnNewClientConnection += runnable_OnNewClientConnection;
         }
 
-        private void runnable_OnNewClientConnection(IAsyncClient client)
+        private void runnable_OnNewClientConnection(object sender, NewClientConnectedEventArgs e)
         {
-            OnNewClientConnection(client);
+            var onNewClientConnection = OnNewClientConnection;
+            if(onNewClientConnection != null)
+            {
+                onNewClientConnection(this, e);
+            }
         }
 
         public static ClientConnectionAgent Create(ITcpListener listener)
