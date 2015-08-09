@@ -16,7 +16,7 @@ namespace AsyncSocks
         private ITcpClient tcpClient;
         private IMessagePoller poller;
 
-        public event NewClientMessageReceived OnNewMessageReceived;
+        public event NewMessageReceived OnNewMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
 
         public AsyncClient(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, ITcpClient tcpClient)

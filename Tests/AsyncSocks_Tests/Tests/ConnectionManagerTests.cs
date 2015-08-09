@@ -75,7 +75,7 @@ namespace AsyncSocks_Tests.Tests
 
             connManager.Add(peerConnectionMock.Object);
 
-            NewClientMessageReceived callback = delegate(IAsyncClient sender, byte[] message)
+            NewMessageReceived callback = delegate(IAsyncClient sender, byte[] message)
             {
                 callbackCalledEvent.Set();
             };

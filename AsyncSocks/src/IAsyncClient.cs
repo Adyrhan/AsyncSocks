@@ -18,7 +18,7 @@ namespace AsyncSocks
         EndPoint RemoteEndPoint { get; }
         bool IsActive();
 
-        event NewClientMessageReceived OnNewMessageReceived;
+        event NewMessageReceived OnNewMessageReceived;
         event PeerDisconnected OnPeerDisconnected;
 
         ITcpClient TcpClient { get; }

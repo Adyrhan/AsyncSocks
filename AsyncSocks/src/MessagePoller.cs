@@ -24,7 +24,7 @@ namespace AsyncSocks
             }
         }
 
-        public event NewClientMessageReceived OnNewClientMessageReceived;
+        public event NewMessageReceived OnNewClientMessageReceived;
 
         public static IMessagePoller Create(BlockingCollection<NetworkMessage> queue)
         {

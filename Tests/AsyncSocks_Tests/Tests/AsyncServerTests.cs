@@ -50,7 +50,7 @@ namespace AsyncSocks_Tests.Tests
             var peerConnectionMock = new Mock<IAsyncClient>();
             var messageReceivedEvent = new AutoResetEvent(false);
 
-            NewClientMessageReceived newMessage = delegate(IAsyncClient sender, byte[] message)
+            NewMessageReceived newMessage = delegate(IAsyncClient sender, byte[] message)
             {
                 messageReceivedEvent.Set();
             };

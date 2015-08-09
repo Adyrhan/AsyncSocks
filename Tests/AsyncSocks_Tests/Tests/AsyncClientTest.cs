@@ -123,7 +123,7 @@ namespace AsyncSocks_Tests.Tests
             IAsyncClient senderArgument = null;
             byte[] messageArgument = null;
 
-            var callback = new NewClientMessageReceived(delegate(IAsyncClient sender, byte[] message)
+            var callback = new NewMessageReceived(delegate(IAsyncClient sender, byte[] message)
             {
                 senderArgument = sender;
                 messageArgument = message;

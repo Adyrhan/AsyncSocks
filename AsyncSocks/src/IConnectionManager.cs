@@ -9,11 +9,11 @@ namespace AsyncSocks
     {
         void CloseAllConnetions();
 
-        event NewClientMessageReceived OnNewClientMessageReceived;
+        event NewMessageReceived OnNewClientMessageReceived;
         event PeerDisconnected OnPeerDisconnected;
 
         void Add(IAsyncClient peerConnection);
     }
 
-    public delegate void NewClientMessageReceived(IAsyncClient sender, byte[] message);
+    public delegate void NewMessageReceived(IAsyncClient sender, byte[] message);
 }

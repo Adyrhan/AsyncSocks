@@ -10,7 +10,7 @@ namespace AsyncSocks
     {
         private Dictionary<IPEndPoint, IAsyncClient> dict;
 
-        public event NewClientMessageReceived OnNewClientMessageReceived;
+        public event NewMessageReceived OnNewClientMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
 
         public ConnectionManager(Dictionary<IPEndPoint, IAsyncClient> dict)
