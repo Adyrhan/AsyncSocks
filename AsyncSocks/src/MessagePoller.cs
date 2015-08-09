@@ -16,11 +16,11 @@ namespace AsyncSocks
             runnable.OnNewMessageReceived += runnable_OnNewMessageReceived;
         }
 
-        private void runnable_OnNewMessageReceived(IAsyncClient sender, byte[] message)
+        private void runnable_OnNewMessageReceived(object sender, NewMessageReceivedEventArgs e)
         {
             if (OnNewClientMessageReceived != null)
             {
-                OnNewClientMessageReceived(sender, message);
+                OnNewClientMessageReceived(this, e);
             }
         }
 

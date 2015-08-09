@@ -10,7 +10,7 @@ namespace AsyncSocks
     {
         private Dictionary<IPEndPoint, IAsyncClient> dict;
 
-        public event NewMessageReceived OnNewClientMessageReceived;
+        public event NewMessageReceived OnNewMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
 
         public ConnectionManager(Dictionary<IPEndPoint, IAsyncClient> dict)
@@ -48,11 +48,11 @@ namespace AsyncSocks
             }
         }
 
-        void peerConnection_OnNewMessageReceived(IAsyncClient sender, byte[] message)
+        void peerConnection_OnNewMessageReceived(object sender, NewMessageReceivedEventArgs e)
         {
-            if (OnNewClientMessageReceived != null)
+            if (OnNewMessageReceived != null)
             {
-                OnNewClientMessageReceived(sender, message);
+                OnNewMessageReceived(this, e);
             }
         }
     }

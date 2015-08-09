@@ -38,11 +38,12 @@ namespace AsyncSocks
             }
         }
 
-        private void poller_OnNewClientMessageReceived(IAsyncClient sender, byte[] message)
+        private void poller_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs e)
         {
             if (OnNewMessageReceived != null)
             {
-                OnNewMessageReceived(this, message);
+                var newE = new NewMessageReceivedEventArgs(this, e.Message);
+                OnNewMessageReceived(this, newE);
             }
         }
 

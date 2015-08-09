@@ -75,14 +75,16 @@ namespace AsyncSocks_Tests.Tests
 
             connManager.Add(peerConnectionMock.Object);
 
-            NewMessageReceived callback = delegate(IAsyncClient sender, byte[] message)
+            NewMessageReceived callback = delegate(object sender, NewMessageReceivedEventArgs e)
             {
                 callbackCalledEvent.Set();
             };
 
-            connManager.OnNewClientMessageReceived += callback;
+            connManager.OnNewMessageReceived += callback;
 
-            peerConnectionMock.Raise(x => x.OnNewMessageReceived += null, peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
+            var ev = new NewMessageReceivedEventArgs(peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
+
+            peerConnectionMock.Raise(x => x.OnNewMessageReceived += null, ev);
 
             bool called = callbackCalledEvent.WaitOne(2000);
 

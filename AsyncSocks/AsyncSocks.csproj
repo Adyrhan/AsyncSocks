@@ -72,7 +72,7 @@
     <Compile Include="src\ITcpClient.cs" />
     <Compile Include="src\ITcpListener.cs" />
     <Compile Include="src\NetworkMessageReader.cs" />
-    <Compile Include="src\NewClientMessageReceived.cs" />
+    <Compile Include="src\NewMessageReceived.cs" />
     <Compile Include="src\OutboundMessageSpooler.cs" />
     <Compile Include="src\OutboundMessageSpoolerRunnable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

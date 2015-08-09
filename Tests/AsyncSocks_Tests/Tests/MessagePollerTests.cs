@@ -28,7 +28,7 @@ namespace AsyncSocks_Tests.Tests
         {
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            NewMessageReceived callback = delegate(IAsyncClient sender, byte[] message)
+            NewMessageReceived callback = delegate(object sender, NewMessageReceivedEventArgs e)
             {
                 callbackCalledEvent.Set();
 

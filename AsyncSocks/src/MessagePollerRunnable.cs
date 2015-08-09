@@ -54,7 +54,8 @@ namespace AsyncSocks
                 NetworkMessage message = queue.Take();
                 if (OnNewMessageReceived != null)
                 {
-                    OnNewMessageReceived(message.Sender, message.Message);
+                    var e = new NewMessageReceivedEventArgs(message.Sender, message.Message);
+                    OnNewMessageReceived(this, e);
                 }
             }
             catch (ThreadInterruptedException)

@@ -48,10 +48,10 @@ namespace AsyncSocks_Tests.Tests
                 connectedEvent.Set();
             };
 
-            server.OnNewMessageReceived += delegate(IAsyncClient sender, byte[] message)
+            server.OnNewMessageReceived += delegate(object sender, NewMessageReceivedEventArgs e)
             {
-                incomingMessage = Encoding.ASCII.GetString(message);
-                incomingEndPoint = (IPEndPoint)sender.RemoteEndPoint;
+                incomingMessage = Encoding.ASCII.GetString(e.Message);
+                incomingEndPoint = (IPEndPoint)e.Sender.RemoteEndPoint;
                 messageReceivedEvent.Set();
             };
 

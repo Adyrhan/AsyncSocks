@@ -24,7 +24,7 @@ namespace AsyncSocks
             this.clientConnectionAgent = clientConnectionAgent;
             this.connectionManager = connectionManager;
             this.tcpListener = tcpListener;
-            this.connectionManager.OnNewClientMessageReceived += connectionManager_OnNewClientMessageReceived;
+            this.connectionManager.OnNewMessageReceived += connectionManager_OnNewClientMessageReceived;
             this.connectionManager.OnPeerDisconnected += ConnectionManager_OnPeerDisconnected;
             this.clientConnectionAgent.OnNewClientConnection += clientConnectionAgent_OnNewClientConnection;
         }
@@ -48,11 +48,11 @@ namespace AsyncSocks
             }
         }
 
-        private void connectionManager_OnNewClientMessageReceived(IAsyncClient sender, byte[] message)
+        private void connectionManager_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs e)
         {
             if (OnNewMessageReceived != null)
             {
-                OnNewMessageReceived(sender, message);
+                OnNewMessageReceived(this, e);
             }
         }
 

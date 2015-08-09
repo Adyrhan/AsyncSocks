@@ -123,16 +123,17 @@ namespace AsyncSocks_Tests.Tests
             IAsyncClient senderArgument = null;
             byte[] messageArgument = null;
 
-            var callback = new NewMessageReceived(delegate(IAsyncClient sender, byte[] message)
+            var callback = new NewMessageReceived(delegate(object sender, NewMessageReceivedEventArgs e)
             {
-                senderArgument = sender;
-                messageArgument = message;
+                senderArgument = e.Sender;
+                messageArgument = e.Message;
                 callbackCalledEvent.Set();
             });
 
             connection.OnNewMessageReceived += callback;
 
-            messagePollerMock.Raise(x => x.OnNewClientMessageReceived += null, null, messageBytes);
+            var ev = new NewMessageReceivedEventArgs(null, messageBytes);
+            messagePollerMock.Raise(x => x.OnNewClientMessageReceived += null, ev);
 
             bool callbackCalled = callbackCalledEvent.WaitOne(2000);
 

@@ -50,18 +50,16 @@ namespace AsyncSocks_Tests.Tests
             var peerConnectionMock = new Mock<IAsyncClient>();
             var messageReceivedEvent = new AutoResetEvent(false);
 
-            NewMessageReceived newMessage = delegate(IAsyncClient sender, byte[] message)
+            NewMessageReceived newMessage = delegate(object sender, NewMessageReceivedEventArgs e)
             {
                 messageReceivedEvent.Set();
             };
 
             server.OnNewMessageReceived += newMessage;
 
-            connectionManagerMock.Raise(
-                x => x.OnNewClientMessageReceived += null, 
-                peerConnectionMock.Object, 
-                Encoding.ASCII.GetBytes("Test message!")
-            );
+            var ev = new NewMessageReceivedEventArgs(peerConnectionMock.Object, Encoding.ASCII.GetBytes("Test message!"));
+
+            connectionManagerMock.Raise(x => x.OnNewMessageReceived += null, ev);
 
             Assert.IsTrue(messageReceivedEvent.WaitOne(2000));
 
