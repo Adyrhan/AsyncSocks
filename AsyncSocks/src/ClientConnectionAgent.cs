@@ -7,7 +7,7 @@ namespace AsyncSocks
 {
     public class ClientConnectionAgent : ThreadRunner, IClientConnectionAgent
     {
-        public event NewPeerConnectionDelegate OnNewClientConnection;
+        public event NewClientConnected OnNewClientConnection;
         private IClientConnectionAgentRunnable runnable;
 
         public ClientConnectionAgent(IClientConnectionAgentRunnable runnable) : base(runnable)

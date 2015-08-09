@@ -73,7 +73,7 @@ namespace AsyncSocks_Tests.Tests
 
             IAsyncClient peerConnectionArgument = null;
 
-            var callback = new NewPeerConnectionDelegate(delegate(IAsyncClient client)
+            var callback = new NewClientConnected(delegate(IAsyncClient client)
             {
                 peerConnectionArgument = client;
                 callbackCalledEvent.Set();

@@ -16,7 +16,7 @@ namespace AsyncSocks
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
         private IAsyncClientFactory connectionFactory;
 
-        public event NewPeerConnectionDelegate OnNewClientConnection;
+        public event NewClientConnected OnNewClientConnection;
 
         public bool IsRunning
         {

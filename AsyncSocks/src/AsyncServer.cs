@@ -7,7 +7,6 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public delegate void NewPeerConnectionDelegate(IAsyncClient client);
     public class AsyncServer : IAsyncServer
     {
         private IClientConnectionAgent clientConnectionAgent;
@@ -15,7 +14,7 @@ namespace AsyncSocks
         private ITcpListener tcpListener;
 
         public event NewMessageReceived OnNewMessageReceived;
-        public event NewPeerConnectionDelegate OnNewClientConnected;
+        public event NewClientConnected OnNewClientConnected;
         public event PeerDisconnected OnPeerDisconnected;
 
         public AsyncServer(IClientConnectionAgent clientConnectionAgent, IConnectionManager connectionManager, ITcpListener tcpListener)

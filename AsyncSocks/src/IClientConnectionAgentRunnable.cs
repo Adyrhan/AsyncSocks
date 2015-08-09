@@ -10,6 +10,6 @@ namespace AsyncSocks
         ITcpListener TcpListener { get; }
 
         void AcceptClientConnection();
-        event NewPeerConnectionDelegate OnNewClientConnection;
+        event NewClientConnected OnNewClientConnection;
     }
 }

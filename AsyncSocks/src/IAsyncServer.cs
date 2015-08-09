@@ -10,7 +10,7 @@ namespace AsyncSocks
     {
         event NewMessageReceived OnNewMessageReceived;
         event PeerDisconnected OnPeerDisconnected;
-        event NewPeerConnectionDelegate OnNewClientConnected;
+        event NewClientConnected OnNewClientConnected;
 
         void Start();
         void Stop();

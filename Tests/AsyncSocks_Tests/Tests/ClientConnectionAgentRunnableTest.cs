@@ -33,7 +33,7 @@ namespace AsyncSocks_Tests
         {
             Mock<ITcpClient> tcpClientMock = new Mock<ITcpClient>();
             Mock<IAsyncClient> peerConnectionMock = new Mock<IAsyncClient>();
-            Mock<NewPeerConnectionDelegate> newClientCallbackMock = new Mock<NewPeerConnectionDelegate>();
+            Mock<NewClientConnected> newClientCallbackMock = new Mock<NewClientConnected>();
 
             tcpListenerMock.Setup(x => x.AcceptTcpClient()).Returns(tcpClientMock.Object).Verifiable();
             connectionFactoryMock.Setup(x => x.Create(tcpClientMock.Object)).Returns(peerConnectionMock.Object).Verifiable();
@@ -52,7 +52,7 @@ namespace AsyncSocks_Tests
         {
             Mock<IAsyncClient> peerConnectionMock = new Mock<IAsyncClient>();
             Mock<ITcpClient> tcpClientMock = new Mock<ITcpClient>();
-            Mock<NewPeerConnectionDelegate> newClientCallbackMock = new Mock<NewPeerConnectionDelegate>();
+            Mock<NewClientConnected> newClientCallbackMock = new Mock<NewClientConnected>();
             
             ThreadRunner runner = new ThreadRunner(agent);
             AutoResetEvent AcceptClientConnectionWasCalled = new AutoResetEvent(false);
