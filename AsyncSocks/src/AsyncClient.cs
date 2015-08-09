@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public delegate void PeerDisconnected(IAsyncClient peer);
+    
 
     public class AsyncClient : IAsyncClient
     {
@@ -29,12 +29,13 @@ namespace AsyncSocks
             inboundSpooler.OnPeerDisconnected += InboundSpooler_OnPeerDisconnected;
         }
 
-        private void InboundSpooler_OnPeerDisconnected(IAsyncClient peer)
+        private void InboundSpooler_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
         {
             var onPeerDisconnected = OnPeerDisconnected;
             if (onPeerDisconnected != null)
             {
-                onPeerDisconnected(this);
+                var ev = new PeerDisconnectedEventArgs(this);
+                onPeerDisconnected(this, ev);
             }
         }
 

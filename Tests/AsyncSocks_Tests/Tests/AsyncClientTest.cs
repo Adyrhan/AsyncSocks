@@ -149,16 +149,15 @@ namespace AsyncSocks_Tests.Tests
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
 
             IAsyncClient peerArgument = null;
-            var callback = new PeerDisconnected(delegate (IAsyncClient peer)
+            var callback = new PeerDisconnected(delegate (object sender, PeerDisconnectedEventArgs e)
             {
-                peerArgument = peer;
+                peerArgument = e.Peer;
                 callbackCalledEvent.Set();
             });
 
             connection.OnPeerDisconnected += callback;
 
-            IAsyncClient nullPeer = null;
-            inboundSpoolerMock.Raise(x => x.OnPeerDisconnected += null, nullPeer);
+            inboundSpoolerMock.Raise(x => x.OnPeerDisconnected += null, new PeerDisconnectedEventArgs(null));
 
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000), "Callback not called");
             Assert.AreEqual(connection, peerArgument);

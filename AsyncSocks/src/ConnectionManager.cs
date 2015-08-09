@@ -36,15 +36,15 @@ namespace AsyncSocks
             
         }
 
-        private void PeerConnection_OnPeerDisconnected(IAsyncClient peer)
+        private void PeerConnection_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
         {
-            dict.Remove((IPEndPoint)peer.RemoteEndPoint);
+            dict.Remove((IPEndPoint)e.Peer.RemoteEndPoint);
 
             var onPeerDisconnected = OnPeerDisconnected;
 
             if (onPeerDisconnected != null)
             {
-                onPeerDisconnected(peer);
+                onPeerDisconnected(this, e);
             }
         }
 

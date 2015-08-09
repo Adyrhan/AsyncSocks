@@ -34,7 +34,7 @@ namespace AsyncSocks
                     var onPeerDisconnected = OnPeerDisconnected;
                     if (onPeerDisconnected != null)
                     {
-                        onPeerDisconnected(null);
+                        onPeerDisconnected(this, null);
                         shouldStop = true;
                     }
                 }

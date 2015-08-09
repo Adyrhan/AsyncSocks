@@ -29,13 +29,13 @@ namespace AsyncSocks
             this.clientConnectionAgent.OnNewClientConnection += clientConnectionAgent_OnNewClientConnection;
         }
 
-        private void ConnectionManager_OnPeerDisconnected(IAsyncClient peer)
+        private void ConnectionManager_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
         {
             var onPeerDisconnected = OnPeerDisconnected;
 
             if (onPeerDisconnected != null)
             {
-                onPeerDisconnected(peer);
+                onPeerDisconnected(this, e);
             }
         }
 

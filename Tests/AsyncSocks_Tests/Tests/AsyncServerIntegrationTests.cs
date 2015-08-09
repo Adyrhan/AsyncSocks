@@ -55,7 +55,7 @@ namespace AsyncSocks_Tests.Tests
                 messageReceivedEvent.Set();
             };
 
-            server.OnPeerDisconnected += delegate(IAsyncClient peer)
+            server.OnPeerDisconnected += delegate(object sender, PeerDisconnectedEventArgs e)
             {
                 disconnectedEvent.Set();
             };
