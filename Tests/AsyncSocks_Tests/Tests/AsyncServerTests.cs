@@ -50,10 +50,7 @@ namespace AsyncSocks_Tests.Tests
             var peerConnectionMock = new Mock<IAsyncClient>();
             var messageReceivedEvent = new AutoResetEvent(false);
 
-            NewMessageReceived newMessage = delegate(object sender, NewMessageReceivedEventArgs e)
-            {
-                messageReceivedEvent.Set();
-            };
+            NewMessageReceived newMessage = (object sender, NewMessageReceivedEventArgs e) => messageReceivedEvent.Set();
 
             server.OnNewMessageReceived += newMessage;
 
@@ -73,7 +70,7 @@ namespace AsyncSocks_Tests.Tests
 
             IAsyncClient peerConnectionArgument = null;
 
-            var callback = new NewClientConnected(delegate(object sender, NewClientConnectedEventArgs e)
+            var callback = new NewClientConnected((object sender, NewClientConnectedEventArgs e) =>
             {
                 peerConnectionArgument = e.Client;
                 callbackCalledEvent.Set();
@@ -109,7 +106,7 @@ namespace AsyncSocks_Tests.Tests
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
 
             IAsyncClient peerArgument = null;
-            server.OnPeerDisconnected += new PeerDisconnected(delegate (object sender, PeerDisconnectedEventArgs e)
+            server.OnPeerDisconnected += new PeerDisconnected((object sender, PeerDisconnectedEventArgs e) =>
             {
                 peerArgument = e.Peer;
                 callbackCalledEvent.Set();

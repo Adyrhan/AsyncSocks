@@ -28,11 +28,7 @@ namespace AsyncSocks_Tests.Tests
         {
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            NewMessageReceived callback = delegate(object sender, NewMessageReceivedEventArgs e)
-            {
-                callbackCalledEvent.Set();
-
-            };
+            NewMessageReceived callback = (object sender, NewMessageReceivedEventArgs e) => callbackCalledEvent.Set();
 
             poller.OnNewClientMessageReceived += callback;
 

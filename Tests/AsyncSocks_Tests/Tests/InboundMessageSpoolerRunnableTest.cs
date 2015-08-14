@@ -75,10 +75,7 @@ namespace AsyncSocks_Tests.Tests
         {
             AutoResetEvent disconnectedEventFired = new AutoResetEvent(false);
 
-            spooler.OnPeerDisconnected += delegate(object sender, PeerDisconnectedEventArgs e)
-            {
-                disconnectedEventFired.Set();
-            };
+            spooler.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => disconnectedEventFired.Set();
 
             readerMock.Setup(x => x.Read()).Returns(() => null).Verifiable();
 

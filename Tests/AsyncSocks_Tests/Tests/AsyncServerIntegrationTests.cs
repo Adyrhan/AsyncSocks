@@ -42,23 +42,20 @@ namespace AsyncSocks_Tests.Tests
             AutoResetEvent messageReceivedEvent = new AutoResetEvent(false);
             AutoResetEvent disconnectedEvent = new AutoResetEvent(false);
 
-            server.OnNewClientConnected += delegate(object sender, NewClientConnectedEventArgs e)
+            server.OnNewClientConnected += (object sender, NewClientConnectedEventArgs e) =>
             {
                 incomingEndPoint = (IPEndPoint)e.Client.RemoteEndPoint;
                 connectedEvent.Set();
             };
 
-            server.OnNewMessageReceived += delegate(object sender, NewMessageReceivedEventArgs e)
+            server.OnNewMessageReceived += (object sender, NewMessageReceivedEventArgs e) =>
             {
                 incomingMessage = Encoding.ASCII.GetString(e.Message);
                 incomingEndPoint = (IPEndPoint)e.Sender.RemoteEndPoint;
                 messageReceivedEvent.Set();
             };
 
-            server.OnPeerDisconnected += delegate(object sender, PeerDisconnectedEventArgs e)
-            {
-                disconnectedEvent.Set();
-            };
+            server.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => disconnectedEvent.Set();
 
             client.Connect(serverEndPoint);
             bool didConnect = connectedEvent.WaitOne(2000);

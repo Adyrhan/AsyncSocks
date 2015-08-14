@@ -44,7 +44,7 @@ namespace AsyncSocks_Tests
             object senderParam = null;
             NewClientConnectedEventArgs eParam = null;
 
-            agent.OnNewClientConnection += delegate (object sender, NewClientConnectedEventArgs e)
+            agent.OnNewClientConnection += (object sender, NewClientConnectedEventArgs e) =>
             {
                 senderParam = sender;
                 eParam = e;
@@ -75,10 +75,7 @@ namespace AsyncSocks_Tests
             connectionFactoryMock.Setup(x => x.Create(tcpClientMock.Object)).Returns(peerConnectionMock.Object).Verifiable();
             //newClientCallbackMock.Setup(x => x(peerConnectionMock.Object)).Callback(() => AcceptClientConnectionWasCalled.Set());
             tcpListenerMock.Setup(x => x.Stop()).Verifiable();
-            agent.OnNewClientConnection += delegate (object sender, NewClientConnectedEventArgs e)
-            {
-                AcceptClientConnectionWasCalled.Set();
-            };
+            agent.OnNewClientConnection += (object sender, NewClientConnectedEventArgs e) => AcceptClientConnectionWasCalled.Set();
             
             runner.Start();
 

@@ -75,10 +75,7 @@ namespace AsyncSocks_Tests.Tests
 
             connManager.Add(peerConnectionMock.Object);
 
-            NewMessageReceived callback = delegate(object sender, NewMessageReceivedEventArgs e)
-            {
-                callbackCalledEvent.Set();
-            };
+            NewMessageReceived callback = (object sender, NewMessageReceivedEventArgs e) => callbackCalledEvent.Set();
 
             connManager.OnNewMessageReceived += callback;
 
@@ -96,10 +93,7 @@ namespace AsyncSocks_Tests.Tests
         {
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            connManager.OnPeerDisconnected += delegate (object sender, PeerDisconnectedEventArgs e)
-            {
-                callbackCalledEvent.Set();
-            };
+            connManager.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => callbackCalledEvent.Set();
 
             var peerConnectionMock = new Mock<IAsyncClient>();
             peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80));

@@ -28,7 +28,7 @@ namespace AsyncSocks_Tests.Tests
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewMessageReceived(delegate(object sender, NewMessageReceivedEventArgs e)
+            var callback = new NewMessageReceived((object sender, NewMessageReceivedEventArgs e) =>
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, e.Sender);
@@ -52,7 +52,7 @@ namespace AsyncSocks_Tests.Tests
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewMessageReceived(delegate (object sender, NewMessageReceivedEventArgs e)
+            var callback = new NewMessageReceived((object sender, NewMessageReceivedEventArgs e) =>
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, e.Sender);

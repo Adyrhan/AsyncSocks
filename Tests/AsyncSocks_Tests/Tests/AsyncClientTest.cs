@@ -123,7 +123,7 @@ namespace AsyncSocks_Tests.Tests
             IAsyncClient senderArgument = null;
             byte[] messageArgument = null;
 
-            var callback = new NewMessageReceived(delegate(object sender, NewMessageReceivedEventArgs e)
+            var callback = new NewMessageReceived((object sender, NewMessageReceivedEventArgs e) =>
             {
                 senderArgument = e.Sender;
                 messageArgument = e.Message;
@@ -149,7 +149,7 @@ namespace AsyncSocks_Tests.Tests
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
 
             IAsyncClient peerArgument = null;
-            var callback = new PeerDisconnected(delegate (object sender, PeerDisconnectedEventArgs e)
+            var callback = new PeerDisconnected((object sender, PeerDisconnectedEventArgs e) =>
             {
                 peerArgument = e.Peer;
                 callbackCalledEvent.Set();
@@ -178,6 +178,6 @@ namespace AsyncSocks_Tests.Tests
             outboundSpoolerMock.Verify();
             messagePollerMock.Verify();
         }
-        
+
     }
 }

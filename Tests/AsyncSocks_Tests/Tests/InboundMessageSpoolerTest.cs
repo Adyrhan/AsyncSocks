@@ -46,10 +46,7 @@ namespace AsyncSocks_Tests.Tests
             var spooler = new InboundMessageSpooler(runnableMock.Object);
 
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
-            spooler.OnPeerDisconnected += delegate (object sender, PeerDisconnectedEventArgs e)
-            {
-                callbackCalledEvent.Set();
-            };
+            spooler.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => callbackCalledEvent.Set();
 
             runnableMock.Raise(x => x.OnPeerDisconnected += null, new PeerDisconnectedEventArgs(null));
 
