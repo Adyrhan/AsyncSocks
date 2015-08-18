@@ -17,6 +17,7 @@ namespace AsyncSocks_Tests.Tests
         private Mock<IMessagePoller> messagePollerMock;
         private Mock<ITcpClient> tcpClientMock;
         private IAsyncClient connection;
+        private Mock<IOutboundMessageFactory> messageFactoryMock;
 
         [TestInitialize]
         public void BeforeEach()
@@ -25,23 +26,33 @@ namespace AsyncSocks_Tests.Tests
             outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
             messagePollerMock = new Mock<IMessagePoller>();
             tcpClientMock = new Mock<ITcpClient>();
+            messageFactoryMock = new Mock<IOutboundMessageFactory>();
 
-            var inboundSpooler = inboundSpoolerMock.Object;
-            var outboundSpooler = outboundSpoolerMock.Object;
-            var tcpClient = tcpClientMock.Object;
-            var messagePoller = messagePollerMock.Object;
-
-            connection = new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, tcpClient);
+            connection = new AsyncClient
+            (
+                inboundSpoolerMock.Object,
+                outboundSpoolerMock.Object,
+                messagePollerMock.Object,
+                messageFactoryMock.Object,
+                tcpClientMock.Object
+            );
         }
 
         [TestMethod]
         public void SendMessageShouldTellOutboundMessageSpoolerToEnqueueTheMessage()
         {
-            byte[] messageBytes = Encoding.ASCII.GetBytes("This is a test message");
+            var messageBytes = Encoding.ASCII.GetBytes("This is a test message");
+            var message = new OutboundMessage(messageBytes, null);
 
-            outboundSpoolerMock.Setup(x => x.Enqueue(messageBytes)).Verifiable();
+            messageFactoryMock.
+                Setup(x => x.Create(messageBytes, null)).
+                Returns(message).
+                Verifiable();
+
+            outboundSpoolerMock.Setup(x => x.Enqueue(message)).Verifiable();
             connection.SendMessage(messageBytes);
 
+            messageFactoryMock.Verify();
             outboundSpoolerMock.Verify();
         }
 
@@ -179,5 +190,29 @@ namespace AsyncSocks_Tests.Tests
             messagePollerMock.Verify();
         }
 
+        [TestMethod]
+        public void SendMessageAcceptsCompletionDelegateAndTellsOutboundSpoolerToEnqueueThePair()
+        {
+            bool receivedResult = false;
+
+            byte[] msgBytes = Encoding.ASCII.GetBytes("Some text");
+            Action<bool, SocketException> callback = (success, error) => receivedResult = success;
+            OutboundMessage outboundMessage = new OutboundMessage(msgBytes, callback);
+
+            messageFactoryMock.
+                Setup(x => x.Create(It.IsAny<byte[]>(), It.IsAny<Action<bool, SocketException>>())).
+                Returns(outboundMessage)
+                .Verifiable();
+
+            outboundSpoolerMock.
+                Setup(x => x.Enqueue(outboundMessage))
+                .Verifiable();
+
+            connection.SendMessage(msgBytes, callback);
+
+            messageFactoryMock.Verify();
+            outboundSpoolerMock.Verify();
+
+        }
     }
 }

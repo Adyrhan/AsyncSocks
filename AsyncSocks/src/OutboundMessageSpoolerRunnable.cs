@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
@@ -10,12 +11,12 @@ namespace AsyncSocks
     public class OutboundMessageSpoolerRunnable : IOutboundMessageSpoolerRunnable, IDisposable
     {
         private ITcpClient tcpClient;
-        private BlockingCollection<byte[]> queue;
+        private BlockingCollection<OutboundMessage> queue;
         private AutoResetEvent startEvent = new AutoResetEvent(false);
         private bool running;
         private bool shouldStop;
 
-        public OutboundMessageSpoolerRunnable(ITcpClient tcpClient, BlockingCollection<byte[]> queue)
+        public OutboundMessageSpoolerRunnable(ITcpClient tcpClient, BlockingCollection<OutboundMessage> queue)
         {
             this.tcpClient = tcpClient;
             this.queue = queue;
@@ -25,10 +26,11 @@ namespace AsyncSocks
         {
             try
             {
-                byte[] message = queue.Take();
-                byte[] size = BitConverter.GetBytes(message.Length);
+                OutboundMessage message = queue.Take();
+                byte[] messageBytes = message.MessageBytes;
 
-                int totalSize = size.Length + message.Length;
+                byte[] size = BitConverter.GetBytes(messageBytes.Length);
+                int totalSize = size.Length + messageBytes.Length;
 
                 byte[] packetBytes = new byte[totalSize];
 
@@ -40,17 +42,42 @@ namespace AsyncSocks
                     }
                     else
                     {
-                        packetBytes[i] = message[i - size.Length];
+                        packetBytes[i] = messageBytes[i - size.Length];
                     }
                 }
 
-                tcpClient.Write(packetBytes, 0, totalSize);
+                SocketException e = WriteOrException(packetBytes, 0, totalSize);
+
+                if (message.Callback != null)
+                {
+                    if (e != null)
+                    {
+                        message.Callback(false, e);
+                    }
+                    else
+                    {
+                        message.Callback(true, null);
+                    }
+                }
             }
             catch (ThreadInterruptedException)
             {
-
+                // OutboundMessageSpooler stopping
             }
             
+        }
+
+        private SocketException WriteOrException(byte[] bytes, int offset, int length)
+        {
+            try
+            {
+                tcpClient.Write(bytes, offset, length);
+                return null;
+            }
+            catch (SocketException e)
+            {
+                return e;
+            }
         }
 
         public void Run()

@@ -8,23 +8,23 @@ namespace AsyncSocks
 {
     public class OutboundMessageSpooler : ThreadRunner, IOutboundMessageSpooler
     {
-        private BlockingCollection<byte[]> queue;
+        private BlockingCollection<OutboundMessage> queue;
 
-        public OutboundMessageSpooler(IOutboundMessageSpoolerRunnable runnable, BlockingCollection<byte[]> queue) : base(runnable) 
+        public OutboundMessageSpooler(IOutboundMessageSpoolerRunnable runnable, BlockingCollection<OutboundMessage> queue) : base(runnable) 
         {
             this.queue = queue;
         }
 
         public static OutboundMessageSpooler Create(ITcpClient tcpClient)
         {
-            BlockingCollection<byte[]> queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
+            BlockingCollection<OutboundMessage> queue = new BlockingCollection<OutboundMessage>(new ConcurrentQueue<OutboundMessage>());
             OutboundMessageSpoolerRunnable runnable = new OutboundMessageSpoolerRunnable(tcpClient, queue);
             return new OutboundMessageSpooler(runnable, queue);
         }
 
-        public void Enqueue(byte[] messageBytes)
+        public void Enqueue(OutboundMessage outboundMessage)
         {
-            queue.Add(messageBytes);
+            queue.Add(outboundMessage);
         }
     }
 }

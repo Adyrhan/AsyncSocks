@@ -12,15 +12,14 @@ namespace AsyncSocks_Tests.Tests
     {
         private OutboundMessageSpooler spooler;
         private Mock<IOutboundMessageSpoolerRunnable> runnableMock;
-        private BlockingCollection<byte[]> queue;
+        private BlockingCollection<OutboundMessage> queue;
 
         [TestInitialize]
         public void BeforeEach()
         {
             runnableMock = new Mock<IOutboundMessageSpoolerRunnable>();
-            var runnable = runnableMock.Object;
-            queue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
-            spooler = new OutboundMessageSpooler(runnable, queue);
+            queue = new BlockingCollection<OutboundMessage>(new ConcurrentQueue<OutboundMessage>());
+            spooler = new OutboundMessageSpooler(runnableMock.Object, queue);
         }
 
         [TestMethod]
@@ -41,10 +40,10 @@ namespace AsyncSocks_Tests.Tests
         public void EnqueueShouldAddMessageToQueue()
         {
             byte[] messageBytes = Encoding.ASCII.GetBytes("This is a test message");
-            
-            spooler.Enqueue(messageBytes);
+            var message = new OutboundMessage(messageBytes, null);
+            spooler.Enqueue(message);
 
-            Assert.AreEqual(messageBytes, queue.Take());
+            Assert.AreEqual(message, queue.Take());
         }
         
     }

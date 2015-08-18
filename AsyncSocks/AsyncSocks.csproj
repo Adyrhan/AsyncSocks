@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IOutboundMessageFactory.cs" />
     <Compile Include="src\IAsyncServer.cs" />
     <Compile Include="src\MessagePoller.cs" />
     <Compile Include="src\IMessagePoller.cs" />
@@ -74,6 +75,8 @@
     <Compile Include="src\NetworkMessageReader.cs" />
     <Compile Include="src\NewClientConnected.cs" />
     <Compile Include="src\NewMessageReceived.cs" />
+    <Compile Include="src\OutboundMessage.cs" />
+    <Compile Include="src\OutboundMessageFactory.cs" />
     <Compile Include="src\OutboundMessageSpooler.cs" />
     <Compile Include="src\OutboundMessageSpoolerRunnable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

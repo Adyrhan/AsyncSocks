@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,8 @@ namespace AsyncSocks
         event PeerDisconnected OnPeerDisconnected;
 
         ITcpClient TcpClient { get; }
+
+        void SendMessage(byte[] msgBytes, Action<bool, SocketException> callback);
     }
     
 }

@@ -8,9 +8,9 @@ namespace AsyncSocks
 {
     public class AsyncClientFactory : IAsyncClientFactory
     {
-        public IAsyncClient Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, ITcpClient tcpClient)
+        public IAsyncClient Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient)
         {
-            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, tcpClient);
+            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient);
         }
 
         public IAsyncClient Create(ITcpClient tcpClient)
@@ -18,8 +18,9 @@ namespace AsyncSocks
             var inboundSpooler = InboundMessageSpooler.Create(tcpClient);
             var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
             var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
+            var messageFactory = new OutboundMessageFactory();
 
-            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, tcpClient);
+            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient);
         }
 
     }

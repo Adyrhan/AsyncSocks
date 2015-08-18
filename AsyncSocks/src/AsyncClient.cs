@@ -7,24 +7,24 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    
-
     public class AsyncClient : IAsyncClient
     {
         private IInboundMessageSpooler inboundSpooler;
         private IOutboundMessageSpooler outboundSpooler;
         private ITcpClient tcpClient;
         private IMessagePoller poller;
+        private IOutboundMessageFactory messageFactory;
 
         public event NewMessageReceived OnNewMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
 
-        public AsyncClient(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, ITcpClient tcpClient)
+        public AsyncClient(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient)
         {
             this.inboundSpooler = inboundSpooler;
             this.outboundSpooler = outboundSpooler;
             this.poller = poller;
             this.tcpClient = tcpClient;
+            this.messageFactory = messageFactory;
             poller.OnNewClientMessageReceived += poller_OnNewClientMessageReceived;
             inboundSpooler.OnPeerDisconnected += InboundSpooler_OnPeerDisconnected;
         }
@@ -50,7 +50,14 @@ namespace AsyncSocks
 
         public void SendMessage(byte[] messageBytes)
         {
-            outboundSpooler.Enqueue(messageBytes);
+            OutboundMessage msg = messageFactory.Create(messageBytes, null);
+            outboundSpooler.Enqueue(msg);
+        }
+
+        public void SendMessage(byte[] msgBytes, Action<bool, SocketException> callback)
+        {
+            OutboundMessage msg = messageFactory.Create(msgBytes, callback);
+            outboundSpooler.Enqueue(msg);
         }
 
         public void Start()
@@ -107,5 +114,6 @@ namespace AsyncSocks
             tcpClient.Connect(remoteEndPoint);
             Start();
         }
+        
     }
 }
