@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IOutboundMessageFactory.cs" />
+    <Compile Include="src\IOutboundMessageFactory.cs" />
     <Compile Include="src\IAsyncServer.cs" />
     <Compile Include="src\MessagePoller.cs" />
     <Compile Include="src\IMessagePoller.cs" />
