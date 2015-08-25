@@ -7,7 +7,7 @@ using System.Net;
 
 namespace AsyncSocks
 {
-    public class BaseTcpClient : ITcpClient
+    public class BaseTcpClient : ITcpClient, IDisposable
     {
         private TcpClient tcpClient;
         private IPEndPoint remoteEndPoint;
@@ -38,7 +38,7 @@ namespace AsyncSocks
 
         public void Close()
         {
-            tcpClient.Close();
+            Dispose();
         }
 
         public void Connect()
@@ -55,5 +55,30 @@ namespace AsyncSocks
         {
             get { return new BaseSocket(tcpClient.Client); }
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // Disposing of managed state goes here (managed objects).
+                    tcpClient.GetStream().Dispose();
+                    tcpClient.Close();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+        }
+        #endregion
     }
 }

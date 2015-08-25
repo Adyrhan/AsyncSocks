@@ -9,5 +9,6 @@ namespace AsyncSocks
     public interface ISocket
     {
         EndPoint RemoteEndPoint { get; }
+        EndPoint LocalEndPoint { get; }
     }
 }

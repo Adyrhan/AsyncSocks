@@ -29,9 +29,9 @@ namespace AsyncSocks_Tests.Tests
         }
 
         [TestMethod]
-        public void AsyncServerIntegrationTest()
+        public void AsyncServerEventsNominalCaseTest()
         {
-            TcpClient client = new TcpClient();
+            AsyncClient client = AsyncClient.Create();
 
             string originalMessage = "This is a test";
             string incomingMessage = null;
@@ -61,7 +61,7 @@ namespace AsyncSocks_Tests.Tests
             bool didConnect = connectedEvent.WaitOne(2000);
 
             Assert.IsTrue(didConnect, "Server delegate for connection not called");
-            Assert.AreEqual(client.Client.LocalEndPoint, incomingEndPoint, "End point for client doesn't match after connection");
+            //Assert.AreEqual(client., incomingEndPoint, "End point for client doesn't match after connection");
 
             byte[] messageBytes = Encoding.ASCII.GetBytes(originalMessage);
             byte[] msgSizeBytes = BitConverter.GetBytes(messageBytes.Length);
@@ -79,12 +79,24 @@ namespace AsyncSocks_Tests.Tests
                 }
             }
 
-            client.GetStream().Write(fullMsgBytes, 0, fullMsgBytes.Length);
+            bool clientReportedSuccess = false;
+            SocketException sendMessageException = null;
+            AutoResetEvent sendMessageCallbackEvent = new AutoResetEvent(false);
+
+            client.SendMessage(messageBytes, (success, exception) =>
+            {
+                clientReportedSuccess = success;
+                sendMessageException = exception;
+                sendMessageCallbackEvent.Set();
+            });
+
+            //client.GetStream().Write(fullMsgBytes, 0, fullMsgBytes.Length);
             bool serverReceivedMessage = messageReceivedEvent.WaitOne(2000);
+            bool sendMessageCallbackCalled = sendMessageCallbackEvent.WaitOne(2000);
 
             Assert.IsTrue(serverReceivedMessage, "Server didn't received the message");
             Assert.AreEqual(originalMessage, incomingMessage, "Message content isn't the same as original");
-            Assert.AreEqual(client.Client.LocalEndPoint, incomingEndPoint, "Endpoints doesn't match in OnNewMessageReceived delegate");
+            //Assert.AreEqual(client.Client.LocalEndPoint, incomingEndPoint, "Endpoints doesn't match in OnNewMessageReceived delegate");
 
             client.Close();
 

@@ -99,6 +99,18 @@ namespace AsyncSocks_Tests.Tests
         }
 
         [TestMethod]
+        public void LocalEndPointPropertyShouldReturnValuesAccordingToTcpClientObject()
+        {
+            var endPoint = new IPEndPoint(IPAddress.Parse("192.168.1.80"), 44526);
+            var clientMock = new Mock<ISocket>();
+
+            tcpClientMock.Setup(x => x.Client).Returns(clientMock.Object).Verifiable();
+            clientMock.Setup(x => x.LocalEndPoint).Returns(endPoint).Verifiable();
+
+            Assert.AreEqual(endPoint, connection.LocalEndPoint);
+        }
+
+        [TestMethod]
         public void IsActiveShouldReturnTrueIfBothSpoolersAndMessagePollerAreRunning()
         {
             bool inboundSpoolerStarted = false;

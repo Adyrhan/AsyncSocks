@@ -21,5 +21,10 @@ namespace AsyncSocks
         {
             get { return socket.RemoteEndPoint; }
         }
+
+        public EndPoint LocalEndPoint
+        {
+            get { return socket.LocalEndPoint; }
+        }
     }
 }

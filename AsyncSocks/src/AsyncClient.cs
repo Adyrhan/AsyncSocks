@@ -69,16 +69,21 @@ namespace AsyncSocks
 
         public void Close()
         {
+            tcpClient.Close();
             poller.Stop();
             inboundSpooler.Stop();
             outboundSpooler.Stop();
-
-            tcpClient.Close();
+            
         }
 
         public EndPoint RemoteEndPoint
         {
             get { return tcpClient.Client.RemoteEndPoint; }
+        }
+
+        public EndPoint LocalEndPoint
+        {
+            get { return tcpClient.Client.LocalEndPoint; }
         }
 
         public bool IsActive()
