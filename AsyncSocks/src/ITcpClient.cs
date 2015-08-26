@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
+﻿using System.Net;
 
 namespace AsyncSocks
 {
@@ -11,7 +6,7 @@ namespace AsyncSocks
     {
         int Read(byte[] buffer, int offset, int lenght);
         void Write(byte[] buffer, int offset, int lenght);
-        ISocket Client { get; }
+        ISocket Socket { get; }
         void Close();
         void Connect();
         void Connect(IPEndPoint remoteEndPoint);

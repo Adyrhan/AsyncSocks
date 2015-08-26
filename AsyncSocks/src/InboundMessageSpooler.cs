@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 
 namespace AsyncSocks
 {
@@ -12,10 +10,14 @@ namespace AsyncSocks
 
         public static InboundMessageSpooler Create(ITcpClient tcpClient)
         {
-            NetworkMessageReader reader = new NetworkMessageReader(tcpClient);
-            BlockingCollection<NetworkMessage> queue = new BlockingCollection<NetworkMessage>(new ConcurrentQueue<NetworkMessage>());
-            InboundMessageSpoolerRunnable runnable = new InboundMessageSpoolerRunnable(reader, queue);
-            return new InboundMessageSpooler(runnable);
+            var reader = new NetworkMessageReader(tcpClient);
+            var queue = new BlockingCollection<NetworkMessage>(new ConcurrentQueue<NetworkMessage>());
+            var runnable = new InboundMessageSpoolerRunnable(reader, queue);
+            var spooler = new InboundMessageSpooler(runnable);
+
+            spooler.ThreadName = "InboundMessageSpooler " + tcpClient.Socket.LocalEndPoint;
+
+            return spooler;
         }
 
         public InboundMessageSpooler(IInboundMessageSpoolerRunnable runnable) : base(runnable)
@@ -38,5 +40,6 @@ namespace AsyncSocks
         {
             get { return ((IInboundMessageSpoolerRunnable) Runnable).Queue; }
         }
+
     }
 }

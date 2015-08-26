@@ -12,5 +12,6 @@ namespace AsyncSocks
         event PeerDisconnected OnPeerDisconnected;
         void Spool();
         BlockingCollection<NetworkMessage> Queue { get; }
+        INetworkMessageReader Reader { get; }
     }
 }

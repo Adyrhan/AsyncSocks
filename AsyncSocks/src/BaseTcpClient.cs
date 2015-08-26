@@ -51,7 +51,7 @@ namespace AsyncSocks
             tcpClient.Connect(remoteEndPoint);
         }
 
-        public ISocket Client
+        public ISocket Socket
         {
             get { return new BaseSocket(tcpClient.Client); }
         }

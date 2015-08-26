@@ -10,5 +10,6 @@ namespace AsyncSocks
     {
         EndPoint RemoteEndPoint { get; }
         EndPoint LocalEndPoint { get; }
+        void Disconnect(bool reuseSocket);
     }
 }

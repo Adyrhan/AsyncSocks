@@ -92,7 +92,7 @@ namespace AsyncSocks_Tests.Tests
             var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
             var clientMock = new Mock<ISocket>();
 
-            tcpClientMock.Setup(x => x.Client).Returns(clientMock.Object).Verifiable();
+            tcpClientMock.Setup(x => x.Socket).Returns(clientMock.Object).Verifiable();
             clientMock.Setup(x => x.RemoteEndPoint).Returns(endPoint).Verifiable();
 
             Assert.AreEqual(endPoint, connection.RemoteEndPoint);
@@ -104,7 +104,7 @@ namespace AsyncSocks_Tests.Tests
             var endPoint = new IPEndPoint(IPAddress.Parse("192.168.1.80"), 44526);
             var clientMock = new Mock<ISocket>();
 
-            tcpClientMock.Setup(x => x.Client).Returns(clientMock.Object).Verifiable();
+            tcpClientMock.Setup(x => x.Socket).Returns(clientMock.Object).Verifiable();
             clientMock.Setup(x => x.LocalEndPoint).Returns(endPoint).Verifiable();
 
             Assert.AreEqual(endPoint, connection.LocalEndPoint);

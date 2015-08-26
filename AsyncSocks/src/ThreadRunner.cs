@@ -12,6 +12,9 @@ namespace AsyncSocks
         private IRunnable runnable;
         private Thread thread;
 
+        public IRunnable Runnable { get { return runnable; } }
+        public string ThreadName { get; set; }
+
         public ThreadRunner(IRunnable runnable)
         {
             this.runnable = runnable;
@@ -26,14 +29,13 @@ namespace AsyncSocks
         {
             get { return thread; }
         }
-
-        public IRunnable Runnable { get { return runnable; } }
-
+        
         public virtual void Start()
         {
             if (thread == null || !thread.IsAlive)
             {
                 thread = new Thread(runnable.Run);
+                thread.Name = ThreadName;
                 thread.Start();
                 runnable.WaitStarted();
             }

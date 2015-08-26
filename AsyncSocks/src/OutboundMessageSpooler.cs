@@ -17,9 +17,12 @@ namespace AsyncSocks
 
         public static OutboundMessageSpooler Create(ITcpClient tcpClient)
         {
-            BlockingCollection<OutboundMessage> queue = new BlockingCollection<OutboundMessage>(new ConcurrentQueue<OutboundMessage>());
-            OutboundMessageSpoolerRunnable runnable = new OutboundMessageSpoolerRunnable(tcpClient, queue);
-            return new OutboundMessageSpooler(runnable, queue);
+            var queue = new BlockingCollection<OutboundMessage>(new ConcurrentQueue<OutboundMessage>());
+            var runnable = new OutboundMessageSpoolerRunnable(tcpClient, queue);
+            var spooler = new OutboundMessageSpooler(runnable, queue);
+            spooler.ThreadName = "OutboundMessageSpooler "+ tcpClient.Socket.LocalEndPoint;
+
+            return spooler;
         }
 
         public void Enqueue(OutboundMessage outboundMessage)

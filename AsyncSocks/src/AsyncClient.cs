@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
@@ -31,12 +32,18 @@ namespace AsyncSocks
 
         private void InboundSpooler_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
         {
-            var onPeerDisconnected = OnPeerDisconnected;
-            if (onPeerDisconnected != null)
+            Task.Run(() =>
             {
-                var ev = new PeerDisconnectedEventArgs(this);
-                onPeerDisconnected(this, ev);
-            }
+                var onPeerDisconnected = OnPeerDisconnected;
+                if (onPeerDisconnected != null)
+                {
+                    var ev = new PeerDisconnectedEventArgs(this);
+                    onPeerDisconnected(this, ev);
+                }
+
+                Close();
+            });
+            
         }
 
         private void poller_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs e)
@@ -78,12 +85,12 @@ namespace AsyncSocks
 
         public EndPoint RemoteEndPoint
         {
-            get { return tcpClient.Client.RemoteEndPoint; }
+            get { return tcpClient.Socket.RemoteEndPoint; }
         }
 
         public EndPoint LocalEndPoint
         {
-            get { return tcpClient.Client.LocalEndPoint; }
+            get { return tcpClient.Socket.LocalEndPoint; }
         }
 
         public bool IsActive()

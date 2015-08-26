@@ -83,6 +83,14 @@ namespace AsyncSocks
             }
         }
 
+        public INetworkMessageReader Reader
+        {
+            get
+            {
+                return networkMessageReader;
+            }
+        }
+
         #region IDisposable Support
         private bool disposedValue = false; // Para detectar llamadas redundantes
 

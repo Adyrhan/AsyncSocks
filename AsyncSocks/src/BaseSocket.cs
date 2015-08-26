@@ -26,5 +26,10 @@ namespace AsyncSocks
         {
             get { return socket.LocalEndPoint; }
         }
+
+        public void Disconnect(bool reuseSocket)
+        {
+            socket.Disconnect(reuseSocket);
+        }
     }
 }

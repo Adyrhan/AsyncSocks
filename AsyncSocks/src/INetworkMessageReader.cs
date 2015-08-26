@@ -8,5 +8,6 @@ namespace AsyncSocks
     public interface INetworkMessageReader
     {
         byte[] Read();
+        ITcpClient Client { get; }
     }
 }
