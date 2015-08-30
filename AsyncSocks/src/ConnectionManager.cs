@@ -18,13 +18,14 @@ namespace AsyncSocks
             this.dict = dict;
         }
 
-        public void CloseAllConnetions()
+        public void CloseAllConnections()
         {
-            foreach(KeyValuePair<IPEndPoint, IAsyncClient> entry in dict)
+            var dictCopy = new Dictionary<IPEndPoint, IAsyncClient>(dict);
+            foreach (KeyValuePair<IPEndPoint, IAsyncClient> entry in dictCopy)
             {
                 entry.Value.Close();
             }
-            dict.Clear();
+            
         }
 
         public void Add(IAsyncClient peerConnection)

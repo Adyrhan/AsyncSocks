@@ -57,7 +57,7 @@ namespace AsyncSocks_Tests.Tests
 
                 connManager.Add(conn.Object);
             }
-            connManager.CloseAllConnetions();
+            connManager.CloseAllConnections();
 
             foreach(Mock<IAsyncClient> conn in connections)
             {

@@ -7,7 +7,7 @@ namespace AsyncSocks
 {
     public interface IConnectionManager
     {
-        void CloseAllConnetions();
+        void CloseAllConnections();
 
         event NewMessageReceived OnNewMessageReceived;
         event PeerDisconnected OnPeerDisconnected;
