@@ -38,7 +38,7 @@ namespace AsyncSocks_Tests.Tests
         public void StopShouldStopClientConnectionAgentAndCloseAllConnectionsInConnectionManager()
         {
             clientConnectionAgentMock.Setup(x => x.Stop()).Verifiable();
-            connectionManagerMock.Setup(x => x.CloseAllConnetions()).Verifiable();
+            connectionManagerMock.Setup(x => x.CloseAllConnections()).Verifiable();
             server.Stop();
             clientConnectionAgentMock.Verify();
             connectionManagerMock.Verify();

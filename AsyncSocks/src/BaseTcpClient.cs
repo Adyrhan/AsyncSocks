@@ -56,6 +56,14 @@ namespace AsyncSocks
             get { return new BaseSocket(tcpClient.Client); }
         }
 
+        public bool Connected
+        {
+            get
+            {
+                return tcpClient.Connected;
+            }
+        }
+
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 

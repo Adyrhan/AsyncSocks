@@ -13,6 +13,14 @@ namespace AsyncSocks
         private IConnectionManager connectionManager;
         private ITcpListener tcpListener;
 
+        public IConnectionManager ConnectionManager
+        {
+            get
+            {
+                return connectionManager;
+            }
+        }
+
         public event NewMessageReceived OnNewMessageReceived;
         public event NewClientConnected OnNewClientConnected;
         public event PeerDisconnected OnPeerDisconnected;
@@ -63,7 +71,7 @@ namespace AsyncSocks
         public void Stop()
         {
             clientConnectionAgent.Stop();
-            connectionManager.CloseAllConnetions();
+            connectionManager.CloseAllConnections();
         }
 
         public static AsyncServer Create(IPEndPoint localEndPoint)

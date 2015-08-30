@@ -18,7 +18,7 @@ namespace AsyncSocks_Tests.Tests
 
             InboundMessageSpooler spooler = InboundMessageSpooler.Create(tcpClient);
 
-            Assert.IsTrue(spooler != null && spooler is InboundMessageSpooler);
+            Assert.IsTrue(spooler != null);
         }
 
         [TestMethod]

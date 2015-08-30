@@ -16,6 +16,7 @@ namespace AsyncSocks_Tests.Tests
         private Mock<IOutboundMessageSpooler> outboundSpoolerMock;
         private Mock<IMessagePoller> messagePollerMock;
         private Mock<ITcpClient> tcpClientMock;
+        private Mock<ISocket> socketMock;
         private IAsyncClient connection;
         private Mock<IOutboundMessageFactory> messageFactoryMock;
 
@@ -25,8 +26,11 @@ namespace AsyncSocks_Tests.Tests
             inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
             outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
             messagePollerMock = new Mock<IMessagePoller>();
+            socketMock = new Mock<ISocket>();
             tcpClientMock = new Mock<ITcpClient>();
             messageFactoryMock = new Mock<IOutboundMessageFactory>();
+
+            tcpClientMock.Setup(x => x.Socket).Returns(socketMock.Object);
 
             connection = new AsyncClient
             (
@@ -90,10 +94,11 @@ namespace AsyncSocks_Tests.Tests
         public void RemoteEndPointPropertyShouldReturnValuesAccordingToTcpClientObject()
         {
             var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
-            var clientMock = new Mock<ISocket>();
+           
+            Assert.IsNull(connection.RemoteEndPoint); // Socket is not connected, so properties are null
 
-            tcpClientMock.Setup(x => x.Socket).Returns(clientMock.Object).Verifiable();
-            clientMock.Setup(x => x.RemoteEndPoint).Returns(endPoint).Verifiable();
+            socketMock.Setup(x => x.RemoteEndPoint).Returns(endPoint);
+            connection.Connect(); // This saves end points from Socket object in AsyncClient object, so they aren't lost on disconnection.
 
             Assert.AreEqual(endPoint, connection.RemoteEndPoint);
         }
@@ -102,12 +107,13 @@ namespace AsyncSocks_Tests.Tests
         public void LocalEndPointPropertyShouldReturnValuesAccordingToTcpClientObject()
         {
             var endPoint = new IPEndPoint(IPAddress.Parse("192.168.1.80"), 44526);
-            var clientMock = new Mock<ISocket>();
 
-            tcpClientMock.Setup(x => x.Socket).Returns(clientMock.Object).Verifiable();
-            clientMock.Setup(x => x.LocalEndPoint).Returns(endPoint).Verifiable();
+            Assert.IsNull(connection.LocalEndPoint); // Socket is not connected, so properties are null
 
-            Assert.AreEqual(endPoint, connection.LocalEndPoint);
+            socketMock.Setup(x => x.LocalEndPoint).Returns(endPoint);
+            connection.Connect(); // This saves end points from Socket object in AsyncClient object, so they aren't lost on disconnection.
+
+            Assert.AreEqual(endPoint, connection.LocalEndPoint); 
         }
 
         [TestMethod]
@@ -193,13 +199,15 @@ namespace AsyncSocks_Tests.Tests
             inboundSpoolerMock.Setup(x => x.Start()).Verifiable();
             outboundSpoolerMock.Setup(x => x.Start()).Verifiable();
             messagePollerMock.Setup(x => x.Start()).Verifiable();
-
+            socketMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80)).Verifiable();
+            socketMock.Setup(x => x.LocalEndPoint).Returns(new IPEndPoint(IPAddress.Parse("192.168.80.80"), 45465)).Verifiable();
             connection.Connect();
 
             tcpClientMock.Verify();
             inboundSpoolerMock.Verify();
             outboundSpoolerMock.Verify();
             messagePollerMock.Verify();
+            socketMock.Verify();
         }
 
         [TestMethod]

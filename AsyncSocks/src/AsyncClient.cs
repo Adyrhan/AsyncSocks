@@ -15,6 +15,7 @@ namespace AsyncSocks
         private ITcpClient tcpClient;
         private IMessagePoller poller;
         private IOutboundMessageFactory messageFactory;
+        private bool isClosing;
 
         public event NewMessageReceived OnNewMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
@@ -26,8 +27,21 @@ namespace AsyncSocks
             this.poller = poller;
             this.tcpClient = tcpClient;
             this.messageFactory = messageFactory;
+
+            setupEvents();
+            if (tcpClient.Connected) saveEndPoints();
+        }
+
+        private void setupEvents()
+        {
             poller.OnNewClientMessageReceived += poller_OnNewClientMessageReceived;
             inboundSpooler.OnPeerDisconnected += InboundSpooler_OnPeerDisconnected;
+        }
+
+        private void saveEndPoints()
+        {
+            LocalEndPoint = tcpClient.Socket.LocalEndPoint;
+            RemoteEndPoint = tcpClient.Socket.RemoteEndPoint;
         }
 
         private void InboundSpooler_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
@@ -41,7 +55,7 @@ namespace AsyncSocks
                     onPeerDisconnected(this, ev);
                 }
 
-                Close();
+                if (!isClosing) Close();
             });
             
         }
@@ -76,22 +90,16 @@ namespace AsyncSocks
 
         public void Close()
         {
+            isClosing = true;
             tcpClient.Close();
             poller.Stop();
             inboundSpooler.Stop();
             outboundSpooler.Stop();
-            
         }
 
-        public EndPoint RemoteEndPoint
-        {
-            get { return tcpClient.Socket.RemoteEndPoint; }
-        }
-
-        public EndPoint LocalEndPoint
-        {
-            get { return tcpClient.Socket.LocalEndPoint; }
-        }
+        public EndPoint RemoteEndPoint { get; private set; }
+        
+        public EndPoint LocalEndPoint { get; private set; }
 
         public bool IsActive()
         {
@@ -119,13 +127,22 @@ namespace AsyncSocks
 
         public void Connect()
         {
-            tcpClient.Connect();
+            Connect(null);
             Start();
         }
 
         public void Connect(IPEndPoint remoteEndPoint)
         {
-            tcpClient.Connect(remoteEndPoint);
+            if (remoteEndPoint == null)
+            {
+                tcpClient.Connect();
+            }
+            else
+            {
+                tcpClient.Connect(remoteEndPoint);
+            }
+            
+            saveEndPoints();
             Start();
         }
         

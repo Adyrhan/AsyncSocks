@@ -97,5 +97,111 @@ namespace AsyncSocks_Tests.Tests
             serverUsingAlreadyUsedPort.Start();
         }
 
+        [TestMethod]
+        public void SendingBigMessage()
+        {
+            AsyncClient client = AsyncClient.Create(serverEndPoint);
+
+            int messageLength = 50 * 1024 * 1024;
+            byte[] messageBytes = new byte[messageLength];
+
+            for (int i = 0; i < messageLength; i++)
+            {
+                messageBytes[i] = (byte)((i+255) % 255);
+            }
+
+            byte[] messageBytesReceived = null;
+            AutoResetEvent messageReceivedEvent = new AutoResetEvent(false);
+            AutoResetEvent messageSentEvent = new AutoResetEvent(false);
+
+            server.OnNewMessageReceived += (sender, e) =>
+            {
+                messageBytesReceived = e.Message;
+                messageReceivedEvent.Set();
+            };
+
+            SocketException callbackException = null;
+            bool sendSuccess = false;
+
+            client.Start();
+
+            client.SendMessage(messageBytes, (success, exception) => 
+            {
+                callbackException = exception;
+                sendSuccess = success;
+                messageSentEvent.Set();
+            });
+
+            Assert.IsTrue(messageReceivedEvent.WaitOne(2000), "Message wasn't received by server");
+            Assert.IsTrue(messageSentEvent.WaitOne(2000));
+
+            string exceptionString = "";
+            if (callbackException != null) exceptionString = "Returned exception: " + callbackException.ToString();
+
+            Assert.IsTrue(sendSuccess, "Client reports error sending message");
+            Assert.IsNull(callbackException, exceptionString);
+
+            bool differs = false;
+            int bytenum = 0;
+
+            for (int i = 0; i < messageBytes.Length; i++)
+            {
+                if (messageBytes[i] != messageBytesReceived[i])
+                {
+                    differs = true;
+                    bytenum = i;
+                }
+            }
+
+            Assert.IsFalse(differs, "Message differs at byte num " + bytenum);
+
+            client.Close();
+           
+        }
+
+        [TestMethod]
+        public void MultipleConnectionsAndDisconnections()
+        {
+            AsyncClient[] clients = new AsyncClient[200];
+            AutoResetEvent allConnectedEvent = new AutoResetEvent(false);
+            int connectedClients = 0;
+
+            server.OnNewClientConnected += (sender, e) =>
+            {
+                connectedClients++;
+                if (connectedClients == clients.Length)
+                {
+                    allConnectedEvent.Set();
+                }
+            };
+
+            
+            for(int i = 0; i < clients.Length; i++)
+            {
+                clients[i] = AsyncClient.Create(serverEndPoint);
+                clients[i].Start();
+            }
+
+            Assert.IsTrue(true);
+
+            Assert.IsTrue(allConnectedEvent.WaitOne(6000), "Not all clients connected to the server");
+
+            AutoResetEvent allDisconnectedEvent = new AutoResetEvent(false);
+            server.OnPeerDisconnected += (sender, e) =>
+            {
+                connectedClients--;
+                if (connectedClients == 0)
+                {
+                    allDisconnectedEvent.Set();
+                }
+            };
+
+            server.ConnectionManager.CloseAllConnections();
+
+            Assert.IsTrue(allDisconnectedEvent.WaitOne(6000), "Not all clients were disconnected from the server");
+
+
+        }
+
     }
 }

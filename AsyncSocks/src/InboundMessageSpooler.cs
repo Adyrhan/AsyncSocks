@@ -15,7 +15,7 @@ namespace AsyncSocks
             var runnable = new InboundMessageSpoolerRunnable(reader, queue);
             var spooler = new InboundMessageSpooler(runnable);
 
-            spooler.ThreadName = "InboundMessageSpooler " + tcpClient.Socket.LocalEndPoint;
+            //spooler.ThreadName = "InboundMessageSpooler " + tcpClient.Socket.LocalEndPoint;
 
             return spooler;
         }

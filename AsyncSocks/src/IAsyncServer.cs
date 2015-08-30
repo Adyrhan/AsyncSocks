@@ -8,6 +8,8 @@ namespace AsyncSocks
 {
     public interface IAsyncServer
     {
+        IConnectionManager ConnectionManager { get; }
+
         event NewMessageReceived OnNewMessageReceived;
         event PeerDisconnected OnPeerDisconnected;
         event NewClientConnected OnNewClientConnected;
