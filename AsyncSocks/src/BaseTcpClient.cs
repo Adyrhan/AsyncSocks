@@ -26,14 +26,14 @@ namespace AsyncSocks
             set { remoteEndPoint = value; }
         }
 
-        public int Read(byte[] buffer, int offset, int lenght)
+        public int Read(byte[] buffer, int offset, int length)
         {
-            return tcpClient.GetStream().Read(buffer, offset, lenght);
+            return tcpClient.GetStream().Read(buffer, offset, length);
         }
 
-        public void Write(byte[] buffer, int offset, int lenght)
+        public void Write(byte[] buffer, int offset, int length)
         {
-            tcpClient.GetStream().Write(buffer, offset, lenght);
+            tcpClient.GetStream().Write(buffer, offset, length);
         }
 
         public void Close()

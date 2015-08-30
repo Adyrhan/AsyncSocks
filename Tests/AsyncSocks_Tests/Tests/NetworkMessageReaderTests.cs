@@ -25,7 +25,7 @@ namespace AsyncSocks_Tests
         {
             string messageString = "This is a test message";
 
-            Func<byte[], int, int, int> readImpl1 = (byte[] buffer, int offset, int lenght) => 
+            Func<byte[], int, int, int> readImpl1 = (byte[] buffer, int offset, int length) => 
             { 
                 byte[] size = BitConverter.GetBytes(messageString.Length);
                 for (int i = 0; i < buffer.Length; i++)
@@ -35,7 +35,7 @@ namespace AsyncSocks_Tests
                 return size.Length; 
             };
 
-            Func<byte[], int, int, int> readImpl2 = (byte[] buffer, int offset, int lenght) => 
+            Func<byte[], int, int, int> readImpl2 = (byte[] buffer, int offset, int length) => 
             { 
                 byte[] message = Encoding.ASCII.GetBytes(messageString);
                 for (int i = 0; i < buffer.Length; i++)
@@ -57,7 +57,7 @@ namespace AsyncSocks_Tests
         [TestMethod]
         public void ZeroByteMessageFromTcpClientShouldReturnNullNotifyingDisconnection()
         {
-            Func<byte[], int, int, int> readImpl1 = (byte[] buffer, int offset, int lenght) =>
+            Func<byte[], int, int, int> readImpl1 = (byte[] buffer, int offset, int length) =>
             {
                 return 0;
             };

@@ -6,8 +6,8 @@ namespace AsyncSocks
     {
         bool Connected { get; }
         ISocket Socket { get; }
-        int Read(byte[] buffer, int offset, int lenght);
-        void Write(byte[] buffer, int offset, int lenght);
+        int Read(byte[] buffer, int offset, int length);
+        void Write(byte[] buffer, int offset, int length);
         void Close();
         void Connect();
         void Connect(IPEndPoint remoteEndPoint);

@@ -30,13 +30,13 @@ namespace AsyncSocks
                 {
                     return null;
                 }
-                int messageLenght = BitConverter.ToInt32(buffer, 0);
+                int messageLength = BitConverter.ToInt32(buffer, 0);
 
-                buffer = new byte[messageLenght];
+                buffer = new byte[messageLength];
                 int bytesRead = 0;
-                while (bytesRead < messageLenght)
+                while (bytesRead < messageLength)
                 {
-                    var bytesReceived = tcpClient.Read(buffer, bytesRead, messageLenght - bytesRead);
+                    var bytesReceived = tcpClient.Read(buffer, bytesRead, messageLength - bytesRead);
                     if (bytesReceived == 0)
                     {
                         return null;
