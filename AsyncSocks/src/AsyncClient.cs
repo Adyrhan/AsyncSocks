@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsyncSocks.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -8,6 +9,17 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
+    namespace Exceptions
+    {
+        [Serializable]
+        public class MessageTooBigException : Exception
+        {
+            public MessageTooBigException(string message) : base(message)
+            {
+            }
+        }
+    }
+
     public class AsyncClient : IAsyncClient
     {
         private IInboundMessageSpooler inboundSpooler;
@@ -16,6 +28,7 @@ namespace AsyncSocks
         private IMessagePoller poller;
         private IOutboundMessageFactory messageFactory;
         private bool isClosing;
+        private ClientConfig clientConfig;
 
         public event NewMessageReceived OnNewMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
@@ -71,13 +84,21 @@ namespace AsyncSocks
 
         public void SendMessage(byte[] messageBytes)
         {
-            OutboundMessage msg = messageFactory.Create(messageBytes, null);
-            outboundSpooler.Enqueue(msg);
+            //OutboundMessage msg = messageFactory.Create(messageBytes, null);
+            //outboundSpooler.Enqueue(msg);
+            SendMessage(messageBytes, null);
         }
 
-        public void SendMessage(byte[] msgBytes, Action<bool, SocketException> callback)
+        public void SendMessage(byte[] messageBytes, Action<bool, SocketException> callback)
         {
-            OutboundMessage msg = messageFactory.Create(msgBytes, callback);
+            if (messageBytes.Length > this.ClientConfig.MaxMessageSize)
+            {
+                int maxSize = this.ClientConfig.MaxMessageSize;
+                int msgSize = messageBytes.Length;
+                throw new MessageTooBigException("Max size expected for outgoing messages is: " + maxSize.ToString() + " Received message of size: " + msgSize.ToString());
+            }
+
+            OutboundMessage msg = messageFactory.Create(messageBytes, callback);
             outboundSpooler.Enqueue(msg);
         }
 
@@ -109,6 +130,25 @@ namespace AsyncSocks
         public ITcpClient TcpClient
         {
             get { return tcpClient; }
+        }
+
+        public ClientConfig ClientConfig
+        {
+            get
+            {
+                if (clientConfig == null)
+                {
+                    clientConfig = ClientConfig.GetDefault();
+                }
+
+                return clientConfig;
+            }
+
+            set
+            {
+                if (!IsActive()) clientConfig = value;
+            }
+
         }
 
         public static AsyncClient Create(IPEndPoint remoteIpAddress)

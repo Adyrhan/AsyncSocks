@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using AsyncSocks.Exceptions;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -98,9 +99,12 @@ namespace AsyncSocks_Tests.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(MessageTooBigException))]
         public void SendingBigMessage()
         {
             AsyncClient client = AsyncClient.Create(serverEndPoint);
+
+            client.ClientConfig = new ClientConfig(40 * 1024 * 1024);
 
             int messageLength = 50 * 1024 * 1024;
             byte[] messageBytes = new byte[messageLength];

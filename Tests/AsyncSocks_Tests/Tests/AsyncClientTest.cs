@@ -6,6 +6,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using AsyncSocks.Exceptions;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -54,6 +55,53 @@ namespace AsyncSocks_Tests.Tests
                 Verifiable();
 
             outboundSpoolerMock.Setup(x => x.Enqueue(message)).Verifiable();
+            connection.SendMessage(messageBytes);
+
+            messageFactoryMock.Verify();
+            outboundSpoolerMock.Verify();
+        }
+
+        [TestMethod]
+        public void SendMessageAcceptsCompletionDelegateAndTellsOutboundSpoolerToEnqueueThePair()
+        {
+            bool receivedResult = false;
+
+            byte[] msgBytes = Encoding.ASCII.GetBytes("Some text");
+            Action<bool, SocketException> callback = (success, error) => receivedResult = success;
+            OutboundMessage outboundMessage = new OutboundMessage(msgBytes, callback);
+
+            messageFactoryMock.
+                Setup(x => x.Create(It.IsAny<byte[]>(), It.IsAny<Action<bool, SocketException>>())).
+                Returns(outboundMessage)
+                .Verifiable();
+
+            outboundSpoolerMock.
+                Setup(x => x.Enqueue(outboundMessage))
+                .Verifiable();
+
+            connection.SendMessage(msgBytes, callback);
+
+            messageFactoryMock.Verify();
+            outboundSpoolerMock.Verify();
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(MessageTooBigException))]
+        public void SendMessageRejectsMessagesBiggerThanConfigMaxMessageSize()
+        {
+            byte[] messageBytes = new byte[15 * 1024 * 1024];
+            var message = new OutboundMessage(messageBytes, null);
+
+            messageFactoryMock.
+                Setup(x => x.Create(messageBytes, null)).
+                Returns(message).
+                Verifiable();
+
+            outboundSpoolerMock.Setup(x => x.Enqueue(message)).Verifiable();
+
+            connection.ClientConfig = new ClientConfig(8 * 1024 * 1024);
+
             connection.SendMessage(messageBytes);
 
             messageFactoryMock.Verify();
@@ -211,28 +259,39 @@ namespace AsyncSocks_Tests.Tests
         }
 
         [TestMethod]
-        public void SendMessageAcceptsCompletionDelegateAndTellsOutboundSpoolerToEnqueueThePair()
+        public void ClientConfigPropertySetsNGetsClientConfigObject()
         {
-            bool receivedResult = false;
+            var clientConfig = new ClientConfig(8 * 1024);
 
-            byte[] msgBytes = Encoding.ASCII.GetBytes("Some text");
-            Action<bool, SocketException> callback = (success, error) => receivedResult = success;
-            OutboundMessage outboundMessage = new OutboundMessage(msgBytes, callback);
+            connection.ClientConfig = clientConfig;
 
-            messageFactoryMock.
-                Setup(x => x.Create(It.IsAny<byte[]>(), It.IsAny<Action<bool, SocketException>>())).
-                Returns(outboundMessage)
-                .Verifiable();
-
-            outboundSpoolerMock.
-                Setup(x => x.Enqueue(outboundMessage))
-                .Verifiable();
-
-            connection.SendMessage(msgBytes, callback);
-
-            messageFactoryMock.Verify();
-            outboundSpoolerMock.Verify();
-
+            Assert.AreEqual(clientConfig, connection.ClientConfig);
         }
+
+        [TestMethod]
+        public void ClientConfigPropertyCannotBeSetOnceStarted()
+        {
+            var clientConfig = new ClientConfig(8 * 1024);
+            var clientConfig2 = new ClientConfig(8 * 1024);
+
+            connection.ClientConfig = clientConfig;
+
+            inboundSpoolerMock.Setup(x => x.IsRunning()).Returns(true);
+            outboundSpoolerMock.Setup(x => x.IsRunning()).Returns(true);
+            messagePollerMock.Setup(x => x.IsRunning()).Returns(true);
+            connection.Start();
+
+            connection.ClientConfig = clientConfig2;
+
+            Assert.AreNotEqual(clientConfig2, connection.ClientConfig);
+            
+        }
+
+        [TestMethod]
+        public void ClientConfigPropertyReturnsDefaultConfig()
+        {
+            Assert.IsNotNull(connection.ClientConfig);
+        }
+
     }
 }
