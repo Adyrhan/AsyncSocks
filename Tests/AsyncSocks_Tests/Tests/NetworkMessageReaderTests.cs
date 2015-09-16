@@ -17,7 +17,7 @@ namespace AsyncSocks_Tests
         public void BeforeEach()
         {
             tcpClientMock = new Mock<ITcpClient>();
-            reader = new NetworkMessageReader(tcpClientMock.Object);
+            reader = new NetworkMessageReader(tcpClientMock.Object, 10 * 1024 * 1024);
         }
         
         [TestMethod]
@@ -68,6 +68,38 @@ namespace AsyncSocks_Tests
 
             Assert.IsNull(readMessage);
 
+        }
+
+        [TestMethod]
+        public void ShouldReturnNullIfMessageSizeIsBiggerThanMaxMessageSizeField()
+        {
+            int size = 50 * 1024 * 1024;
+
+            Func<byte[], int, int, int> readImpl = (byte[] buffer, int offset, int length) =>
+            {
+                byte[] sizeBytes = BitConverter.GetBytes(size);
+
+                for (int i = 0; i < length; i++)
+                {
+                    buffer[i] = sizeBytes[i];
+                }
+
+                return length;
+            };
+
+            Func<byte[], int, int, int> readImpl2 = (byte[] buffer, int offset, int length) =>
+            {
+                return length;
+            };
+
+            tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), It.IsAny<int>(), 4)).
+                Callback((byte[] buffer, int offset, int length) => readImpl(buffer, offset, length)).Returns(readImpl);
+            tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), It.IsAny<int>(), size)).
+                Callback((byte[] buffer, int offset, int length) => readImpl2(buffer, offset, length)).Returns(readImpl2);
+
+            Assert.IsNull(reader.Read());
+
+            tcpClientMock.Verify(x => x.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()), Times.Once());
         }
 
         [TestMethod]

@@ -8,9 +8,9 @@ namespace AsyncSocks
     {
         public event PeerDisconnected OnPeerDisconnected;
 
-        public static InboundMessageSpooler Create(ITcpClient tcpClient)
+        public static InboundMessageSpooler Create(ITcpClient tcpClient, int maxMessageSize)
         {
-            var reader = new NetworkMessageReader(tcpClient);
+            var reader = new NetworkMessageReader(tcpClient, maxMessageSize);
             var queue = new BlockingCollection<NetworkMessage>(new ConcurrentQueue<NetworkMessage>());
             var runnable = new InboundMessageSpoolerRunnable(reader, queue);
             var spooler = new InboundMessageSpooler(runnable);
@@ -18,6 +18,11 @@ namespace AsyncSocks
             //spooler.ThreadName = "InboundMessageSpooler " + tcpClient.Socket.LocalEndPoint;
 
             return spooler;
+        }
+
+        public static InboundMessageSpooler Create(ITcpClient tcpClient)
+        {
+            return Create(tcpClient, ClientConfig.GetDefault().MaxMessageSize);
         }
 
         public InboundMessageSpooler(IInboundMessageSpoolerRunnable runnable) : base(runnable)

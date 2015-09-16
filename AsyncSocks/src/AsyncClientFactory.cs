@@ -13,14 +13,19 @@ namespace AsyncSocks
             return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient);
         }
 
-        public IAsyncClient Create(ITcpClient tcpClient)
+        public IAsyncClient Create(ITcpClient tcpClient, int maxMessageSize)
         {
-            var inboundSpooler = InboundMessageSpooler.Create(tcpClient);
+            var inboundSpooler = InboundMessageSpooler.Create(tcpClient, maxMessageSize);
             var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
             var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
             var messageFactory = new OutboundMessageFactory();
 
             return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient);
+        }
+
+        public IAsyncClient Create(ITcpClient tcpClient)
+        {
+            return Create(tcpClient, ClientConfig.GetDefault().MaxMessageSize);
         }
 
     }
