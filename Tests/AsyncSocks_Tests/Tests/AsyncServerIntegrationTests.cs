@@ -112,53 +112,20 @@ namespace AsyncSocks_Tests.Tests
                 messageBytes[i] = (byte)((i+255) % 255);
             }
 
-            byte[] messageBytesReceived = null;
-            AutoResetEvent messageReceivedEvent = new AutoResetEvent(false);
-            AutoResetEvent messageSentEvent = new AutoResetEvent(false);
-
-            server.OnNewMessageReceived += (sender, e) =>
-            {
-                messageBytesReceived = e.Message;
-                messageReceivedEvent.Set();
-            };
-
-            SocketException callbackException = null;
-            bool sendSuccess = false;
-
             client.Start();
 
-            client.SendMessage(messageBytes, (success, exception) => 
+            try
             {
-                callbackException = exception;
-                sendSuccess = success;
-                messageSentEvent.Set();
-            });
-
-            Assert.IsTrue(messageReceivedEvent.WaitOne(2000), "Message wasn't received by server");
-            Assert.IsTrue(messageSentEvent.WaitOne(2000));
-
-            string exceptionString = "";
-            if (callbackException != null) exceptionString = "Returned exception: " + callbackException.ToString();
-
-            Assert.IsTrue(sendSuccess, "Client reports error sending message");
-            Assert.IsNull(callbackException, exceptionString);
-
-            bool differs = false;
-            int bytenum = 0;
-
-            for (int i = 0; i < messageBytes.Length; i++)
-            {
-                if (messageBytes[i] != messageBytesReceived[i])
-                {
-                    differs = true;
-                    bytenum = i;
-                }
+                client.SendMessage(messageBytes);
             }
-
-            Assert.IsFalse(differs, "Message differs at byte num " + bytenum);
-
-            client.Close();
-           
+            catch (MessageTooBigException e)
+            {
+                throw e;
+            }
+            finally
+            {
+                client.Close();
+            }
         }
 
         [TestMethod]
