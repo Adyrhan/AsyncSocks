@@ -28,18 +28,18 @@ namespace AsyncSocks
         private IMessagePoller poller;
         private IOutboundMessageFactory messageFactory;
         private bool isClosing;
-        private ClientConfig clientConfig;
 
         public event NewMessageReceived OnNewMessageReceived;
         public event PeerDisconnected OnPeerDisconnected;
 
-        public AsyncClient(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient)
+        public AsyncClient(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient, ClientConfig clientConfig)
         {
             this.inboundSpooler = inboundSpooler;
             this.outboundSpooler = outboundSpooler;
             this.poller = poller;
             this.tcpClient = tcpClient;
             this.messageFactory = messageFactory;
+            ClientConfig = clientConfig;
 
             setupEvents();
             if (tcpClient.Connected) saveEndPoints();
@@ -91,9 +91,9 @@ namespace AsyncSocks
 
         public void SendMessage(byte[] messageBytes, Action<bool, SocketException> callback)
         {
-            if (messageBytes.Length > this.ClientConfig.MaxMessageSize)
+            if (messageBytes.Length > ClientConfig.MaxMessageSize)
             {
-                int maxSize = this.ClientConfig.MaxMessageSize;
+                int maxSize = ClientConfig.MaxMessageSize;
                 int msgSize = messageBytes.Length;
                 throw new MessageTooBigException("Max size expected for outgoing messages is: " + maxSize.ToString() + " Received message of size: " + msgSize.ToString());
             }
@@ -132,37 +132,48 @@ namespace AsyncSocks
             get { return tcpClient; }
         }
 
-        public ClientConfig ClientConfig
+        public ClientConfig ClientConfig { get; }
+
+        public static AsyncClient Create(IPEndPoint remoteIpAddress, ClientConfig config)
         {
-            get
-            {
-                if (clientConfig == null)
-                {
-                    clientConfig = ClientConfig.GetDefault();
-                }
+            TcpClient tcpClient;
+            BaseTcpClient client;
 
-                return clientConfig;
+            if (remoteIpAddress == null)
+            {
+                tcpClient = new TcpClient();
+                client = new BaseTcpClient(tcpClient);
+            }
+            else
+            {
+                tcpClient = new TcpClient(remoteIpAddress.Address.ToString(), remoteIpAddress.Port);
+                client = new BaseTcpClient(tcpClient);
             }
 
-            set
+            if (config == null)
             {
-                if (!IsActive()) clientConfig = value;
+                return (AsyncClient)new AsyncClientFactory().Create(client);
+            }
+            else
+            {
+                return (AsyncClient)new AsyncClientFactory(config).Create(client);
             }
 
+        }
+
+        public static AsyncClient Create(ClientConfig config)
+        {
+            return Create(null, config);
         }
 
         public static AsyncClient Create(IPEndPoint remoteIpAddress)
         {
-            var tcpClient = new TcpClient(remoteIpAddress.Address.ToString(), remoteIpAddress.Port);
-            var client = new BaseTcpClient(tcpClient);
-
-            return (AsyncClient)new AsyncClientFactory().Create(client);
+            return Create(remoteIpAddress, null);
         }
 
         public static AsyncClient Create()
         {
-            var client = new BaseTcpClient(new TcpClient());
-            return (AsyncClient)new AsyncClientFactory().Create(client);
+            return Create(null, null);
         }
 
         public void Connect()

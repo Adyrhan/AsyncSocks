@@ -20,6 +20,7 @@ namespace AsyncSocks_Tests.Tests
         private Mock<ISocket> socketMock;
         private IAsyncClient connection;
         private Mock<IOutboundMessageFactory> messageFactoryMock;
+        private ClientConfig clientConfig;
 
         [TestInitialize]
         public void BeforeEach()
@@ -30,6 +31,7 @@ namespace AsyncSocks_Tests.Tests
             socketMock = new Mock<ISocket>();
             tcpClientMock = new Mock<ITcpClient>();
             messageFactoryMock = new Mock<IOutboundMessageFactory>();
+            clientConfig = new ClientConfig(8 * 1024 * 1024);
 
             tcpClientMock.Setup(x => x.Socket).Returns(socketMock.Object);
 
@@ -39,7 +41,8 @@ namespace AsyncSocks_Tests.Tests
                 outboundSpoolerMock.Object,
                 messagePollerMock.Object,
                 messageFactoryMock.Object,
-                tcpClientMock.Object
+                tcpClientMock.Object,
+                clientConfig
             );
         }
 
@@ -99,8 +102,6 @@ namespace AsyncSocks_Tests.Tests
                 Verifiable();
 
             outboundSpoolerMock.Setup(x => x.Enqueue(message)).Verifiable();
-
-            connection.ClientConfig = new ClientConfig(8 * 1024 * 1024);
 
             connection.SendMessage(messageBytes);
 
@@ -259,38 +260,9 @@ namespace AsyncSocks_Tests.Tests
         }
 
         [TestMethod]
-        public void ClientConfigPropertySetsNGetsClientConfigObject()
+        public void ClientConfigPropertyReturnsClientConfigObject()
         {
-            var clientConfig = new ClientConfig(8 * 1024);
-
-            connection.ClientConfig = clientConfig;
-
             Assert.AreEqual(clientConfig, connection.ClientConfig);
-        }
-
-        [TestMethod]
-        public void ClientConfigPropertyCannotBeSetOnceStarted()
-        {
-            var clientConfig = new ClientConfig(8 * 1024);
-            var clientConfig2 = new ClientConfig(8 * 1024);
-
-            connection.ClientConfig = clientConfig;
-
-            inboundSpoolerMock.Setup(x => x.IsRunning()).Returns(true);
-            outboundSpoolerMock.Setup(x => x.IsRunning()).Returns(true);
-            messagePollerMock.Setup(x => x.IsRunning()).Returns(true);
-            connection.Start();
-
-            connection.ClientConfig = clientConfig2;
-
-            Assert.AreNotEqual(clientConfig2, connection.ClientConfig);
-            
-        }
-
-        [TestMethod]
-        public void ClientConfigPropertyReturnsDefaultConfig()
-        {
-            Assert.IsNotNull(connection.ClientConfig);
         }
 
     }

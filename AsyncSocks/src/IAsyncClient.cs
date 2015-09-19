@@ -20,7 +20,7 @@ namespace AsyncSocks
         event PeerDisconnected OnPeerDisconnected;
 
         ITcpClient TcpClient { get; }
-        ClientConfig ClientConfig { get; set; }
+        ClientConfig ClientConfig { get; }
 
         void SendMessage(byte[] msgBytes, Action<bool, SocketException> callback);
     }

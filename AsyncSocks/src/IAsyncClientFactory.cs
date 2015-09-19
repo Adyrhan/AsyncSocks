@@ -9,5 +9,7 @@ namespace AsyncSocks
     {
         IAsyncClient Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient);
         IAsyncClient Create(ITcpClient tcpClient);
+
+        ClientConfig ClientConfig { get; }
     }
 }

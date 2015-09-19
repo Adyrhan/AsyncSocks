@@ -11,7 +11,7 @@ namespace AsyncSocks
     {
         private IClientConnectionAgent clientConnectionAgent;
         private IConnectionManager connectionManager;
-        private ITcpListener tcpListener;
+        private ITcpListener tcpListener;        
 
         public IConnectionManager ConnectionManager
         {
@@ -21,13 +21,15 @@ namespace AsyncSocks
             }
         }
 
+        public ClientConfig ClientConfig { get; }
+
         public event NewMessageReceived OnNewMessageReceived;
         public event NewClientConnected OnNewClientConnected;
         public event PeerDisconnected OnPeerDisconnected;
 
-        public AsyncServer(IClientConnectionAgent clientConnectionAgent, IConnectionManager connectionManager, ITcpListener tcpListener)
+        public AsyncServer(IClientConnectionAgent clientConnectionAgent, IConnectionManager connectionManager, ITcpListener tcpListener, ClientConfig clientConfig)
         {
-            // TODO: Complete member initialization
+            ClientConfig = clientConfig;
             this.clientConnectionAgent = clientConnectionAgent;
             this.connectionManager = connectionManager;
             this.tcpListener = tcpListener;
@@ -76,10 +78,16 @@ namespace AsyncSocks
 
         public static AsyncServer Create(IPEndPoint localEndPoint)
         {
+            var clientConfig = ClientConfig.GetDefault();
+            return Create(localEndPoint, clientConfig);
+        }
+
+        public static AsyncServer Create(IPEndPoint localEndPoint, ClientConfig clientConfig)
+        {
             BaseTcpListener tcpListener = new BaseTcpListener(new TcpListener(localEndPoint));
-            ClientConnectionAgent clientConnectionAgent = ClientConnectionAgent.Create(tcpListener);
+            ClientConnectionAgent clientConnectionAgent = ClientConnectionAgent.Create(tcpListener, clientConfig);
             ConnectionManager connectionManager = new ConnectionManager(new Dictionary<IPEndPoint, IAsyncClient>());
-            return new AsyncServer(clientConnectionAgent, connectionManager, tcpListener);
+            return new AsyncServer(clientConnectionAgent, connectionManager, tcpListener, clientConfig);
         }
     }
 }

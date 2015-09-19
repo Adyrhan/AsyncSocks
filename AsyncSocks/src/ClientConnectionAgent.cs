@@ -26,9 +26,9 @@ namespace AsyncSocks
             }
         }
 
-        public static ClientConnectionAgent Create(ITcpListener listener)
+        public static ClientConnectionAgent Create(ITcpListener listener, ClientConfig clientConfig)
         {
-            AsyncClientFactory factory = new AsyncClientFactory();
+            AsyncClientFactory factory = new AsyncClientFactory(clientConfig);
             ClientConnectionAgentRunnable runnable = new ClientConnectionAgentRunnable(listener, factory);
             return new ClientConnectionAgent(runnable);
         }

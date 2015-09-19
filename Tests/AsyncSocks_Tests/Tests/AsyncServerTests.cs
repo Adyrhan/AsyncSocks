@@ -16,6 +16,7 @@ namespace AsyncSocks_Tests.Tests
         private Mock<IConnectionManager> connectionManagerMock;
         private Mock<IClientConnectionAgent> clientConnectionAgentMock;
         private Mock<ITcpListener> tcpListenerMock;
+        private ClientConfig clientConfig;
         
         [TestInitialize]
         public void BeforeEach()
@@ -23,7 +24,8 @@ namespace AsyncSocks_Tests.Tests
             tcpListenerMock = new Mock<ITcpListener>();
             connectionManagerMock = new Mock<IConnectionManager>();
             clientConnectionAgentMock = new Mock<IClientConnectionAgent>();
-            server = new AsyncServer(clientConnectionAgentMock.Object, connectionManagerMock.Object, tcpListenerMock.Object);
+            clientConfig = new ClientConfig(10 * 1024 * 1024);
+            server = new AsyncServer(clientConnectionAgentMock.Object, connectionManagerMock.Object, tcpListenerMock.Object, clientConfig);
         }
         
         [TestMethod]
@@ -121,5 +123,33 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000));
             Assert.AreEqual(peerConnectionMock.Object, peerArgument, "PeerConnection instance is not the same as expected");
         }
+
+        [TestMethod]
+        public void ClientConfigPropertyGetsClientConfigObject()
+        {
+            Assert.AreEqual(clientConfig, server.ClientConfig);
+        }
+
+        //[TestMethod]
+        //public void ClientConfigPropertyCanOnlyBeSetBeforeCallingStartMethod()
+        //{
+        //    var clientConfig = new ClientConfig(10 * 1024 * 1024);
+        //    var clientConfig2 = new ClientConfig(10 * 1024 * 1024);
+
+        //    server.ClientConfig = clientConfig;
+        //    Assert.AreEqual(clientConfig, server.ClientConfig);
+
+        //    server.Start();
+
+        //    server.ClientConfig = clientConfig2;
+        //    Assert.AreEqual(clientConfig, server.ClientConfig);
+
+        //}
+
+        //[TestMethod]
+        //public void ClientConfigAlwaysReturnAnInstance()
+        //{
+        //    Assert.IsNotNull(server.ClientConfig);
+        //}
     }
 }

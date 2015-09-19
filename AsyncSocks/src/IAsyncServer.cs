@@ -9,6 +9,7 @@ namespace AsyncSocks
     public interface IAsyncServer
     {
         IConnectionManager ConnectionManager { get; }
+        ClientConfig ClientConfig { get; }
 
         event NewMessageReceived OnNewMessageReceived;
         event PeerDisconnected OnPeerDisconnected;

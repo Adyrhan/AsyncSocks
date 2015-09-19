@@ -8,24 +8,31 @@ namespace AsyncSocks
 {
     public class AsyncClientFactory : IAsyncClientFactory
     {
-        public IAsyncClient Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient)
+        public AsyncClientFactory(ClientConfig clientConfig)
         {
-            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient);
+            ClientConfig = clientConfig;
         }
 
-        public IAsyncClient Create(ITcpClient tcpClient, int maxMessageSize)
+        public AsyncClientFactory()
         {
-            var inboundSpooler = InboundMessageSpooler.Create(tcpClient, maxMessageSize);
-            var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
-            var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
-            var messageFactory = new OutboundMessageFactory();
+            ClientConfig = ClientConfig.GetDefault();
+        }
 
-            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient);
+        public ClientConfig ClientConfig { get; }
+
+        public IAsyncClient Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient)
+        {
+            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient, ClientConfig);
         }
 
         public IAsyncClient Create(ITcpClient tcpClient)
         {
-            return Create(tcpClient, ClientConfig.GetDefault().MaxMessageSize);
+            var inboundSpooler = InboundMessageSpooler.Create(tcpClient, ClientConfig.MaxMessageSize);
+            var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
+            var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
+            var messageFactory = new OutboundMessageFactory();
+
+            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient, ClientConfig);
         }
 
     }
