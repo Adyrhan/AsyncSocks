@@ -172,5 +172,76 @@ namespace AsyncSocks_Tests.Tests
 
         }
 
+        [TestMethod]
+        public void MultipleConnectionsAndDisconnectionsFromPeers()
+        {
+            AsyncClient[] clients = new AsyncClient[200];
+            AutoResetEvent allConnectedEvent = new AutoResetEvent(false);
+            int connectedClients = 0;
+
+            server.OnNewClientConnected += (sender, e) =>
+            {
+                connectedClients++;
+                if (connectedClients == clients.Length)
+                {
+                    allConnectedEvent.Set();
+                }
+            };
+
+
+            for (int i = 0; i < clients.Length; i++)
+            {
+                clients[i] = AsyncClient.Create(serverEndPoint);
+                clients[i].Start();
+            }
+
+            Assert.IsTrue(true);
+
+            Assert.IsTrue(allConnectedEvent.WaitOne(6000), "Not all clients connected to the server");
+
+            AutoResetEvent allDisconnectedEvent = new AutoResetEvent(false);
+            server.OnPeerDisconnected += (sender, e) =>
+            {
+                connectedClients--;
+                if (connectedClients == 0)
+                {
+                    allDisconnectedEvent.Set();
+                }
+            };
+
+            foreach(AsyncClient client in clients)
+            {
+                client.Close();
+            }
+
+            Assert.IsTrue(allDisconnectedEvent.WaitOne(6000), "Not all clients were disconnected from the server");
+        }
+
+        [TestMethod]
+        public void ReceivingBigMessage()
+        {
+            AsyncClient client = AsyncClient.Create(serverEndPoint, new ClientConfig(60 * 1024 * 1024)); // It's not gonna reject the message on the client
+
+            int messageLength = 50 * 1024 * 1024;
+            byte[] messageBytes = new byte[messageLength];
+
+            for (int i = 0; i < messageLength; i++)
+            {
+                messageBytes[i] = (byte)((i + 255) % 255);
+            }
+
+            client.Start();
+
+            AutoResetEvent disconnectedEvent = new AutoResetEvent(false);
+            client.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) =>
+            {
+                disconnectedEvent.Set();
+            };
+
+            client.SendMessage(messageBytes);
+
+            Assert.IsTrue(disconnectedEvent.WaitOne(2000), "Server didn't disconnect client when it sent the message");
+
+        }
     }
 }
