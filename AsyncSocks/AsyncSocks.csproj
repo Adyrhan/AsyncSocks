@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\ClientConfig.cs" />
+    <Compile Include="src\INetworkReader.cs" />
+    <Compile Include="src\INetworkStreamReader.cs" />
     <Compile Include="src\IOutboundMessageFactory.cs" />
     <Compile Include="src\IAsyncServer.cs" />
     <Compile Include="src\MessagePoller.cs" />
@@ -75,6 +77,8 @@
     <Compile Include="src\ITcpClient.cs" />
     <Compile Include="src\ITcpListener.cs" />
     <Compile Include="src\NetworkMessageReader.cs" />
+    <Compile Include="src\NetworkReaderResult.cs" />
+    <Compile Include="src\NetworkStreamReader.cs" />
     <Compile Include="src\NewClientConnected.cs" />
     <Compile Include="src\NewMessageReceived.cs" />
     <Compile Include="src\OutboundMessage.cs" />
