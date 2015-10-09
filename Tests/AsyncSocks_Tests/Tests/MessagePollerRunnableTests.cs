@@ -11,24 +11,24 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class MessagePollerRunnableTests
     {
-        private IMessagePollerRunnable runnable;
-        private BlockingCollection<NetworkMessage> queue;
+        private IMessagePollerRunnable<byte[]> runnable;
+        private BlockingCollection<ReadResult<byte[]>> queue;
 
         [TestInitialize]
         public void BeforeEach()
         {
-            queue = new BlockingCollection<NetworkMessage>();
-            runnable = new MessagePollerRunnable(queue);
+            queue = new BlockingCollection<ReadResult<byte[]>>();
+            runnable = new MessagePollerRunnable<byte[]>(queue);
         }
 
         [TestMethod]
         public void PollShouldGetAMessageFromQueueAndRaiseOnNewMessageReceivedEvent()
         {
-            var connectionMock = new Mock<IAsyncClient>();
+            var connectionMock = new Mock<IAsyncClient<byte[]>>();
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewMessageReceived((object sender, NewMessageReceivedEventArgs e) =>
+            var callback = new NewMessageReceived<byte[]>((object sender, NewMessageReceivedEventArgs<byte[]> e) =>
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, e.Sender);
@@ -37,7 +37,7 @@ namespace AsyncSocks_Tests.Tests
 
             runnable.OnNewMessageReceived += callback;
 
-            queue.Add(new NetworkMessage(connectionMock.Object, originalMessage));
+            queue.Add(new ReadResult<byte[]>(originalMessage));
 
             runnable.Poll();
 
@@ -48,11 +48,11 @@ namespace AsyncSocks_Tests.Tests
         public void RunShouldCallPool()
         {
             var runner = new ThreadRunner(runnable);
-            var connectionMock = new Mock<IAsyncClient>();
+            var connectionMock = new Mock<IAsyncClient<byte[]>>();
             var originalMessage = Encoding.ASCII.GetBytes("This is a message");
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            var callback = new NewMessageReceived((object sender, NewMessageReceivedEventArgs e) =>
+            var callback = new NewMessageReceived<byte[]>((object sender, NewMessageReceivedEventArgs<byte[]> e) =>
             {
                 callbackCalledEvent.Set();
                 Assert.AreEqual(connectionMock.Object, e.Sender);
@@ -61,7 +61,7 @@ namespace AsyncSocks_Tests.Tests
             
             runnable.OnNewMessageReceived += callback;
 
-            queue.Add(new NetworkMessage(connectionMock.Object, originalMessage));
+            queue.Add(new ReadResult<byte[]>(originalMessage));
 
             Assert.IsFalse(runnable.IsRunning);
 

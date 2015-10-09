@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public class OutboundMessage
+    public class OutboundMessage<T>
     {
-        public OutboundMessage(byte[] messageBytes, Action<bool, SocketException> callback)
+        public OutboundMessage(T message, Action<bool, SocketException> callback)
         {
-            MessageBytes = messageBytes;
+            Message = message;
             Callback = callback;
         }
 
-        public byte[] MessageBytes { get; }
+        public T Message { get; }
         public Action<bool, SocketException> Callback { get; }
     }
 }

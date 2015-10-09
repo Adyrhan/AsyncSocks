@@ -6,26 +6,26 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class OutboundMessageSpooler : ThreadRunner, IOutboundMessageSpooler
+    public class OutboundMessageSpooler<T> : ThreadRunner, IOutboundMessageSpooler<T>
     {
-        private BlockingCollection<OutboundMessage> queue;
+        private BlockingCollection<OutboundMessage<T>> queue;
 
-        public OutboundMessageSpooler(IOutboundMessageSpoolerRunnable runnable, BlockingCollection<OutboundMessage> queue) : base(runnable) 
+        public OutboundMessageSpooler(IOutboundMessageSpoolerRunnable runnable, BlockingCollection<OutboundMessage<T>> queue) : base(runnable) 
         {
             this.queue = queue;
         }
 
-        public static OutboundMessageSpooler Create(ITcpClient tcpClient)
+        public static OutboundMessageSpooler<T> Create(ITcpClient tcpClient)
         {
-            var queue = new BlockingCollection<OutboundMessage>(new ConcurrentQueue<OutboundMessage>());
-            var runnable = new OutboundMessageSpoolerRunnable(tcpClient, queue);
-            var spooler = new OutboundMessageSpooler(runnable, queue);
+            var queue = new BlockingCollection<OutboundMessage<T>>(new ConcurrentQueue<OutboundMessage<T>>());
+            var runnable = new OutboundMessageSpoolerRunnable<T>(tcpClient, queue);
+            var spooler = new OutboundMessageSpooler<T>(runnable, queue);
             //spooler.ThreadName = "OutboundMessageSpooler "+ tcpClient.Socket.LocalEndPoint;
 
             return spooler;
         }
 
-        public void Enqueue(OutboundMessage outboundMessage)
+        public void Enqueue(OutboundMessage<T> outboundMessage)
         {
             queue.Add(outboundMessage);
         }

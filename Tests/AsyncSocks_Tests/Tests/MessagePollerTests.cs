@@ -10,16 +10,16 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class MessagePollerTests
     {
-        private IMessagePoller poller;
+        private IMessagePoller<byte[]> poller;
         private BlockingCollection<byte[]> queue;
-        private Mock<IMessagePollerRunnable> runnable;
+        private Mock<IMessagePollerRunnable<byte[]>> runnable;
 
         [TestInitialize]
         public void BeforeEach()
         {
             queue = new BlockingCollection<byte[]>();
-            runnable = new Mock<IMessagePollerRunnable>();
-            poller = new MessagePoller(runnable.Object);
+            runnable = new Mock<IMessagePollerRunnable<byte[]>>();
+            poller = new MessagePoller<byte[]>(runnable.Object);
         }
 
 
@@ -28,7 +28,7 @@ namespace AsyncSocks_Tests.Tests
         {
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            NewMessageReceived callback = (object sender, NewMessageReceivedEventArgs e) => callbackCalledEvent.Set();
+            NewMessageReceived<byte[]> callback = (object sender, NewMessageReceivedEventArgs<byte[]> e) => callbackCalledEvent.Set();
 
             poller.OnNewClientMessageReceived += callback;
 

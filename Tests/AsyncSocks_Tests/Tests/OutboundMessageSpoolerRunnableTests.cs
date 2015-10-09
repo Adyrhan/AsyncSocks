@@ -15,16 +15,16 @@ namespace AsyncSocks_Tests
     public class OutboundMessageSpoolerRunnableTests
     {
         
-        private OutboundMessageSpoolerRunnable spooler;
+        private OutboundMessageSpoolerRunnable<byte[]> spooler;
         private Mock<ITcpClient> tcpClientMock;
-        private BlockingCollection<OutboundMessage> queue;
+        private BlockingCollection<OutboundMessage<byte[]>> queue;
 
         [TestInitialize]
         public void BeforeEach()
         {
-            queue = new BlockingCollection<OutboundMessage>(new ConcurrentQueue<OutboundMessage>());
+            queue = new BlockingCollection<OutboundMessage<byte[]>>(new ConcurrentQueue<OutboundMessage<byte[]>>());
             tcpClientMock = new Mock<ITcpClient>();
-            spooler = new OutboundMessageSpoolerRunnable(tcpClientMock.Object, queue);
+            spooler = new OutboundMessageSpoolerRunnable<byte[]>(tcpClientMock.Object, queue);
         }
         
         [TestMethod]
@@ -36,7 +36,7 @@ namespace AsyncSocks_Tests
             byte[] size = BitConverter.GetBytes(messageBytes.Length);
             int totalLength = size.Length + messageBytes.Length;
 
-            var message = new OutboundMessage(messageBytes, null);
+            var message = new OutboundMessage<byte[]>(messageBytes, null);
 
             tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), 0, totalLength)).Verifiable();
 
@@ -57,7 +57,7 @@ namespace AsyncSocks_Tests
         {
             AutoResetEvent spoolerCalled = new AutoResetEvent(false);
 
-            queue.Add(new OutboundMessage(new byte[5]{0,1,2,3,4}, null));
+            queue.Add(new OutboundMessage<byte[]>(new byte[5]{0,1,2,3,4}, null));
             tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).Callback(() => spoolerCalled.Set()).Verifiable(); // If Write is called, it means Spool also has been called.
 
             ThreadRunner runner = new ThreadRunner(spooler);
@@ -97,7 +97,7 @@ namespace AsyncSocks_Tests
                 callbackException = exception;
             };
 
-            queue.Add(new OutboundMessage(messageBytes, callback));
+            queue.Add(new OutboundMessage<byte[]>(messageBytes, callback));
 
             spooler.Spool();
 
@@ -118,7 +118,7 @@ namespace AsyncSocks_Tests
                 callbackException = exception;
             };
 
-            queue.Add(new OutboundMessage(messageBytes, callback));
+            queue.Add(new OutboundMessage<byte[]>(messageBytes, callback));
 
             tcpClientMock.
                 Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).

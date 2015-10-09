@@ -6,17 +6,17 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class MessagePoller : ThreadRunner, IMessagePoller
+    public class MessagePoller<T> : ThreadRunner, IMessagePoller<T>
     {
-        private IMessagePollerRunnable runnable;
+        private IMessagePollerRunnable<T> runnable;
 
-        public MessagePoller(IMessagePollerRunnable runnable) : base(runnable)
+        public MessagePoller(IMessagePollerRunnable<T> runnable) : base(runnable)
         {
             this.runnable = runnable;
             runnable.OnNewMessageReceived += runnable_OnNewMessageReceived;
         }
 
-        private void runnable_OnNewMessageReceived(object sender, NewMessageReceivedEventArgs e)
+        private void runnable_OnNewMessageReceived(object sender, NewMessageReceivedEventArgs<T> e)
         {
             if (OnNewClientMessageReceived != null)
             {
@@ -24,11 +24,11 @@ namespace AsyncSocks
             }
         }
 
-        public event NewMessageReceived OnNewClientMessageReceived;
+        public event NewMessageReceived<T> OnNewClientMessageReceived;
 
-        public static IMessagePoller Create(BlockingCollection<NetworkMessage> queue)
+        public static IMessagePoller<T> Create(BlockingCollection<ReadResult<T>> queue)
         {
-            return new MessagePoller(new MessagePollerRunnable(queue));
+            return new MessagePoller<T>(new MessagePollerRunnable<T>(queue));
         }
     }
 }

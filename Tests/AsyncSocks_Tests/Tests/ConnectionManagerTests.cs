@@ -12,14 +12,14 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class ConnectionManagerTests
     {
-        private IConnectionManager connManager;
-        private Dictionary<IPEndPoint, IAsyncClient> dict;
+        private IConnectionManager<byte[]> connManager;
+        private Dictionary<IPEndPoint, IAsyncClient<byte[]>> dict;
 
         [TestInitialize]
         public void BeforeEach()
         {
-            dict = new Dictionary<IPEndPoint, IAsyncClient>();
-            connManager = new ConnectionManager(dict);
+            dict = new Dictionary<IPEndPoint, IAsyncClient<byte[]>>();
+            connManager = new ConnectionManager<byte[]>(dict);
         }
 
         [TestMethod]
@@ -27,7 +27,7 @@ namespace AsyncSocks_Tests.Tests
         {
             var tcpClientMock = new Mock<ITcpClient>();
             var socketMock = new Mock<ISocket>();
-            var peerConnectionMock = new Mock<IAsyncClient>();
+            var peerConnectionMock = new Mock<IAsyncClient<byte[]>> ();
             
             var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
 
@@ -44,11 +44,11 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void CloseAllConnectionsShouldCloseConnections()
         {
-            var connections = new List<Mock<IAsyncClient>>();
+            var connections = new List<Mock<IAsyncClient<byte[]>>> ();
             for(int i = 0; i < 10; i++)
             {
-                var conn = new Mock<IAsyncClient>();
-                var messagePollerMock = new Mock<IMessagePoller>();
+                var conn = new Mock<IAsyncClient<byte[]>> ();
+                var messagePollerMock = new Mock<IMessagePoller<byte[]>>();
                 
                 conn.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80."+i.ToString()), 80));
                 conn.Setup(x => x.Close()).Verifiable();
@@ -59,7 +59,7 @@ namespace AsyncSocks_Tests.Tests
             }
             connManager.CloseAllConnections();
 
-            foreach(Mock<IAsyncClient> conn in connections)
+            foreach(Mock<IAsyncClient<byte[]>> conn in connections)
             {
                 conn.Verify();
             }
@@ -69,17 +69,17 @@ namespace AsyncSocks_Tests.Tests
         public void OnNewClientMessageReceivedCallbacksShouldBeCalledWhenEventIsFiredByAPeerConnectionInstance()
         {
             var callbackCalledEvent = new AutoResetEvent(false);
-            var peerConnectionMock = new Mock<IAsyncClient>();
+            var peerConnectionMock = new Mock<IAsyncClient<byte[]>> ();
 
             peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80));
 
             connManager.Add(peerConnectionMock.Object);
 
-            NewMessageReceived callback = (object sender, NewMessageReceivedEventArgs e) => callbackCalledEvent.Set();
+            NewMessageReceived<byte[]> callback = (object sender, NewMessageReceivedEventArgs<byte[]> e) => callbackCalledEvent.Set();
 
             connManager.OnNewMessageReceived += callback;
 
-            var ev = new NewMessageReceivedEventArgs(peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
+            var ev = new NewMessageReceivedEventArgs<byte[]>(peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
 
             peerConnectionMock.Raise(x => x.OnNewMessageReceived += null, ev);
 
@@ -93,13 +93,13 @@ namespace AsyncSocks_Tests.Tests
         {
             var callbackCalledEvent = new AutoResetEvent(false);
 
-            connManager.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => callbackCalledEvent.Set();
+            connManager.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs<byte[]> e) => callbackCalledEvent.Set();
 
-            var peerConnectionMock = new Mock<IAsyncClient>();
+            var peerConnectionMock = new Mock<IAsyncClient<byte[]>> ();
             peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80));
             connManager.Add(peerConnectionMock.Object);
 
-            var ev = new PeerDisconnectedEventArgs(peerConnectionMock.Object);
+            var ev = new PeerDisconnectedEventArgs<byte[]>(peerConnectionMock.Object);
 
             peerConnectionMock.Raise(x => x.OnPeerDisconnected += null, ev);
 
@@ -109,14 +109,14 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ShouldRemovePeerConnectionFromDictWhenInstanceFiresOnPeerDisconnectedEvent()
         {
-            var peerConnectionMock = new Mock<IAsyncClient>();
+            var peerConnectionMock = new Mock<IAsyncClient<byte[]>> ();
             var endPoint = new IPEndPoint(IPAddress.Parse("80.80.80.80"), 80);
             peerConnectionMock.Setup(x => x.RemoteEndPoint).Returns(endPoint);
             connManager.Add(peerConnectionMock.Object);
 
             Assert.IsTrue(dict.ContainsKey(endPoint));
 
-            var ev = new PeerDisconnectedEventArgs(peerConnectionMock.Object);
+            var ev = new PeerDisconnectedEventArgs<byte[]>(peerConnectionMock.Object);
 
             peerConnectionMock.Raise(x => x.OnPeerDisconnected += null, ev);
 

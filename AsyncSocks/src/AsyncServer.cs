@@ -7,13 +7,13 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class AsyncServer : IAsyncServer
+    public class AsyncServer<T> : IAsyncServer<T>
     {
-        private IClientConnectionAgent clientConnectionAgent;
-        private IConnectionManager connectionManager;
+        private IClientConnectionAgent<T> clientConnectionAgent;
+        private IConnectionManager<T> connectionManager;
         private ITcpListener tcpListener;        
 
-        public IConnectionManager ConnectionManager
+        public IConnectionManager<T> ConnectionManager
         {
             get
             {
@@ -23,11 +23,11 @@ namespace AsyncSocks
 
         public ClientConfig ClientConfig { get; }
 
-        public event NewMessageReceived OnNewMessageReceived;
-        public event NewClientConnected OnNewClientConnected;
-        public event PeerDisconnected OnPeerDisconnected;
+        public event NewMessageReceived<T> OnNewMessageReceived;
+        public event NewClientConnected<T> OnNewClientConnected;
+        public event PeerDisconnected<T> OnPeerDisconnected;
 
-        public AsyncServer(IClientConnectionAgent clientConnectionAgent, IConnectionManager connectionManager, ITcpListener tcpListener, ClientConfig clientConfig)
+        public AsyncServer(IClientConnectionAgent<T> clientConnectionAgent, IConnectionManager<T> connectionManager, ITcpListener tcpListener, ClientConfig clientConfig)
         {
             ClientConfig = clientConfig;
             this.clientConnectionAgent = clientConnectionAgent;
@@ -38,7 +38,7 @@ namespace AsyncSocks
             this.clientConnectionAgent.OnNewClientConnection += clientConnectionAgent_OnNewClientConnection;
         }
 
-        private void ConnectionManager_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
+        private void ConnectionManager_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs<T> e)
         {
             var onPeerDisconnected = OnPeerDisconnected;
 
@@ -48,7 +48,7 @@ namespace AsyncSocks
             }
         }
 
-        void clientConnectionAgent_OnNewClientConnection(object sender, NewClientConnectedEventArgs e)
+        void clientConnectionAgent_OnNewClientConnection(object sender, NewClientConnectedEventArgs<T> e)
         {
             connectionManager.Add(e.Client);
             if (OnNewClientConnected != null) 
@@ -57,7 +57,7 @@ namespace AsyncSocks
             }
         }
 
-        private void connectionManager_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs e)
+        private void connectionManager_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs<T> e)
         {
             if (OnNewMessageReceived != null)
             {
@@ -74,20 +74,6 @@ namespace AsyncSocks
         {
             clientConnectionAgent.Stop();
             connectionManager.CloseAllConnections();
-        }
-
-        public static AsyncServer Create(IPEndPoint localEndPoint)
-        {
-            var clientConfig = ClientConfig.GetDefault();
-            return Create(localEndPoint, clientConfig);
-        }
-
-        public static AsyncServer Create(IPEndPoint localEndPoint, ClientConfig clientConfig)
-        {
-            BaseTcpListener tcpListener = new BaseTcpListener(new TcpListener(localEndPoint));
-            ClientConnectionAgent clientConnectionAgent = ClientConnectionAgent.Create(tcpListener, clientConfig);
-            ConnectionManager connectionManager = new ConnectionManager(new Dictionary<IPEndPoint, IAsyncClient>());
-            return new AsyncServer(clientConnectionAgent, connectionManager, tcpListener, clientConfig);
         }
     }
 }

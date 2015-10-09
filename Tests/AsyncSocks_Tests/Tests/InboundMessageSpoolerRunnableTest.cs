@@ -14,16 +14,16 @@ namespace AsyncSocks_Tests.Tests
     public class InboundMessageSpoolerRunnableTest
     {
 
-        private IInboundMessageSpoolerRunnable spooler;
-        private BlockingCollection<NetworkMessage> queue;
+        private IInboundMessageSpoolerRunnable<byte[]> spooler;
+        private BlockingCollection<ReadResult<byte[]>> queue;
         private Mock<INetworkMessageReader> readerMock;
 
         [TestInitialize]
         public void BeforeEach()
         {
             readerMock = new Mock<INetworkMessageReader>();
-            queue = new BlockingCollection<NetworkMessage>(new ConcurrentQueue<NetworkMessage>());
-            spooler = new InboundMessageSpoolerRunnable(readerMock.Object, queue);
+            queue = new BlockingCollection<ReadResult<byte[]>>(new ConcurrentQueue<ReadResult<byte[]>>());
+            spooler = new InboundMessageSpoolerRunnable<byte[]>(readerMock.Object, queue);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace AsyncSocks_Tests.Tests
         {
             string messageString = "This is a test message";
 
-            readerMock.Setup(x => x.Read()).Returns(Encoding.ASCII.GetBytes(messageString));
+            readerMock.Setup(x => x.Read()).Returns(new ReadResult<byte[]>(Encoding.ASCII.GetBytes(messageString)));
 
             spooler.Spool();
 
@@ -43,7 +43,7 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ShouldImplementIRunnableAndIInboundMessageSpoolerRunnable()
         {
-            Assert.IsTrue(spooler is IRunnable && spooler is IInboundMessageSpoolerRunnable);
+            Assert.IsTrue(spooler is IRunnable && spooler is IInboundMessageSpoolerRunnable<byte[]>);
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace AsyncSocks_Tests.Tests
         public void RunShouldCallSpool()
         {
             AutoResetEvent spoolCalledEvent = new AutoResetEvent(false);
-            readerMock.Setup(x => x.Read()).Returns(new byte[] { 0 }).Callback(() => spoolCalledEvent.Set());
+            readerMock.Setup(x => x.Read()).Returns(new ReadResult<byte[]>(new byte[] { 0 })).Callback(() => spoolCalledEvent.Set());
             
             ThreadRunner runner = new ThreadRunner(spooler);
             runner.Start();
@@ -75,7 +75,7 @@ namespace AsyncSocks_Tests.Tests
         {
             AutoResetEvent disconnectedEventFired = new AutoResetEvent(false);
 
-            spooler.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => disconnectedEventFired.Set();
+            spooler.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs<byte[]> e) => disconnectedEventFired.Set();
 
             readerMock.Setup(x => x.Read()).Returns(() => null).Verifiable();
 

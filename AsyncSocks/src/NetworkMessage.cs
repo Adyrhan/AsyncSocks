@@ -6,18 +6,30 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public class NetworkMessage
+    public class NetworkMessage<T>
     {
-        private IAsyncClient sender;
-        private byte[] message;
+        public IAsyncClient<T> Sender { get; }
+        public Exception Error { get; }
+        public T Message { get; }
 
-        public NetworkMessage(IAsyncClient sender, byte[] message)
+        public NetworkMessage(IAsyncClient<T> sender, T message, Exception error)
         {
-            this.sender = sender;
-            this.message = message;
+            Error = error;
+            Message = message;
+            Sender = sender;
         }
 
-        public IAsyncClient Sender { get { return sender;  } }
-        public byte[] Message { get { return message;  } }
+        public NetworkMessage(T message)
+        {
+            Message = message;
+        }
+
+        public NetworkMessage(Exception error)
+        {
+            Error = error;
+        }
+
+        public NetworkMessage(IAsyncClient<T> sender, T message) : this(sender, message, null) { }
+        public NetworkMessage(IAsyncClient<T> sender, Exception error) : this(sender, default(T), error) { }
     }
 }

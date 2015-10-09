@@ -48,9 +48,9 @@ namespace AsyncSocks_Tests
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 4)).Returns(readImpl1).Verifiable();
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, messageString.Length)).Returns(readImpl2).Verifiable();
 
-            byte[] readMessage = reader.Read();
+            ReadResult<byte[]> readMessage = reader.Read();
 
-            Assert.AreEqual(messageString, Encoding.ASCII.GetString(readMessage));
+            Assert.AreEqual(messageString, Encoding.ASCII.GetString(readMessage.Message));
             
         }
 
@@ -64,7 +64,7 @@ namespace AsyncSocks_Tests
 
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 4)).Returns(readImpl1).Verifiable();
 
-            byte[] readMessage = reader.Read();
+            ReadResult<byte[]> readMessage = reader.Read();
 
             Assert.IsNull(readMessage);
 

@@ -6,29 +6,29 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class ConnectionManager : IConnectionManager
+    public class ConnectionManager<T> : IConnectionManager<T>
     {
-        private Dictionary<IPEndPoint, IAsyncClient> dict;
+        private Dictionary<IPEndPoint, IAsyncClient<T>> dict;
 
-        public event NewMessageReceived OnNewMessageReceived;
-        public event PeerDisconnected OnPeerDisconnected;
+        public event NewMessageReceived<T> OnNewMessageReceived;
+        public event PeerDisconnected<T> OnPeerDisconnected;
 
-        public ConnectionManager(Dictionary<IPEndPoint, IAsyncClient> dict)
+        public ConnectionManager(Dictionary<IPEndPoint, IAsyncClient<T>> dict)
         {
             this.dict = dict;
         }
 
         public void CloseAllConnections()
         {
-            var dictCopy = new Dictionary<IPEndPoint, IAsyncClient>(dict);
-            foreach (KeyValuePair<IPEndPoint, IAsyncClient> entry in dictCopy)
+            var dictCopy = new Dictionary<IPEndPoint, IAsyncClient<T>>(dict);
+            foreach (KeyValuePair<IPEndPoint, IAsyncClient<T>> entry in dictCopy)
             {
                 entry.Value.Close();
             }
             
         }
 
-        public void Add(IAsyncClient peerConnection)
+        public void Add(IAsyncClient<T> peerConnection)
         {
             dict[(IPEndPoint) peerConnection.RemoteEndPoint] = peerConnection;
             peerConnection.OnNewMessageReceived += peerConnection_OnNewMessageReceived;
@@ -37,7 +37,7 @@ namespace AsyncSocks
             
         }
 
-        private void PeerConnection_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
+        private void PeerConnection_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs<T> e)
         {
             dict.Remove((IPEndPoint)e.Peer.RemoteEndPoint);
 
@@ -49,7 +49,7 @@ namespace AsyncSocks
             }
         }
 
-        void peerConnection_OnNewMessageReceived(object sender, NewMessageReceivedEventArgs e)
+        void peerConnection_OnNewMessageReceived(object sender, NewMessageReceivedEventArgs<T> e)
         {
             if (OnNewMessageReceived != null)
             {

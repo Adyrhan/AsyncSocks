@@ -5,8 +5,8 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IOutboundMessageSpooler : IThreadRunner
+    public interface IOutboundMessageSpooler<T> : IThreadRunner
     {
-        void Enqueue(OutboundMessage outboundMessage);
+        void Enqueue(OutboundMessage<T> outboundMessage);
     }
 }

@@ -12,14 +12,14 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class AsyncServerIntegrationTests
     {
-        private AsyncServer server;
+        private AsyncMessagingServer server;
         private IPEndPoint serverEndPoint;
 
         [TestInitialize]
         public void BeforeEach()
         {
             serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 40000);
-            server = AsyncServer.Create(serverEndPoint);
+            server = AsyncMessagingServer.Create(serverEndPoint);
             server.Start();
         }
 
@@ -32,7 +32,7 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void AsyncServerEventsNominalCaseTest()
         {
-            AsyncClient client = AsyncClient.Create();
+            var client = (AsyncMessagingClient) new AsyncMessagingClientFactory().Create();
 
             string originalMessage = "This is a test";
             string incomingMessage = null;
@@ -43,20 +43,20 @@ namespace AsyncSocks_Tests.Tests
             AutoResetEvent messageReceivedEvent = new AutoResetEvent(false);
             AutoResetEvent disconnectedEvent = new AutoResetEvent(false);
 
-            server.OnNewClientConnected += (object sender, NewClientConnectedEventArgs e) =>
+            server.OnNewClientConnected += (object sender, NewClientConnectedEventArgs<byte[]> e) =>
             {
                 incomingEndPoint = (IPEndPoint)e.Client.RemoteEndPoint;
                 connectedEvent.Set();
             };
 
-            server.OnNewMessageReceived += (object sender, NewMessageReceivedEventArgs e) =>
+            server.OnNewMessageReceived += (object sender, NewMessageReceivedEventArgs<byte[]> e) =>
             {
                 incomingMessage = Encoding.ASCII.GetString(e.Message);
                 incomingEndPoint = (IPEndPoint)e.Sender.RemoteEndPoint;
                 messageReceivedEvent.Set();
             };
 
-            server.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => disconnectedEvent.Set();
+            server.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs<byte[]> e) => disconnectedEvent.Set();
 
             client.Connect(serverEndPoint);
             bool didConnect = connectedEvent.WaitOne(2000);
@@ -94,7 +94,7 @@ namespace AsyncSocks_Tests.Tests
         [ExpectedException(typeof(SocketException))]
         public void ServerTryingToStartWithAlreadyUsedPort()
         {
-            var serverUsingAlreadyUsedPort = AsyncServer.Create(serverEndPoint);
+            var serverUsingAlreadyUsedPort = (AsyncMessagingClient)new AsyncMessagingClientFactory().Create(serverEndPoint);
             serverUsingAlreadyUsedPort.Start();
         }
 
@@ -102,7 +102,7 @@ namespace AsyncSocks_Tests.Tests
         [ExpectedException(typeof(MessageTooBigException))]
         public void SendingBigMessage()
         {
-            AsyncClient client = AsyncClient.Create(serverEndPoint, new ClientConfig(40 * 1024 * 1024));
+            var client = (AsyncMessagingClient)new AsyncMessagingClientFactory(new ClientConfig(40 * 1024 * 1024)).Create(serverEndPoint);
 
             int messageLength = 50 * 1024 * 1024;
             byte[] messageBytes = new byte[messageLength];
@@ -131,7 +131,7 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void MultipleConnectionsAndDisconnections()
         {
-            AsyncClient[] clients = new AsyncClient[200];
+            AsyncClient<byte[]>[] clients = new AsyncClient<byte[]>[200];
             AutoResetEvent allConnectedEvent = new AutoResetEvent(false);
             int connectedClients = 0;
 
@@ -147,7 +147,7 @@ namespace AsyncSocks_Tests.Tests
             
             for(int i = 0; i < clients.Length; i++)
             {
-                clients[i] = AsyncClient.Create(serverEndPoint);
+                clients[i] = (AsyncMessagingClient) new AsyncMessagingClientFactory().Create(serverEndPoint);
                 clients[i].Start();
             }
 
@@ -175,7 +175,7 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void MultipleConnectionsAndDisconnectionsFromPeers()
         {
-            AsyncClient[] clients = new AsyncClient[200];
+            AsyncClient<byte[]>[] clients = new AsyncClient<byte[]>[200];
             AutoResetEvent allConnectedEvent = new AutoResetEvent(false);
             int connectedClients = 0;
 
@@ -191,7 +191,7 @@ namespace AsyncSocks_Tests.Tests
 
             for (int i = 0; i < clients.Length; i++)
             {
-                clients[i] = AsyncClient.Create(serverEndPoint);
+                clients[i] = (AsyncMessagingClient)new AsyncMessagingClientFactory().Create(serverEndPoint);
                 clients[i].Start();
             }
 
@@ -209,7 +209,7 @@ namespace AsyncSocks_Tests.Tests
                 }
             };
 
-            foreach(AsyncClient client in clients)
+            foreach(AsyncClient<byte[]> client in clients)
             {
                 client.Close();
             }
@@ -220,7 +220,7 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ReceivingBigMessage()
         {
-            AsyncClient client = AsyncClient.Create(serverEndPoint, new ClientConfig(60 * 1024 * 1024)); // It's not gonna reject the message on the client
+            var client = (AsyncMessagingClient)new AsyncMessagingClientFactory(new ClientConfig(60 * 1024 * 1024)).Create(serverEndPoint); // It's not gonna reject the message on the client
 
             int messageLength = 50 * 1024 * 1024;
             byte[] messageBytes = new byte[messageLength];
@@ -233,7 +233,7 @@ namespace AsyncSocks_Tests.Tests
             client.Start();
 
             AutoResetEvent disconnectedEvent = new AutoResetEvent(false);
-            client.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) =>
+            client.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs<byte[]> e) =>
             {
                 disconnectedEvent.Set();
             };

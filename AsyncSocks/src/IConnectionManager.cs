@@ -5,13 +5,13 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IConnectionManager
+    public interface IConnectionManager<T>
     {
         void CloseAllConnections();
 
-        event NewMessageReceived OnNewMessageReceived;
-        event PeerDisconnected OnPeerDisconnected;
+        event NewMessageReceived<T> OnNewMessageReceived;
+        event PeerDisconnected<T> OnPeerDisconnected;
 
-        void Add(IAsyncClient peerConnection);
+        void Add(IAsyncClient<T> peerConnection);
     }
 }

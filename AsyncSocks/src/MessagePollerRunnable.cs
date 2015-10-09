@@ -7,14 +7,14 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class MessagePollerRunnable : IMessagePollerRunnable, IDisposable
+    public class MessagePollerRunnable<T> : IMessagePollerRunnable<T>, IDisposable
     {
-        private BlockingCollection<NetworkMessage> queue;
+        private BlockingCollection<ReadResult<T>> queue;
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
         private bool shouldStop;
         private bool running;
 
-        public MessagePollerRunnable(BlockingCollection<NetworkMessage> queue)
+        public MessagePollerRunnable(BlockingCollection<ReadResult<T>> queue)
         {
             this.queue = queue;
         }
@@ -45,16 +45,16 @@ namespace AsyncSocks
             return startedEvent.WaitOne(2000);
         }
 
-        public event NewMessageReceived OnNewMessageReceived;
+        public event NewMessageReceived<T> OnNewMessageReceived;
 
-        public void Poll()
+        public void Poll() // FIXME: This probably needs to take into account the error property of the ReadResult object and fire an error event instead of a new message event
         {
             try
             {
-                NetworkMessage message = queue.Take();
+                ReadResult<T> message = queue.Take();
                 if (OnNewMessageReceived != null)
                 {
-                    var e = new NewMessageReceivedEventArgs(message.Sender, message.Message);
+                    var e = new NewMessageReceivedEventArgs<T>(null, message.Message);
                     OnNewMessageReceived(this, e);
                 }
             }

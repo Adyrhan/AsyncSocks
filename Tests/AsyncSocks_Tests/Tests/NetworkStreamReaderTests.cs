@@ -35,11 +35,11 @@ namespace AsyncSocks_Tests.Tests
                 }
             }).Returns(256).Verifiable();
 
-            NetworkReaderResult<byte[]> result = reader.Read();
+            ReadResult<byte[]> result = reader.Read();
 
             Assert.IsNotNull(result, "reader.Read() returned null");
             Assert.IsNull(result.Error , "result.Error is not null");
-            Assert.IsNotNull(result.Result, "result.Result is null");
+            Assert.IsNotNull(result.Message, "result.Result is null");
         }
 
         [TestMethod]
@@ -47,7 +47,7 @@ namespace AsyncSocks_Tests.Tests
         {
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 1024 * 8)).Returns(0).Verifiable();
 
-            NetworkReaderResult<byte[]> result = reader.Read();
+            ReadResult<byte[]> result = reader.Read();
 
             Assert.IsNull(result, "reader.Read() returned object");
         }
@@ -57,7 +57,7 @@ namespace AsyncSocks_Tests.Tests
         {
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 1024 * 8)).Throws(new SocketException()).Verifiable();
 
-            NetworkReaderResult<byte[]> result = reader.Read();
+            ReadResult<byte[]> result = reader.Read();
 
             Assert.IsNull(result, "reader.Read() returned object");
         }

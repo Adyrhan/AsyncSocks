@@ -2,13 +2,13 @@
 
 namespace AsyncSocks
 {
-    public delegate void PeerDisconnected(object sender, PeerDisconnectedEventArgs e);
+    public delegate void PeerDisconnected<T>(object sender, PeerDisconnectedEventArgs<T> e);
 
-    public class PeerDisconnectedEventArgs : EventArgs
+    public class PeerDisconnectedEventArgs<T> : EventArgs
     {
-        public IAsyncClient Peer { get; }
+        public IAsyncClient<T> Peer { get; }
 
-        public PeerDisconnectedEventArgs(IAsyncClient peer)
+        public PeerDisconnectedEventArgs(IAsyncClient<T> peer)
         {
             Peer = peer;
         }

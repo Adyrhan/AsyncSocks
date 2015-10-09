@@ -18,7 +18,7 @@ namespace AsyncSocks
 
         public ITcpClient Client { get; }
 
-        public NetworkReaderResult<byte[]> Read()
+        public ReadResult<byte[]> Read()
         {
             try
             {
@@ -31,7 +31,7 @@ namespace AsyncSocks
                 }
                 else
                 {
-                    return new NetworkReaderResult<byte[]>(buffer, null);
+                    return new ReadResult<byte[]>(buffer);
                 }
             }
             catch (IOException)

@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public interface IAsyncServer
+    public interface IAsyncServer<T>
     {
-        IConnectionManager ConnectionManager { get; }
+        IConnectionManager<T> ConnectionManager { get; }
         ClientConfig ClientConfig { get; }
 
-        event NewMessageReceived OnNewMessageReceived;
-        event PeerDisconnected OnPeerDisconnected;
-        event NewClientConnected OnNewClientConnected;
+        event NewMessageReceived<T> OnNewMessageReceived;
+        event PeerDisconnected<T> OnPeerDisconnected;
+        event NewClientConnected<T> OnNewClientConnected;
 
         void Start();
         void Stop();

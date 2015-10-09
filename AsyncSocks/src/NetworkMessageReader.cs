@@ -23,7 +23,7 @@ namespace AsyncSocks
             get { return tcpClient; }
         }
 
-        public byte[] Read()
+        public ReadResult<byte[]> Read()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace AsyncSocks
                     }
                     bytesRead += bytesReceived;
                 }
-                return buffer;
+                return new ReadResult<byte[]>(buffer);
             }
             catch (IOException)
             {

@@ -4,9 +4,9 @@ using System.Net.Sockets;
 
 namespace AsyncSocks
 {
-    public interface IAsyncClient
+    public interface IAsyncClient<T>
     {
-        void SendMessage(byte[] messageBytes);
+        void SendMessage(T message);
         void Start();
         void Connect();
         void Connect(IPEndPoint remoteEndPoint);
@@ -16,13 +16,13 @@ namespace AsyncSocks
         EndPoint LocalEndPoint { get; }
         bool IsActive();
 
-        event NewMessageReceived OnNewMessageReceived;
-        event PeerDisconnected OnPeerDisconnected;
+        event NewMessageReceived<T> OnNewMessageReceived;
+        event PeerDisconnected<T> OnPeerDisconnected;
 
         ITcpClient TcpClient { get; }
         ClientConfig ClientConfig { get; }
 
-        void SendMessage(byte[] msgBytes, Action<bool, SocketException> callback);
+        void SendMessage(T message, Action<bool, SocketException> callback);
     }
     
 }

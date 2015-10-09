@@ -12,9 +12,9 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class AsyncServerTests
     {
-        private IAsyncServer server;
-        private Mock<IConnectionManager> connectionManagerMock;
-        private Mock<IClientConnectionAgent> clientConnectionAgentMock;
+        private IAsyncServer<byte[]> server;
+        private Mock<IConnectionManager<byte[]>> connectionManagerMock;
+        private Mock<IClientConnectionAgent<byte[]>> clientConnectionAgentMock;
         private Mock<ITcpListener> tcpListenerMock;
         private ClientConfig clientConfig;
         
@@ -22,10 +22,10 @@ namespace AsyncSocks_Tests.Tests
         public void BeforeEach()
         {
             tcpListenerMock = new Mock<ITcpListener>();
-            connectionManagerMock = new Mock<IConnectionManager>();
-            clientConnectionAgentMock = new Mock<IClientConnectionAgent>();
+            connectionManagerMock = new Mock<IConnectionManager<byte[]>>();
+            clientConnectionAgentMock = new Mock<IClientConnectionAgent<byte[]>>();
             clientConfig = new ClientConfig(10 * 1024 * 1024);
-            server = new AsyncServer(clientConnectionAgentMock.Object, connectionManagerMock.Object, tcpListenerMock.Object, clientConfig);
+            server = new AsyncServer<byte[]>(clientConnectionAgentMock.Object, connectionManagerMock.Object, tcpListenerMock.Object, clientConfig);
         }
         
         [TestMethod]
@@ -49,14 +49,14 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void OnClientMessageReceivedCallbackShouldBeCalledWhenConnectionManagerFiresTheEvent()
         {
-            var peerConnectionMock = new Mock<IAsyncClient>();
+            var peerConnectionMock = new Mock<IAsyncClient<byte[]>> ();
             var messageReceivedEvent = new AutoResetEvent(false);
 
-            NewMessageReceived newMessage = (object sender, NewMessageReceivedEventArgs e) => messageReceivedEvent.Set();
+            NewMessageReceived<byte[]> newMessage = (object sender, NewMessageReceivedEventArgs<byte[]> e) => messageReceivedEvent.Set();
 
             server.OnNewMessageReceived += newMessage;
 
-            var ev = new NewMessageReceivedEventArgs(peerConnectionMock.Object, Encoding.ASCII.GetBytes("Test message!"));
+            var ev = new NewMessageReceivedEventArgs<byte[]>(peerConnectionMock.Object, Encoding.ASCII.GetBytes("Test message!"));
 
             connectionManagerMock.Raise(x => x.OnNewMessageReceived += null, ev);
 
@@ -68,11 +68,11 @@ namespace AsyncSocks_Tests.Tests
         public void OnNewClientConnectedShouldFireUpWhenClientConnectionAgentDoes()
         {
             var callbackCalledEvent = new AutoResetEvent(false);
-            var peerConnectionMock = new Mock<IAsyncClient>();
+            var peerConnectionMock = new Mock<IAsyncClient<byte[]>> ();
 
-            IAsyncClient peerConnectionArgument = null;
+            IAsyncClient<byte[]> peerConnectionArgument = null;
 
-            var callback = new NewClientConnected((object sender, NewClientConnectedEventArgs e) =>
+            var callback = new NewClientConnected<byte[]>((object sender, NewClientConnectedEventArgs<byte[]> e) =>
             {
                 peerConnectionArgument = e.Client;
                 callbackCalledEvent.Set();
@@ -83,7 +83,7 @@ namespace AsyncSocks_Tests.Tests
 
             connectionManagerMock.Setup(x => x.Add(peerConnectionMock.Object)).Verifiable();
 
-            var ev = new NewClientConnectedEventArgs(peerConnectionMock.Object);
+            var ev = new NewClientConnectedEventArgs<byte[]>(peerConnectionMock.Object);
 
             clientConnectionAgentMock.Raise(x => x.OnNewClientConnection += null, ev);
             
@@ -97,9 +97,9 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void StaticFactoryCreateShouldCreateInstance()
         {
-            var instance = AsyncServer.Create(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 80));
+            var instance = AsyncMessagingServer.Create(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 80));
 
-            Assert.IsTrue(instance != null && instance is AsyncServer);
+            Assert.IsTrue(instance != null && instance is AsyncServer<byte[]>);
         }
 
         [TestMethod]
@@ -107,16 +107,16 @@ namespace AsyncSocks_Tests.Tests
         {
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
 
-            IAsyncClient peerArgument = null;
-            server.OnPeerDisconnected += new PeerDisconnected((object sender, PeerDisconnectedEventArgs e) =>
+            IAsyncClient<byte[]> peerArgument = null;
+            server.OnPeerDisconnected += new PeerDisconnected<byte[]>((object sender, PeerDisconnectedEventArgs<byte[]> e) =>
             {
                 peerArgument = e.Peer;
                 callbackCalledEvent.Set();
             });
 
-            var peerConnectionMock = new Mock<IAsyncClient>();
+            var peerConnectionMock = new Mock<IAsyncClient<byte[]>> ();
 
-            var ev = new PeerDisconnectedEventArgs(peerConnectionMock.Object);
+            var ev = new PeerDisconnectedEventArgs<byte[]>(peerConnectionMock.Object);
 
             connectionManagerMock.Raise(x => x.OnPeerDisconnected += null, ev);
 

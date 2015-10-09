@@ -14,9 +14,9 @@ namespace AsyncSocks_Tests.Tests
         public void CreateShouldCreateInstance()
         {
             var tcpClientMock = new Mock<ITcpClient>();
-            var tcpClient = tcpClientMock.Object;
+            var readerMock = new Mock<INetworkReader<byte[]>>();
 
-            InboundMessageSpooler spooler = InboundMessageSpooler.Create(tcpClient);
+            InboundMessageSpooler<byte[]> spooler = InboundMessageSpooler<byte[]>.Create(readerMock.Object, tcpClientMock.Object);
 
             Assert.IsTrue(spooler != null);
         }
@@ -24,9 +24,9 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ShouldBehaveLikeAThreadRunner()
         {
-            var runnableMock = new Mock<IInboundMessageSpoolerRunnable>();
+            var runnableMock = new Mock<IInboundMessageSpoolerRunnable<byte[]>>();
             var runnable = runnableMock.Object;
-            var spooler = new InboundMessageSpooler(runnable);
+            var spooler = new InboundMessageSpooler<byte[]>(runnable);
 
             Assert.IsTrue(spooler is ThreadRunner);
         }
@@ -34,21 +34,21 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ConstructorShouldTakeRunnable()
         {
-            var runnableMock = new Mock<IInboundMessageSpoolerRunnable>();
+            var runnableMock = new Mock<IInboundMessageSpoolerRunnable<byte[]>>();
             var runnable = runnableMock.Object;
-            InboundMessageSpooler spooler = new InboundMessageSpooler(runnable);
+            InboundMessageSpooler<byte[]> spooler = new InboundMessageSpooler<byte[]>(runnable);
         }
 
         [TestMethod]
         public void PeerDisconnectedFiresUpWhenRunnableEventDoes()
         {
-            var runnableMock = new Mock<IInboundMessageSpoolerRunnable>();
-            var spooler = new InboundMessageSpooler(runnableMock.Object);
+            var runnableMock = new Mock<IInboundMessageSpoolerRunnable<byte[]>>();
+            var spooler = new InboundMessageSpooler<byte[]>(runnableMock.Object);
 
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
-            spooler.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs e) => callbackCalledEvent.Set();
+            spooler.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs<byte[]> e) => callbackCalledEvent.Set();
 
-            runnableMock.Raise(x => x.OnPeerDisconnected += null, new PeerDisconnectedEventArgs(null));
+            runnableMock.Raise(x => x.OnPeerDisconnected += null, new PeerDisconnectedEventArgs<byte[]>(null));
 
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000));
         }

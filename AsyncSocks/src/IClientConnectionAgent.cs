@@ -5,8 +5,8 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IClientConnectionAgent : IThreadRunner
+    public interface IClientConnectionAgent<T> : IThreadRunner
     {
-        event NewClientConnected OnNewClientConnection;
+        event NewClientConnected<T> OnNewClientConnection;
     }
 }

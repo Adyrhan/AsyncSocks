@@ -5,9 +5,9 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IMessagePollerRunnable : IRunnable
+    public interface IMessagePollerRunnable<T> : IRunnable
     {
-        event NewMessageReceived OnNewMessageReceived;
+        event NewMessageReceived<T> OnNewMessageReceived;
 
         void Poll();
     }

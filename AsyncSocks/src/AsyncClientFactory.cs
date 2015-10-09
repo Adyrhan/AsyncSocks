@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public class AsyncClientFactory : IAsyncClientFactory
+    public abstract class AsyncClientFactory<T> : IAsyncClientFactory<T>
     {
         public AsyncClientFactory(ClientConfig clientConfig)
         {
@@ -20,20 +22,10 @@ namespace AsyncSocks
 
         public ClientConfig ClientConfig { get; }
 
-        public IAsyncClient Create(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller messagePoller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient)
-        {
-            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient, ClientConfig);
-        }
-
-        public IAsyncClient Create(ITcpClient tcpClient)
-        {
-            var inboundSpooler = InboundMessageSpooler.Create(tcpClient, ClientConfig.MaxMessageSize);
-            var outboundSpooler = OutboundMessageSpooler.Create(tcpClient);
-            var messagePoller = MessagePoller.Create(inboundSpooler.Queue);
-            var messageFactory = new OutboundMessageFactory();
-
-            return new AsyncClient(inboundSpooler, outboundSpooler, messagePoller, messageFactory, tcpClient, ClientConfig);
-        }
+        public abstract IAsyncClient<T> Create(IInboundMessageSpooler<T> inboundSpooler, IOutboundMessageSpooler<T> outboundSpooler, IMessagePoller<T> messagePoller, IOutboundMessageFactory<T> messageFactory, ITcpClient tcpClient);
+        public abstract IAsyncClient<T> Create(ITcpClient tcpClient);
+        public abstract IAsyncClient<T> Create(IPEndPoint remoteEndPoint);
+        public abstract IAsyncClient<T> Create();
 
     }
 }

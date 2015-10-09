@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public interface INetworkReader<T>
+    interface INetworkWriter<T>
     {
-        ReadResult<T> Read();
+        void Write(T message);
         ITcpClient Client { get; }
     }
 }

@@ -3,8 +3,8 @@ using System.Net.Sockets;
 
 namespace AsyncSocks
 {
-    public interface IOutboundMessageFactory
+    public interface IOutboundMessageFactory<T>
     {
-        OutboundMessage Create(byte[] msg, Action<bool, SocketException> callback);
+        OutboundMessage<T> Create(T msg, Action<bool, SocketException> callback);
     }
 }

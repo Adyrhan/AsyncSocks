@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public interface IInboundMessageSpoolerRunnable : IRunnable
+    public interface IInboundMessageSpoolerRunnable<T> : IRunnable
     {
-        event PeerDisconnected OnPeerDisconnected;
+        event PeerDisconnected<T> OnPeerDisconnected;
         void Spool();
-        BlockingCollection<NetworkMessage> Queue { get; }
-        INetworkMessageReader Reader { get; }
+        BlockingCollection<ReadResult<T>> Queue { get; }
+        INetworkReader<T> Reader { get; }
     }
 }

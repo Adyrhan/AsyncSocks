@@ -2,20 +2,20 @@
 
 namespace AsyncSocks
 {
-    public delegate void NewMessageReceived(object sender, NewMessageReceivedEventArgs e);
+    public delegate void NewMessageReceived<T>(object sender, NewMessageReceivedEventArgs<T> e);
 
-    public class NewMessageReceivedEventArgs : EventArgs
+    public class NewMessageReceivedEventArgs<T> : EventArgs
     {
         //private IAsyncClient asyncClient;
         //private byte[] message;
 
-        public NewMessageReceivedEventArgs(IAsyncClient sender, byte[] message)
+        public NewMessageReceivedEventArgs(IAsyncClient<T> sender, T message)
         {
             Sender = sender;
             Message = message;
         }
 
-        public IAsyncClient Sender { get; }
-        public byte[] Message { get; }
+        public IAsyncClient<T> Sender { get; }
+        public T Message { get; }
     }
 }

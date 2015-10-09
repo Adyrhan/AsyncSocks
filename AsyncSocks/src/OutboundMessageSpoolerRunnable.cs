@@ -8,15 +8,16 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class OutboundMessageSpoolerRunnable : IOutboundMessageSpoolerRunnable, IDisposable
+    //FIXME: Refactor Spool source code into a new class. That code should become the NetworkMessageWriter, which will be of an implementation of a new interface INetworkWriter.
+    public class OutboundMessageSpoolerRunnable<T> : IOutboundMessageSpoolerRunnable, IDisposable
     {
         private ITcpClient tcpClient;
-        private BlockingCollection<OutboundMessage> queue;
+        private BlockingCollection<OutboundMessage<T>> queue;
         private AutoResetEvent startEvent = new AutoResetEvent(false);
         private bool running;
         private bool shouldStop;
 
-        public OutboundMessageSpoolerRunnable(ITcpClient tcpClient, BlockingCollection<OutboundMessage> queue)
+        public OutboundMessageSpoolerRunnable(ITcpClient tcpClient, BlockingCollection<OutboundMessage<T>> queue)
         {
             this.tcpClient = tcpClient;
             this.queue = queue;
@@ -24,46 +25,46 @@ namespace AsyncSocks
 
         public void Spool()
         {
-            try
-            {
-                OutboundMessage message = queue.Take();
-                byte[] messageBytes = message.MessageBytes;
+            //try
+            //{
+            //    OutboundMessage<T> message = queue.Take();
+            //    T messageBytes = message.Message;
 
-                byte[] size = BitConverter.GetBytes(messageBytes.Length);
-                int totalSize = size.Length + messageBytes.Length;
+            //    byte[] size = BitConverter.GetBytes(messageBytes.Length);
+            //    int totalSize = size.Length + messageBytes.Length;
 
-                byte[] packetBytes = new byte[totalSize];
+            //    byte[] packetBytes = new byte[totalSize];
 
-                for (int i = 0; i < totalSize; i++)
-                {
-                    if (i < size.Length)
-                    {
-                        packetBytes[i] = size[i];
-                    }
-                    else
-                    {
-                        packetBytes[i] = messageBytes[i - size.Length];
-                    }
-                }
+            //    for (int i = 0; i < totalSize; i++)
+            //    {
+            //        if (i < size.Length)
+            //        {
+            //            packetBytes[i] = size[i];
+            //        }
+            //        else
+            //        {
+            //            packetBytes[i] = messageBytes[i - size.Length];
+            //        }
+            //    }
 
-                SocketException e = WriteOrException(packetBytes, 0, totalSize);
+            //    SocketException e = WriteOrException(packetBytes, 0, totalSize);
 
-                if (message.Callback != null)
-                {
-                    if (e != null)
-                    {
-                        message.Callback(false, e);
-                    }
-                    else
-                    {
-                        message.Callback(true, null);
-                    }
-                }
-            }
-            catch (ThreadInterruptedException)
-            {
-                // OutboundMessageSpooler stopping
-            }
+            //    if (message.Callback != null)
+            //    {
+            //        if (e != null)
+            //        {
+            //            message.Callback(false, e);
+            //        }
+            //        else
+            //        {
+            //            message.Callback(true, null);
+            //        }
+            //    }
+            //}
+            //catch (ThreadInterruptedException)
+            //{
+            //    // OutboundMessageSpooler stopping
+            //}
             
         }
 

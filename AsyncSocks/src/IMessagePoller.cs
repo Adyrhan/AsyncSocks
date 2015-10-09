@@ -6,8 +6,8 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IMessagePoller : IThreadRunner
+    public interface IMessagePoller<T> : IThreadRunner
     {
-        event NewMessageReceived OnNewClientMessageReceived;
+        event NewMessageReceived<T> OnNewClientMessageReceived;
     }
 }

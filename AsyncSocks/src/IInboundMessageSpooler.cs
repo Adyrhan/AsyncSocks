@@ -6,9 +6,9 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IInboundMessageSpooler : IThreadRunner
+    public interface IInboundMessageSpooler<T> : IThreadRunner
     {
-        BlockingCollection<NetworkMessage> Queue { get; }
-        event PeerDisconnected OnPeerDisconnected;
+        BlockingCollection<ReadResult<T>> Queue { get; }
+        event PeerDisconnected<T> OnPeerDisconnected;
     }
 }

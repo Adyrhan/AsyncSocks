@@ -5,11 +5,11 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface IClientConnectionAgentRunnable : IRunnable
+    public interface IClientConnectionAgentRunnable<T> : IRunnable
     {
         ITcpListener TcpListener { get; }
 
         void AcceptClientConnection();
-        event NewClientConnected OnNewClientConnection;
+        event NewClientConnected<T> OnNewClientConnection;
     }
 }

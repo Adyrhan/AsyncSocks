@@ -2,15 +2,15 @@
 
 namespace AsyncSocks
 {
-    public delegate void NewClientConnected(object sender, NewClientConnectedEventArgs e);
+    public delegate void NewClientConnected<T>(object sender, NewClientConnectedEventArgs<T> e);
 
-    public class NewClientConnectedEventArgs : EventArgs
+    public class NewClientConnectedEventArgs<T> : EventArgs
     {
-        public NewClientConnectedEventArgs(IAsyncClient client)
+        public NewClientConnectedEventArgs(IAsyncClient<T> client)
         {
             Client = client;
         }
 
-        public IAsyncClient Client { get; }
+        public IAsyncClient<T> Client { get; }
     }
 }

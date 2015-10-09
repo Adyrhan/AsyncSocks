@@ -1,5 +1,4 @@
-﻿using AsyncSocks.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,30 +8,19 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    namespace Exceptions
+    public class AsyncClient<T> : IAsyncClient<T>
     {
-        [Serializable]
-        public class MessageTooBigException : Exception
-        {
-            public MessageTooBigException(string message) : base(message)
-            {
-            }
-        }
-    }
-
-    public class AsyncClient : IAsyncClient
-    {
-        private IInboundMessageSpooler inboundSpooler;
-        private IOutboundMessageSpooler outboundSpooler;
+        private IInboundMessageSpooler<T> inboundSpooler;
+        private IOutboundMessageSpooler<T> outboundSpooler;
         private ITcpClient tcpClient;
-        private IMessagePoller poller;
-        private IOutboundMessageFactory messageFactory;
+        private IMessagePoller<T> poller;
+        private IOutboundMessageFactory<T> messageFactory;
         private bool isClosing;
 
-        public event NewMessageReceived OnNewMessageReceived;
-        public event PeerDisconnected OnPeerDisconnected;
+        public event NewMessageReceived<T> OnNewMessageReceived;
+        public event PeerDisconnected<T> OnPeerDisconnected;
 
-        public AsyncClient(IInboundMessageSpooler inboundSpooler, IOutboundMessageSpooler outboundSpooler, IMessagePoller poller, IOutboundMessageFactory messageFactory, ITcpClient tcpClient, ClientConfig clientConfig)
+        public AsyncClient(IInboundMessageSpooler<T> inboundSpooler, IOutboundMessageSpooler<T> outboundSpooler, IMessagePoller<T> poller, IOutboundMessageFactory<T> messageFactory, ITcpClient tcpClient, ClientConfig clientConfig)
         {
             this.inboundSpooler = inboundSpooler;
             this.outboundSpooler = outboundSpooler;
@@ -57,14 +45,14 @@ namespace AsyncSocks
             RemoteEndPoint = tcpClient.Socket.RemoteEndPoint;
         }
 
-        private void InboundSpooler_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs e)
+        private void InboundSpooler_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs<T> e)
         {
             Task.Run(() =>
             {
                 var onPeerDisconnected = OnPeerDisconnected;
                 if (onPeerDisconnected != null)
                 {
-                    var ev = new PeerDisconnectedEventArgs(this);
+                    var ev = new PeerDisconnectedEventArgs<T>(this);
                     onPeerDisconnected(this, ev);
                 }
 
@@ -73,32 +61,32 @@ namespace AsyncSocks
             
         }
 
-        private void poller_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs e)
+        private void poller_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs<T> e)
         {
             if (OnNewMessageReceived != null)
             {
-                var newE = new NewMessageReceivedEventArgs(this, e.Message);
+                var newE = new NewMessageReceivedEventArgs<T>(this, e.Message);
                 OnNewMessageReceived(this, newE);
             }
         }
 
-        public void SendMessage(byte[] messageBytes)
+        public void SendMessage(T message)
         {
             //OutboundMessage msg = messageFactory.Create(messageBytes, null);
             //outboundSpooler.Enqueue(msg);
-            SendMessage(messageBytes, null);
+            SendMessage(message, null);
         }
 
-        public void SendMessage(byte[] messageBytes, Action<bool, SocketException> callback)
+        public virtual void SendMessage(T message, Action<bool, SocketException> callback)
         {
-            if (messageBytes.Length > ClientConfig.MaxMessageSize)
-            {
-                int maxSize = ClientConfig.MaxMessageSize;
-                int msgSize = messageBytes.Length;
-                throw new MessageTooBigException("Max size expected for outgoing messages is: " + maxSize.ToString() + " Received message of size: " + msgSize.ToString());
-            }
+            //if (messageBytes.Length > ClientConfig.MaxMessageSize)
+            //{
+            //    int maxSize = ClientConfig.MaxMessageSize;
+            //    int msgSize = messageBytes.Length;
+            //    throw new MessageTooBigException("Max size expected for outgoing messages is: " + maxSize.ToString() + " Received message of size: " + msgSize.ToString());
+            //}
 
-            OutboundMessage msg = messageFactory.Create(messageBytes, callback);
+            OutboundMessage<T> msg = messageFactory.Create(message, callback);
             outboundSpooler.Enqueue(msg);
         }
 
@@ -133,48 +121,6 @@ namespace AsyncSocks
         }
 
         public ClientConfig ClientConfig { get; }
-
-        public static AsyncClient Create(IPEndPoint remoteIpAddress, ClientConfig config)
-        {
-            TcpClient tcpClient;
-            BaseTcpClient client;
-
-            if (remoteIpAddress == null)
-            {
-                tcpClient = new TcpClient();
-                client = new BaseTcpClient(tcpClient);
-            }
-            else
-            {
-                tcpClient = new TcpClient(remoteIpAddress.Address.ToString(), remoteIpAddress.Port);
-                client = new BaseTcpClient(tcpClient);
-            }
-
-            if (config == null)
-            {
-                return (AsyncClient)new AsyncClientFactory().Create(client);
-            }
-            else
-            {
-                return (AsyncClient)new AsyncClientFactory(config).Create(client);
-            }
-
-        }
-
-        public static AsyncClient Create(ClientConfig config)
-        {
-            return Create(null, config);
-        }
-
-        public static AsyncClient Create(IPEndPoint remoteIpAddress)
-        {
-            return Create(remoteIpAddress, null);
-        }
-
-        public static AsyncClient Create()
-        {
-            return Create(null, null);
-        }
 
         public void Connect()
         {

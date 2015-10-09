@@ -13,29 +13,29 @@ namespace AsyncSocks_Tests.Tests
     [TestClass]
     public class AsyncClientTest
     {
-        private Mock<IInboundMessageSpooler> inboundSpoolerMock;
-        private Mock<IOutboundMessageSpooler> outboundSpoolerMock;
-        private Mock<IMessagePoller> messagePollerMock;
+        private Mock<IInboundMessageSpooler<byte[]>> inboundSpoolerMock;
+        private Mock<IOutboundMessageSpooler<byte[]>> outboundSpoolerMock;
+        private Mock<IMessagePoller<byte[]>> messagePollerMock;
         private Mock<ITcpClient> tcpClientMock;
         private Mock<ISocket> socketMock;
-        private IAsyncClient connection;
-        private Mock<IOutboundMessageFactory> messageFactoryMock;
+        private IAsyncClient<byte[]> connection;
+        private Mock<IOutboundMessageFactory<byte[]>> messageFactoryMock;
         private ClientConfig clientConfig;
 
         [TestInitialize]
         public void BeforeEach()
         {
-            inboundSpoolerMock = new Mock<IInboundMessageSpooler>();
-            outboundSpoolerMock = new Mock<IOutboundMessageSpooler>();
-            messagePollerMock = new Mock<IMessagePoller>();
+            inboundSpoolerMock = new Mock<IInboundMessageSpooler<byte[]>>();
+            outboundSpoolerMock = new Mock<IOutboundMessageSpooler<byte[]>>();
+            messagePollerMock = new Mock<IMessagePoller<byte[]>>();
             socketMock = new Mock<ISocket>();
             tcpClientMock = new Mock<ITcpClient>();
-            messageFactoryMock = new Mock<IOutboundMessageFactory>();
+            messageFactoryMock = new Mock<IOutboundMessageFactory<byte[]>>();
             clientConfig = new ClientConfig(8 * 1024 * 1024);
 
             tcpClientMock.Setup(x => x.Socket).Returns(socketMock.Object);
 
-            connection = new AsyncClient
+            connection = new AsyncClient<byte[]>
             (
                 inboundSpoolerMock.Object,
                 outboundSpoolerMock.Object,
@@ -50,7 +50,7 @@ namespace AsyncSocks_Tests.Tests
         public void SendMessageShouldTellOutboundMessageSpoolerToEnqueueTheMessage()
         {
             var messageBytes = Encoding.ASCII.GetBytes("This is a test message");
-            var message = new OutboundMessage(messageBytes, null);
+            var message = new OutboundMessage<byte[]>(messageBytes, null);
 
             messageFactoryMock.
                 Setup(x => x.Create(messageBytes, null)).
@@ -71,7 +71,7 @@ namespace AsyncSocks_Tests.Tests
 
             byte[] msgBytes = Encoding.ASCII.GetBytes("Some text");
             Action<bool, SocketException> callback = (success, error) => receivedResult = success;
-            OutboundMessage outboundMessage = new OutboundMessage(msgBytes, callback);
+            OutboundMessage<byte[]> outboundMessage = new OutboundMessage<byte[]>(msgBytes, callback);
 
             messageFactoryMock.
                 Setup(x => x.Create(It.IsAny<byte[]>(), It.IsAny<Action<bool, SocketException>>())).
@@ -94,7 +94,7 @@ namespace AsyncSocks_Tests.Tests
         public void SendMessageRejectsMessagesBiggerThanConfigMaxMessageSize()
         {
             byte[] messageBytes = new byte[15 * 1024 * 1024];
-            var message = new OutboundMessage(messageBytes, null);
+            var message = new OutboundMessage<byte[]>(messageBytes, null);
 
             messageFactoryMock.
                 Setup(x => x.Create(messageBytes, null)).
@@ -198,10 +198,10 @@ namespace AsyncSocks_Tests.Tests
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
             var messageBytes = Encoding.ASCII.GetBytes("This is a test");
 
-            IAsyncClient senderArgument = null;
+            IAsyncClient<byte[]> senderArgument = null;
             byte[] messageArgument = null;
 
-            var callback = new NewMessageReceived((object sender, NewMessageReceivedEventArgs e) =>
+            var callback = new NewMessageReceived<byte[]>((object sender, NewMessageReceivedEventArgs<byte[]> e) =>
             {
                 senderArgument = e.Sender;
                 messageArgument = e.Message;
@@ -210,7 +210,7 @@ namespace AsyncSocks_Tests.Tests
 
             connection.OnNewMessageReceived += callback;
 
-            var ev = new NewMessageReceivedEventArgs(null, messageBytes);
+            var ev = new NewMessageReceivedEventArgs<byte[]>(null, messageBytes);
             messagePollerMock.Raise(x => x.OnNewClientMessageReceived += null, ev);
 
             bool callbackCalled = callbackCalledEvent.WaitOne(2000);
@@ -226,8 +226,8 @@ namespace AsyncSocks_Tests.Tests
         {
             AutoResetEvent callbackCalledEvent = new AutoResetEvent(false);
 
-            IAsyncClient peerArgument = null;
-            var callback = new PeerDisconnected((object sender, PeerDisconnectedEventArgs e) =>
+            IAsyncClient<byte[]> peerArgument = null;
+            var callback = new PeerDisconnected<byte[]>((object sender, PeerDisconnectedEventArgs<byte[]> e) =>
             {
                 peerArgument = e.Peer;
                 callbackCalledEvent.Set();
@@ -235,7 +235,7 @@ namespace AsyncSocks_Tests.Tests
 
             connection.OnPeerDisconnected += callback;
 
-            inboundSpoolerMock.Raise(x => x.OnPeerDisconnected += null, new PeerDisconnectedEventArgs(null));
+            inboundSpoolerMock.Raise(x => x.OnPeerDisconnected += null, new PeerDisconnectedEventArgs<byte[]>(null));
 
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000), "Callback not called");
             Assert.AreEqual(connection, peerArgument);

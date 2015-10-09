@@ -5,9 +5,5 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public interface INetworkMessageReader
-    {
-        byte[] Read();
-        ITcpClient Client { get; }
-    }
+    public interface INetworkMessageReader : INetworkReader<byte[]> {}
 }

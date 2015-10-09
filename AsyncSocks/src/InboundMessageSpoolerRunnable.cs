@@ -7,19 +7,19 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    public class InboundMessageSpoolerRunnable : IInboundMessageSpoolerRunnable, IDisposable
+    public class InboundMessageSpoolerRunnable<T> : IInboundMessageSpoolerRunnable<T>, IDisposable
     {
-        private INetworkMessageReader networkMessageReader;
-        private BlockingCollection<NetworkMessage> queue;
+        private INetworkReader<T> networkReader;
+        private BlockingCollection<ReadResult<T>> queue;
         private AutoResetEvent startedEvent = new AutoResetEvent(false);
         private volatile bool shouldStop;
         private volatile bool running;
 
-        public event PeerDisconnected OnPeerDisconnected;
+        public event PeerDisconnected<T> OnPeerDisconnected;
 
-        public InboundMessageSpoolerRunnable(INetworkMessageReader networkMessageReader, BlockingCollection<NetworkMessage> queue)
+        public InboundMessageSpoolerRunnable(INetworkReader<T> networkReader, BlockingCollection<ReadResult<T>> queue)
         {
-            this.networkMessageReader = networkMessageReader;
+            this.networkReader = networkReader;
             this.queue = queue;
         }
 
@@ -27,7 +27,7 @@ namespace AsyncSocks
         {
             try
             {
-                byte[] message = networkMessageReader.Read();
+                ReadResult<T> message = networkReader.Read();
                 
                 if (message == null)
                 {
@@ -40,7 +40,7 @@ namespace AsyncSocks
                 }
                 else
                 {
-                    queue.Add(new NetworkMessage(null, message));
+                    queue.Add(message);
                 }
             }
             catch (ThreadInterruptedException)
@@ -75,7 +75,7 @@ namespace AsyncSocks
             get { return running; }
         }
 
-        public BlockingCollection<NetworkMessage> Queue
+        public BlockingCollection<ReadResult<T>> Queue
         {
             get
             {
@@ -83,11 +83,11 @@ namespace AsyncSocks
             }
         }
 
-        public INetworkMessageReader Reader
+        public INetworkReader<T> Reader
         {
             get
             {
-                return networkMessageReader;
+                return networkReader;
             }
         }
 

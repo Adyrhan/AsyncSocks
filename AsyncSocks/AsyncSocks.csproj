@@ -41,9 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ReadResult.cs" />
+    <Compile Include="src\AsyncMessagingClient.cs" />
+    <Compile Include="src\AsyncMessagingClientFactory.cs" />
+    <Compile Include="src\AsyncMessagingServer.cs" />
     <Compile Include="src\ClientConfig.cs" />
     <Compile Include="src\INetworkReader.cs" />
+    <Compile Include="src\INetworkReaderFactory.cs" />
     <Compile Include="src\INetworkStreamReader.cs" />
+    <Compile Include="src\INetworkWriter.cs" />
+    <Compile Include="src\INetworkWriterFactory.cs" />
     <Compile Include="src\IOutboundMessageFactory.cs" />
     <Compile Include="src\IAsyncServer.cs" />
     <Compile Include="src\MessagePoller.cs" />
@@ -62,7 +69,6 @@
     <Compile Include="src\IClientConnectionAgentRunnable.cs" />
     <Compile Include="src\IAsyncClient.cs" />
     <Compile Include="src\IThreadRunner.cs" />
-    <Compile Include="src\NetworkMessage.cs" />
     <Compile Include="src\AsyncClient.cs" />
     <Compile Include="src\IInboundMessageSpooler.cs" />
     <Compile Include="src\IOutboundMessageSpooler.cs" />
@@ -77,7 +83,7 @@
     <Compile Include="src\ITcpClient.cs" />
     <Compile Include="src\ITcpListener.cs" />
     <Compile Include="src\NetworkMessageReader.cs" />
-    <Compile Include="src\NetworkReaderResult.cs" />
+    <Compile Include="src\NetworkMessage.cs" />
     <Compile Include="src\NetworkStreamReader.cs" />
     <Compile Include="src\NewClientConnected.cs" />
     <Compile Include="src\NewMessageReceived.cs" />

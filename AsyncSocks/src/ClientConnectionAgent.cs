@@ -5,19 +5,19 @@ using System.Text;
 
 namespace AsyncSocks
 {
-    public class ClientConnectionAgent : ThreadRunner, IClientConnectionAgent
+    public class ClientConnectionAgent<T> : ThreadRunner, IClientConnectionAgent<T>
     {
-        public event NewClientConnected OnNewClientConnection;
-        private IClientConnectionAgentRunnable runnable;
+        public event NewClientConnected<T> OnNewClientConnection;
+        private IClientConnectionAgentRunnable<T> runnable;
 
-        public ClientConnectionAgent(IClientConnectionAgentRunnable runnable) : base(runnable)
+        public ClientConnectionAgent(IClientConnectionAgentRunnable<T> runnable) : base(runnable)
         {
             // TODO: Complete member initialization
             this.runnable = runnable;
             runnable.OnNewClientConnection += runnable_OnNewClientConnection;
         }
 
-        private void runnable_OnNewClientConnection(object sender, NewClientConnectedEventArgs e)
+        private void runnable_OnNewClientConnection(object sender, NewClientConnectedEventArgs<T> e)
         {
             var onNewClientConnection = OnNewClientConnection;
             if(onNewClientConnection != null)
@@ -26,11 +26,10 @@ namespace AsyncSocks
             }
         }
 
-        public static ClientConnectionAgent Create(ITcpListener listener, ClientConfig clientConfig)
+        public static ClientConnectionAgent<T> Create(AsyncClientFactory<T> clientFactory, ITcpListener listener)
         {
-            AsyncClientFactory factory = new AsyncClientFactory(clientConfig);
-            ClientConnectionAgentRunnable runnable = new ClientConnectionAgentRunnable(listener, factory);
-            return new ClientConnectionAgent(runnable);
+            ClientConnectionAgentRunnable<T> runnable = new ClientConnectionAgentRunnable<T>(listener, clientFactory);
+            return new ClientConnectionAgent<T>(runnable);
         }
 
         public override void Start()
