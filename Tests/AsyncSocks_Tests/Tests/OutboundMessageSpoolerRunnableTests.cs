@@ -16,19 +16,19 @@ namespace AsyncSocks_Tests
     {
         
         private OutboundMessageSpoolerRunnable<byte[]> spooler;
-        private Mock<ITcpClient> tcpClientMock;
+        private Mock<INetworkWriter<byte[]>> writerMock;
         private BlockingCollection<OutboundMessage<byte[]>> queue;
 
         [TestInitialize]
         public void BeforeEach()
         {
             queue = new BlockingCollection<OutboundMessage<byte[]>>(new ConcurrentQueue<OutboundMessage<byte[]>>());
-            tcpClientMock = new Mock<ITcpClient>();
-            spooler = new OutboundMessageSpoolerRunnable<byte[]>(tcpClientMock.Object, queue);
+            writerMock = new Mock<INetworkWriter<byte[]>>();
+            spooler = new OutboundMessageSpoolerRunnable<byte[]>(writerMock.Object, queue);
         }
         
         [TestMethod]
-        public void SpoolShouldWriteMessageToTcpClient()
+        public void SpoolShouldCallNetworkWriterWriteMethod()
         {
             string messageString = "This is a test message";
             byte[] messageBytes = Encoding.ASCII.GetBytes(messageString);
@@ -38,12 +38,12 @@ namespace AsyncSocks_Tests
 
             var message = new OutboundMessage<byte[]>(messageBytes, null);
 
-            tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), 0, totalLength)).Verifiable();
+            writerMock.Setup(x => x.Write(message.Message)).Verifiable();
 
             queue.Add(message);
             spooler.Spool();
 
-            tcpClientMock.Verify();
+            writerMock.Verify();
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace AsyncSocks_Tests
             AutoResetEvent spoolerCalled = new AutoResetEvent(false);
 
             queue.Add(new OutboundMessage<byte[]>(new byte[5]{0,1,2,3,4}, null));
-            tcpClientMock.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).Callback(() => spoolerCalled.Set()).Verifiable(); // If Write is called, it means Spool also has been called.
+            writerMock.Setup(x => x.Write(It.IsAny<byte[]>())).Callback(() => spoolerCalled.Set()).Verifiable(); // If Write is called, it means Spool also has been called.
 
             ThreadRunner runner = new ThreadRunner(spooler);
 
@@ -66,7 +66,7 @@ namespace AsyncSocks_Tests
             spoolerCalled.WaitOne(2000);
             runner.Stop();
 
-            tcpClientMock.Verify();
+            writerMock.Verify();
 
         }
 
@@ -120,8 +120,8 @@ namespace AsyncSocks_Tests
 
             queue.Add(new OutboundMessage<byte[]>(messageBytes, callback));
 
-            tcpClientMock.
-                Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).
+            writerMock.
+                Setup(x => x.Write(It.IsAny<byte[]>())).
                 Throws(new SocketException());
 
             spooler.Spool();

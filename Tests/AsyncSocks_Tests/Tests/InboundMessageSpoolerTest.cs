@@ -16,7 +16,7 @@ namespace AsyncSocks_Tests.Tests
             var tcpClientMock = new Mock<ITcpClient>();
             var readerMock = new Mock<INetworkReader<byte[]>>();
 
-            InboundMessageSpooler<byte[]> spooler = InboundMessageSpooler<byte[]>.Create(readerMock.Object, tcpClientMock.Object);
+            InboundMessageSpooler<byte[]> spooler = InboundMessageSpooler<byte[]>.Create(readerMock.Object);
 
             Assert.IsTrue(spooler != null);
         }

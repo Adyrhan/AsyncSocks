@@ -30,9 +30,10 @@ namespace AsyncSocks_Tests.Tests
 
             var callback = new NewMessageReceived<byte[]>((object sender, NewMessageReceivedEventArgs<byte[]> e) =>
             {
-                callbackCalledEvent.Set();
-                Assert.AreEqual(connectionMock.Object, e.Sender);
+                Assert.IsNull(e.Sender);
+                Assert.IsNotNull(sender);
                 Assert.AreEqual(originalMessage, e.Message);
+                callbackCalledEvent.Set();
             });
 
             runnable.OnNewMessageReceived += callback;

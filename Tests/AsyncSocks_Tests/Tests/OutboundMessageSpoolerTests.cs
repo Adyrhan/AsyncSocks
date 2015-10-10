@@ -25,8 +25,8 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void CreateShouldReturnANewInstance()
         {
-            var tcpClientMock = new Mock<ITcpClient>();
-            var spooler2 = OutboundMessageSpooler<byte[]>.Create(tcpClientMock.Object);
+            var writerMock = new Mock<INetworkWriter<byte[]>>();
+            var spooler2 = OutboundMessageSpooler<byte[]>.Create(writerMock.Object);
             Assert.IsTrue(spooler2 != null && spooler2 is OutboundMessageSpooler<byte[]>);
         }
 

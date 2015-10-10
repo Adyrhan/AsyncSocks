@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\INetworkMessageWriter.cs" />
+    <Compile Include="src\NetworkMessageWriter.cs" />
     <Compile Include="src\ReadResult.cs" />
     <Compile Include="src\AsyncMessagingClient.cs" />
     <Compile Include="src\AsyncMessagingClientFactory.cs" />

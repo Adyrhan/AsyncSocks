@@ -55,7 +55,7 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ReadShouldReturnNullOnClosedSocket()
         {
-            tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 1024 * 8)).Throws(new SocketException()).Verifiable();
+            tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), 0, 1024 * 8)).Throws(new IOException()).Verifiable();
 
             ReadResult<byte[]> result = reader.Read();
 

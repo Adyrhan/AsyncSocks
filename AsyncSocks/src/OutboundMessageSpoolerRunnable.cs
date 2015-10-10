@@ -11,68 +11,51 @@ namespace AsyncSocks
     //FIXME: Refactor Spool source code into a new class. That code should become the NetworkMessageWriter, which will be of an implementation of a new interface INetworkWriter.
     public class OutboundMessageSpoolerRunnable<T> : IOutboundMessageSpoolerRunnable, IDisposable
     {
-        private ITcpClient tcpClient;
+        private INetworkWriter<T> writer;
         private BlockingCollection<OutboundMessage<T>> queue;
         private AutoResetEvent startEvent = new AutoResetEvent(false);
         private bool running;
         private bool shouldStop;
 
-        public OutboundMessageSpoolerRunnable(ITcpClient tcpClient, BlockingCollection<OutboundMessage<T>> queue)
+        public OutboundMessageSpoolerRunnable(INetworkWriter<T> writer, BlockingCollection<OutboundMessage<T>> queue)
         {
-            this.tcpClient = tcpClient;
+            this.writer = writer;
             this.queue = queue;
         }
 
         public void Spool()
         {
-            //try
-            //{
-            //    OutboundMessage<T> message = queue.Take();
-            //    T messageBytes = message.Message;
+            try
+            {
+                OutboundMessage<T> message = queue.Take();
+                T messageBytes = message.Message;
 
-            //    byte[] size = BitConverter.GetBytes(messageBytes.Length);
-            //    int totalSize = size.Length + messageBytes.Length;
+                SocketException e = WriteOrException(message.Message);
+                
+                if (message.Callback != null)
+                {
+                    if (e != null)
+                    {
+                        message.Callback(false, e);
+                    }
+                    else
+                    {
+                        message.Callback(true, null);
+                    }
+                }
+            }
+            catch (ThreadInterruptedException)
+            {
+                // OutboundMessageSpooler stopping
+            }
 
-            //    byte[] packetBytes = new byte[totalSize];
-
-            //    for (int i = 0; i < totalSize; i++)
-            //    {
-            //        if (i < size.Length)
-            //        {
-            //            packetBytes[i] = size[i];
-            //        }
-            //        else
-            //        {
-            //            packetBytes[i] = messageBytes[i - size.Length];
-            //        }
-            //    }
-
-            //    SocketException e = WriteOrException(packetBytes, 0, totalSize);
-
-            //    if (message.Callback != null)
-            //    {
-            //        if (e != null)
-            //        {
-            //            message.Callback(false, e);
-            //        }
-            //        else
-            //        {
-            //            message.Callback(true, null);
-            //        }
-            //    }
-            //}
-            //catch (ThreadInterruptedException)
-            //{
-            //    // OutboundMessageSpooler stopping
-            //}
-            
         }
 
-        private SocketException WriteOrException(byte[] bytes, int offset, int length)
+        private SocketException WriteOrException(T message)
         {
             try
             {
-                tcpClient.Write(bytes, offset, length);
+                writer.Write(message);
                 return null;
             }
             catch (SocketException e)

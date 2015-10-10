@@ -6,9 +6,5 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    public interface INetworkWriter<T>
-    {
-        void Write(T message);
-        ITcpClient Client { get; }
-    }
+    public interface INetworkMessageWriter : INetworkWriter<byte[]> { }
 }

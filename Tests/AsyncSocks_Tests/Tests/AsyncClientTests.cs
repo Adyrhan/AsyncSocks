@@ -11,7 +11,7 @@ using AsyncSocks.Exceptions;
 namespace AsyncSocks_Tests.Tests
 {
     [TestClass]
-    public class AsyncClientTest
+    public class AsyncClientTests
     {
         private Mock<IInboundMessageSpooler<byte[]>> inboundSpoolerMock;
         private Mock<IOutboundMessageSpooler<byte[]>> outboundSpoolerMock;
@@ -87,26 +87,6 @@ namespace AsyncSocks_Tests.Tests
             messageFactoryMock.Verify();
             outboundSpoolerMock.Verify();
 
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(MessageTooBigException))]
-        public void SendMessageRejectsMessagesBiggerThanConfigMaxMessageSize()
-        {
-            byte[] messageBytes = new byte[15 * 1024 * 1024];
-            var message = new OutboundMessage<byte[]>(messageBytes, null);
-
-            messageFactoryMock.
-                Setup(x => x.Create(messageBytes, null)).
-                Returns(message).
-                Verifiable();
-
-            outboundSpoolerMock.Setup(x => x.Enqueue(message)).Verifiable();
-
-            connection.SendMessage(messageBytes);
-
-            messageFactoryMock.Verify();
-            outboundSpoolerMock.Verify();
         }
 
         [TestMethod]

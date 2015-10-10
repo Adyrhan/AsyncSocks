@@ -94,7 +94,7 @@ namespace AsyncSocks_Tests.Tests
         [ExpectedException(typeof(SocketException))]
         public void ServerTryingToStartWithAlreadyUsedPort()
         {
-            var serverUsingAlreadyUsedPort = (AsyncMessagingClient)new AsyncMessagingClientFactory().Create(serverEndPoint);
+            var serverUsingAlreadyUsedPort = AsyncMessagingServer.Create(serverEndPoint);
             serverUsingAlreadyUsedPort.Start();
         }
 

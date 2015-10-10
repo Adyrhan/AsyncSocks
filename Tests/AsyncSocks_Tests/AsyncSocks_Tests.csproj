@@ -66,13 +66,14 @@
     <Compile Include="Tests\OutboundMessageSpoolerRunnableTests.cs" />
     <Compile Include="Tests\OutboundMessageSpoolerTests.cs" />
     <Compile Include="Tests\InboundMessageSpoolerTest.cs" />
-    <Compile Include="Tests\AsyncClientTest.cs" />
+    <Compile Include="Tests\AsyncClientTests.cs" />
     <Compile Include="Tests\ClientConnectionAgentTests.cs" />
     <Compile Include="Tests\ConnectionManagerTests.cs" />
     <Compile Include="Tests\AsyncServerTests.cs" />
     <Compile Include="Tests\MessagePollerTests.cs" />
     <Compile Include="Tests\MessagePollerRunnableTests.cs" />
     <Compile Include="Tests\AsyncServerIntegrationTests.cs" />
+    <Compile Include="Tests\AsyncMessagingClientTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AsyncSocks\AsyncSocks.csproj">
