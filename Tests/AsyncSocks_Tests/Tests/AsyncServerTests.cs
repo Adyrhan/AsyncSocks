@@ -24,7 +24,7 @@ namespace AsyncSocks_Tests.Tests
             tcpListenerMock = new Mock<ITcpListener>();
             connectionManagerMock = new Mock<IConnectionManager<byte[]>>();
             clientConnectionAgentMock = new Mock<IClientConnectionAgent<byte[]>>();
-            clientConfig = new ClientConfig(10 * 1024 * 1024);
+            clientConfig = new ClientConfig(new Dictionary<string, string>());
             server = new AsyncServer<byte[]>(clientConnectionAgentMock.Object, connectionManagerMock.Object, tcpListenerMock.Object, clientConfig);
         }
         

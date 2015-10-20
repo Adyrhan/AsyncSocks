@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AsyncSocks;
 using Moq;
 using AsyncSocks.Exceptions;
+using System.Collections.Generic;
+
 namespace AsyncSocks_Tests.Tests
 {
     [TestClass]
@@ -15,7 +17,7 @@ namespace AsyncSocks_Tests.Tests
         private Mock<ISocket> socketMock;
         private IAsyncClient<byte[]> connection;
         private Mock<IOutboundMessageFactory<byte[]>> messageFactoryMock;
-        private ClientConfig clientConfig;
+        private AsyncMessagingClientConfig clientConfig;
 
         [TestInitialize]
         public void BeforeEach()
@@ -26,7 +28,10 @@ namespace AsyncSocks_Tests.Tests
             socketMock = new Mock<ISocket>();
             tcpClientMock = new Mock<ITcpClient>();
             messageFactoryMock = new Mock<IOutboundMessageFactory<byte[]>>();
-            clientConfig = new ClientConfig(8 * 1024 * 1024);
+
+            var kvp = new Dictionary<string, string>();
+            kvp.Add("MaxMessageSize", (8 * 1024 * 1024).ToString());
+            clientConfig = new AsyncMessagingClientConfig(kvp);
 
             tcpClientMock.Setup(x => x.Socket).Returns(socketMock.Object);
 

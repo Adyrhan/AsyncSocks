@@ -1,16 +1,16 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AsyncSocks;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using AsyncSocks.Exceptions;
+using System.Collections.Generic;
 
 namespace AsyncSocks_Tests.Tests
 {
     [TestClass]
-    public class AsyncServerIntegrationTests
+    public class AsyncMessagingServerIntegrationTests
     {
         private AsyncMessagingServer server;
         private IPEndPoint serverEndPoint;
@@ -102,7 +102,9 @@ namespace AsyncSocks_Tests.Tests
         [ExpectedException(typeof(MessageTooBigException))]
         public void SendingBigMessage()
         {
-            var client = (AsyncMessagingClient)new AsyncMessagingClientFactory(new ClientConfig(40 * 1024 * 1024)).Create(serverEndPoint);
+            var kvp = new Dictionary<string, string>();
+            kvp.Add("MaxMessageSize", (8 * 1024 * 1024).ToString());
+            var client = (AsyncMessagingClient)new AsyncMessagingClientFactory(new AsyncMessagingClientConfig(kvp)).Create(serverEndPoint);
 
             int messageLength = 50 * 1024 * 1024;
             byte[] messageBytes = new byte[messageLength];
@@ -220,7 +222,9 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ReceivingBigMessage()
         {
-            var client = (AsyncMessagingClient)new AsyncMessagingClientFactory(new ClientConfig(60 * 1024 * 1024)).Create(serverEndPoint); // It's not gonna reject the message on the client
+            var kvp = new Dictionary<string, string>();
+            kvp.Add("MaxMessageSize", (60 * 1024 * 1024).ToString());
+            var client = (AsyncMessagingClient)new AsyncMessagingClientFactory(new AsyncMessagingClientConfig(kvp)).Create(serverEndPoint); // It's not gonna reject the message on the client
 
             int messageLength = 50 * 1024 * 1024;
             byte[] messageBytes = new byte[messageLength];

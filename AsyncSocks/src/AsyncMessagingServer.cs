@@ -13,7 +13,7 @@ namespace AsyncSocks
 
         public static AsyncMessagingServer Create(IPEndPoint localEndPoint)
         {
-            var clientConfig = ClientConfig.GetDefault();
+            var clientConfig = AsyncMessagingClientConfig.GetDefault();
             return Create(localEndPoint, clientConfig);
         }
 

@@ -17,7 +17,7 @@ namespace AsyncSocks
 
         public AsyncClientFactory()
         {
-            ClientConfig = ClientConfig.GetDefault();
+            ClientConfig = AsyncMessagingClientConfig.GetDefault();
         }
 
         public ClientConfig ClientConfig { get; }

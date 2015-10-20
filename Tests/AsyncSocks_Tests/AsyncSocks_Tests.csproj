@@ -72,7 +72,7 @@
     <Compile Include="Tests\AsyncServerTests.cs" />
     <Compile Include="Tests\MessagePollerTests.cs" />
     <Compile Include="Tests\MessagePollerRunnableTests.cs" />
-    <Compile Include="Tests\AsyncServerIntegrationTests.cs" />
+    <Compile Include="Tests\AsyncMessagingServerIntegrationTests.cs" />
     <Compile Include="Tests\AsyncMessagingClientTests.cs" />
   </ItemGroup>
   <ItemGroup>

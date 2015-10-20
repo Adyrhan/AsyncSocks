@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using AsyncSocks.Exceptions;
+using System.Collections.Generic;
 
 namespace AsyncSocks_Tests.Tests
 {
@@ -31,7 +32,7 @@ namespace AsyncSocks_Tests.Tests
             socketMock = new Mock<ISocket>();
             tcpClientMock = new Mock<ITcpClient>();
             messageFactoryMock = new Mock<IOutboundMessageFactory<byte[]>>();
-            clientConfig = new ClientConfig(8 * 1024 * 1024);
+            clientConfig = new ClientConfig(new Dictionary<string, string>());
 
             tcpClientMock.Setup(x => x.Socket).Returns(socketMock.Object);
 

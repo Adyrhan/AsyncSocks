@@ -16,7 +16,7 @@ namespace AsyncSocks
         public override IAsyncClient<byte[]> Create(ITcpClient tcpClient)
         {
             var writer = new NetworkMessageWriter(tcpClient);
-            var reader = new NetworkMessageReader(tcpClient, ClientConfig.MaxMessageSize); // FIXME: This ClientConfig object here is quite coupled if we plan to use it as a configuration object for every kind of implementation. It should be abstract, or just an interface
+            var reader = new NetworkMessageReader(tcpClient, int.Parse(ClientConfig.GetProperty("MaxMessageSize"))); // FIXME: This ClientConfig object here is quite coupled if we plan to use it as a configuration object for every kind of implementation. It should be abstract, or just an interface
             var inboundSpooler = InboundMessageSpooler<byte[]>.Create(reader); 
             var outboundSpooler = OutboundMessageSpooler<byte[]>.Create(writer);
             var messagePoller = MessagePoller<byte[]>.Create(inboundSpooler.Queue);

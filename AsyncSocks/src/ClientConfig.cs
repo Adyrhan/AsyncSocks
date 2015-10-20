@@ -1,22 +1,24 @@
-﻿namespace AsyncSocks
+﻿using System.Collections.Generic;
+
+namespace AsyncSocks
 {
     public class ClientConfig
     {
-        public int MaxMessageSize { get; }
+        private Dictionary<string, string> dict;
 
-        public ClientConfig(int maxMessageSize)
+        public ClientConfig(Dictionary<string, string> keyValuePairs)
         {
-            MaxMessageSize = maxMessageSize;
+            dict = keyValuePairs;
         }
 
         public override string ToString()
         {
-            return "MaxMessageSize: " + MaxMessageSize.ToString();
+            return dict.ToString();
         }
 
-        public static ClientConfig GetDefault()
+        public string GetProperty(string key)
         {
-            return new ClientConfig(10 * 1024 * 1024); // 10MB max message size
+            return dict[key];
         }
     }
 }
