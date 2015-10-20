@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AsyncSocks
@@ -72,20 +69,11 @@ namespace AsyncSocks
 
         public void SendMessage(T message)
         {
-            //OutboundMessage msg = messageFactory.Create(messageBytes, null);
-            //outboundSpooler.Enqueue(msg);
             SendMessage(message, null);
         }
 
         public virtual void SendMessage(T message, Action<bool, SocketException> callback)
         {
-            //if (messageBytes.Length > ClientConfig.MaxMessageSize)
-            //{
-            //    int maxSize = ClientConfig.MaxMessageSize;
-            //    int msgSize = messageBytes.Length;
-            //    throw new MessageTooBigException("Max size expected for outgoing messages is: " + maxSize.ToString() + " Received message of size: " + msgSize.ToString());
-            //}
-
             OutboundMessage<T> msg = messageFactory.Create(message, callback);
             outboundSpooler.Enqueue(msg);
         }
