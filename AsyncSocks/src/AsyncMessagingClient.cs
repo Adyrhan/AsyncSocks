@@ -1,15 +1,21 @@
 ﻿using AsyncSocks.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace AsyncSocks
 {
     namespace Exceptions
     {
+        /// <summary>
+        /// Exceptions used by this library.
+        /// </summary>
+        [System.Runtime.CompilerServices.CompilerGenerated]
+        class NamespaceDoc { }
+
+        /// <summary>
+        /// This exception is thrown by AsyncMessagingClient when the message to send is too big
+        /// </summary>
         [Serializable]
         public class MessageTooBigException : Exception
         {
@@ -19,6 +25,10 @@ namespace AsyncSocks
         }
     }
 
+    /// <summary>
+    /// This subclass of AsyncClient will send binary messages preceded by 4 bytes that indicates the size of the message.
+    /// If you want to limit the message size, change the value for the key "MaxMessageSize" to the desired size in AsyncMessagingClientConfig
+    /// </summary>
     public class AsyncMessagingClient : AsyncClient<byte[]>
     {
         private int maxMessageSize;
@@ -31,6 +41,11 @@ namespace AsyncSocks
             maxMessageSize = int.Parse(ClientConfig.GetProperty("MaxMessageSize"));
         }
 
+        /// <summary>
+        /// Sends binary messages to the client.
+        /// </summary>
+        /// <param name="message">binary data to send</param>
+        /// <param name="callback"><inheritdoc/></param>
         public override void SendMessage(byte[] message, Action<bool, SocketException> callback)
         {
             

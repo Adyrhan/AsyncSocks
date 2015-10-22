@@ -7,6 +7,9 @@ using System.Text;
 
 namespace AsyncSocks
 {
+    /// <summary>
+    /// Implementation of INetworkReader for the use of AsyncMessagingClient.
+    /// </summary>
     public class NetworkMessageReader : INetworkMessageReader
     {
         private ITcpClient tcpClient;
@@ -23,6 +26,11 @@ namespace AsyncSocks
             get { return tcpClient; }
         }
 
+        /// <summary>
+        /// When called, reads the first 4 bytes coming from the client and uses them as the size for the message that will be 
+        /// read inmediatelly before those 4 bytes.
+        /// </summary>
+        /// <returns>Binary message in the form of an array of bytes.</returns>
         public ReadResult<byte[]> Read()
         {
             try

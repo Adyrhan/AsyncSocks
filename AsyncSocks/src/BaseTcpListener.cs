@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
-    class BaseTcpListener : ITcpListener
+    /// <summary>
+    /// Wrapped instance of TcpListener
+    /// </summary>
+    public class BaseTcpListener : ITcpListener
     {
         private TcpListener listener;
 
@@ -16,6 +19,10 @@ namespace AsyncSocks
             this.listener = listener;
         }
 
+        /// <summary>
+        /// Accepts a single incomming client connection.
+        /// </summary>
+        /// <returns>Wrapped instance of TcpClient</returns>
         public ITcpClient AcceptTcpClient()
         {
             
@@ -23,11 +30,17 @@ namespace AsyncSocks
             return new BaseTcpClient(client);
         }
 
+        /// <summary>
+        /// Stops the TcpListener from listening.
+        /// </summary>
         public void Stop()
         {
             listener.Stop();
         }
 
+        /// <summary>
+        /// Starts TcpListener for listening new client connections.
+        /// </summary>
         public void Start()
         {
             listener.Start();

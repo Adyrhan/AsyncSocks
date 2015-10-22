@@ -7,6 +7,9 @@ using System.Net;
 
 namespace AsyncSocks
 {
+    /// <summary>
+    /// TcpClient instance wrapper.
+    /// </summary>
     public class BaseTcpClient : ITcpClient, IDisposable
     {
         private TcpClient tcpClient;

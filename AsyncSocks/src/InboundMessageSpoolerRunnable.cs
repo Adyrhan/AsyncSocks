@@ -7,6 +7,10 @@ using System.Threading;
 
 namespace AsyncSocks
 {
+    /// <summary>
+    /// Runnable used by the thread created by an InboundMessageSpooler. See <see cref="InboundMessageSpooler{T}"/>.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class InboundMessageSpoolerRunnable<T> : IInboundMessageSpoolerRunnable<T>, IDisposable
     {
         private INetworkReader<T> networkReader;

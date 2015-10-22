@@ -6,6 +6,10 @@ using System.Text;
 
 namespace AsyncSocks
 {
+    /// <summary>
+    /// Holds the client objects and notifies the server instance of messages sent by the clients and client disconnections.
+    /// </summary>
+    /// <typeparam name="T">Type for the message object associated with the protocol that the AsyncClient instance is using.</typeparam>
     public class ConnectionManager<T> : IConnectionManager<T>
     {
         private Dictionary<IPEndPoint, IAsyncClient<T>> dict;
@@ -18,6 +22,9 @@ namespace AsyncSocks
             this.dict = dict;
         }
 
+        /// <summary>
+        /// Closes all connections.
+        /// </summary>
         public void CloseAllConnections()
         {
             var dictCopy = new Dictionary<IPEndPoint, IAsyncClient<T>>(dict);
@@ -28,6 +35,10 @@ namespace AsyncSocks
             
         }
 
+        /// <summary>
+        /// Adds a new client connection to the manager instance.
+        /// </summary>
+        /// <param name="peerConnection">Instance of AsyncClient</param>
         public void Add(IAsyncClient<T> peerConnection)
         {
             dict[(IPEndPoint) peerConnection.RemoteEndPoint] = peerConnection;

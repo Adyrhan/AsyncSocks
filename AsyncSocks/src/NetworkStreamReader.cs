@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace AsyncSocks
 {
+    /// <summary>
+    /// Implementation of INetworkReader for buffered reads from a client.
+    /// </summary>
     public class NetworkStreamReader : INetworkStreamReader
     {
         private int bufferSize;
@@ -18,6 +21,10 @@ namespace AsyncSocks
 
         public ITcpClient Client { get; }
 
+        /// <summary>
+        /// Reads up to the buffer size specified when creating the instance of this object, and returns the read data.
+        /// </summary>
+        /// <returns>Read data coming from the client. Has a maximum size equal to the buffer size specified when creating the instance of this object.</returns>
         public ReadResult<byte[]> Read()
         {
             try

@@ -7,7 +7,16 @@ using System.Threading;
 
 namespace AsyncSocks
 {
+    /// <summary>
+    /// Delegate for NewClientConnection events
+    /// </summary>
+    /// <param name="client">The wrapped TcpClient instance associated to the new client.</param>
     public delegate void NewClientConnectionDelegate(ITcpClient client);
+
+    /// <summary>
+    /// This is the runnable that holds the code executed by the internal thread of ClientConnectionAgent. See <see cref="ClientConnectionAgent{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">Type for the message object associated with the protocol that the AsyncClient instance is using.</typeparam>
     public class ClientConnectionAgentRunnable<T> : IClientConnectionAgentRunnable<T>, IDisposable
     {
         private ITcpListener listener;        

@@ -8,7 +8,10 @@ using System.Threading;
 
 namespace AsyncSocks
 {
-    //FIXME: Refactor Spool source code into a new class. That code should become the NetworkMessageWriter, which will be of an implementation of a new interface INetworkWriter.
+    /// <summary>
+    /// Runnable run by the thread of OutboundMessageSpooler
+    /// </summary>
+    /// <typeparam name="T">Type for the message associated with the protocol that the instance of AsyncClient is using.</typeparam>
     public class OutboundMessageSpoolerRunnable<T> : IOutboundMessageSpoolerRunnable, IDisposable
     {
         private INetworkWriter<T> writer;

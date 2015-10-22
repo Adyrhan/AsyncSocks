@@ -7,6 +7,10 @@ using System.Threading;
 
 namespace AsyncSocks
 {
+    /// <summary>
+    /// Runnable used by the thread run by MessagePoller. See <see cref="MessagePoller{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">Type for the message object associated with the protocol that the AsyncClient instance is using.</typeparam>
     public class MessagePollerRunnable<T> : IMessagePollerRunnable<T>, IDisposable
     {
         private BlockingCollection<ReadResult<T>> queue;
