@@ -81,7 +81,7 @@ namespace AsyncSocks_Tests.Tests
 
             var ev = new NewMessageReceivedEventArgs<byte[]>(peerConnectionMock.Object, Encoding.ASCII.GetBytes("This is a test!"));
 
-            peerConnectionMock.Raise(x => x.OnNewMessageReceived += null, ev);
+            peerConnectionMock.Raise(x => x.OnNewMessage += null, ev);
 
             bool called = callbackCalledEvent.WaitOne(2000);
 

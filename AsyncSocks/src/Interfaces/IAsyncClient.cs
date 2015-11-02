@@ -16,7 +16,7 @@ namespace AsyncSocks
         EndPoint LocalEndPoint { get; }
         bool IsActive();
 
-        event NewMessageReceived<T> OnNewMessageReceived;
+        event NewMessageReceived<T> OnNewMessage;
         event PeerDisconnected<T> OnPeerDisconnected;
         event ReadErrorEventHandler OnReadError;
 

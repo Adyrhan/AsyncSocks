@@ -42,7 +42,7 @@ namespace AsyncSocks
         public void Add(IAsyncClient<T> peerConnection)
         {
             dict[(IPEndPoint) peerConnection.RemoteEndPoint] = peerConnection;
-            peerConnection.OnNewMessageReceived += peerConnection_OnNewMessageReceived;
+            peerConnection.OnNewMessage += peerConnection_OnNewMessageReceived;
             peerConnection.OnPeerDisconnected += PeerConnection_OnPeerDisconnected;
             peerConnection.Start();
             

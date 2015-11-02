@@ -86,7 +86,6 @@ namespace AsyncSocks_Tests.Tests
 
             messageFactoryMock.Verify();
             outboundSpoolerMock.Verify();
-
         }
 
         [TestMethod]
@@ -169,7 +168,6 @@ namespace AsyncSocks_Tests.Tests
             messagePollerMock.Verify();
 
             Assert.IsTrue(active);
-            
         }
 
         [TestMethod]
@@ -188,7 +186,7 @@ namespace AsyncSocks_Tests.Tests
                 callbackCalledEvent.Set();
             });
 
-            connection.OnNewMessageReceived += callback;
+            connection.OnNewMessage += callback;
 
             var ev = new NewMessageReceivedEventArgs<byte[]>(null, messageBytes);
             messagePollerMock.Raise(x => x.OnNewClientMessageReceived += null, ev);

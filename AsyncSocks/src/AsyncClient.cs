@@ -27,7 +27,7 @@ namespace AsyncSocks
         /// <summary>
         /// Event fires for each message received from this client.
         /// </summary>
-        public event NewMessageReceived<T> OnNewMessageReceived;
+        public event NewMessageReceived<T> OnNewMessage;
 
         /// <summary>
         /// Event fires when this client closes connection.
@@ -54,12 +54,12 @@ namespace AsyncSocks
 
         private void setupEvents()
         {
-            poller.OnNewClientMessageReceived += poller_OnNewClientMessageReceived;
-            inboundSpooler.OnPeerDisconnected += InboundSpooler_OnPeerDisconnected;
-            poller.OnReadError += Poller_OnReadError;
+            poller.OnNewClientMessageReceived += RaiseOnNewMessage;
+            inboundSpooler.OnPeerDisconnected += RaiseOnPeerDisconnected;
+            poller.OnReadError += RaiseOnReadError;
         }
 
-        private void Poller_OnReadError(object sender, ReadErrorEventArgs e)
+        protected void RaiseOnReadError(object sender, ReadErrorEventArgs e)
         {
             var onReadError = OnReadError;
             if (onReadError != null)
@@ -74,7 +74,7 @@ namespace AsyncSocks
             RemoteEndPoint = tcpClient.Socket.RemoteEndPoint;
         }
 
-        private void InboundSpooler_OnPeerDisconnected(object sender, PeerDisconnectedEventArgs<T> e)
+        protected void RaiseOnPeerDisconnected(object sender, PeerDisconnectedEventArgs<T> e)
         {
             Task.Run(() =>
             {
@@ -90,12 +90,12 @@ namespace AsyncSocks
             
         }
 
-        private void poller_OnNewClientMessageReceived(object sender, NewMessageReceivedEventArgs<T> e)
+        protected void RaiseOnNewMessage(object sender, NewMessageReceivedEventArgs<T> e)
         {
-            if (OnNewMessageReceived != null)
+            if (OnNewMessage != null)
             {
                 var newE = new NewMessageReceivedEventArgs<T>(this, e.Message);
-                OnNewMessageReceived(this, newE);
+                OnNewMessage(this, newE);
             }
         }
 
