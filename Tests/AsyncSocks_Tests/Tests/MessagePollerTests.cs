@@ -22,7 +22,6 @@ namespace AsyncSocks_Tests.Tests
             poller = new MessagePoller<byte[]>(runnable.Object);
         }
 
-
         [TestMethod]
         public void OnNewClientMessageReceivedFiresUpWhenTheRunnableOneDoes()
         {
@@ -35,6 +34,21 @@ namespace AsyncSocks_Tests.Tests
             runnable.Raise(x => x.OnNewMessageReceived += null, null, null);
 
             Assert.IsTrue(callbackCalledEvent.WaitOne(2000));
+        }
+
+        [TestMethod]
+        public void OnReadErrorFiresUpWhenRunnableOneDoes()
+        {
+            Exception expectedError = new Exception("Fake test error");
+            Exception receivedError = null;
+            poller.OnReadError += (object sender, ReadErrorEventArgs e) =>
+            {
+                receivedError = e.Error;
+            };
+
+            runnable.Raise(x => x.OnReadError += null, runnable, new ReadErrorEventArgs(expectedError));
+
+            Assert.AreSame(expectedError, receivedError);
         }
     }
 }

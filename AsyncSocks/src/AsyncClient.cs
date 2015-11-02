@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AsyncSocks
 {
     /// <summary>
-    /// Root namespace.
+    /// Root namespace. Most classes that allow for implementations are in this namespace.
     /// </summary>
     class NamespaceDoc { }
 
@@ -34,6 +34,11 @@ namespace AsyncSocks
         /// </summary>
         public event PeerDisconnected<T> OnPeerDisconnected;
 
+        /// <summary>
+        /// Fires whenever a read error happened.
+        /// </summary>
+        public event ReadErrorEventHandler OnReadError;
+
         public AsyncClient(IInboundMessageSpooler<T> inboundSpooler, IOutboundMessageSpooler<T> outboundSpooler, IMessagePoller<T> poller, IOutboundMessageFactory<T> messageFactory, ITcpClient tcpClient, ClientConfig clientConfig)
         {
             this.inboundSpooler = inboundSpooler;
@@ -51,6 +56,16 @@ namespace AsyncSocks
         {
             poller.OnNewClientMessageReceived += poller_OnNewClientMessageReceived;
             inboundSpooler.OnPeerDisconnected += InboundSpooler_OnPeerDisconnected;
+            poller.OnReadError += Poller_OnReadError;
+        }
+
+        private void Poller_OnReadError(object sender, ReadErrorEventArgs e)
+        {
+            var onReadError = OnReadError;
+            if (onReadError != null)
+            {
+                onReadError(this, e);
+            }
         }
 
         private void saveEndPoints()

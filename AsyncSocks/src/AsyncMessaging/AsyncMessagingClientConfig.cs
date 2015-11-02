@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncMessaging
 {
     /// <summary>
     /// Subclass of ClientConfig object used by AsyncMessagingClientFactory. The static GetDefault() method returns an instance of this configuration object that only allows messages to be sent and received of up to 8MB of size.

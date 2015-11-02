@@ -1,11 +1,12 @@
-﻿using System;
+﻿using AsyncSocks.AsyncMessaging.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncMessaging
 {
     /// <summary>
     /// Implementation of INetworkReader for the use of AsyncMessagingClient.
@@ -44,7 +45,7 @@ namespace AsyncSocks
 
                 if (messageLength > maxMessageSize)
                 {
-                    return null;
+                    return new ReadResult<byte[]>(new MessageTooBigException("Received message of size "+messageLength.ToString()+". Max allowed is "+maxMessageSize));
                 }
 
                 buffer = new byte[messageLength];

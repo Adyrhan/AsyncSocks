@@ -6,7 +6,6 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using AsyncSocks.Exceptions;
 using System.Collections.Generic;
 
 namespace AsyncSocks_Tests.Tests
@@ -199,7 +198,6 @@ namespace AsyncSocks_Tests.Tests
             Assert.IsTrue(callbackCalled);
             Assert.AreEqual(connection, senderArgument);
             Assert.AreEqual(messageBytes, messageArgument);
-
         }
 
         [TestMethod]
@@ -244,6 +242,21 @@ namespace AsyncSocks_Tests.Tests
         public void ClientConfigPropertyReturnsClientConfigObject()
         {
             Assert.AreEqual(clientConfig, connection.ClientConfig);
+        }
+
+        [TestMethod]
+        public void ReadErrorEventFiresOnError()
+        {
+            var expectedError = new Exception("Fake test error");
+            Exception receivedError = null;
+            connection.OnReadError += (object sender, ReadErrorEventArgs e) =>
+            {
+                receivedError = e.Error;
+            };
+
+            messagePollerMock.Raise(x => x.OnReadError += null, messagePollerMock.Object, new ReadErrorEventArgs(expectedError));
+
+            Assert.AreSame(expectedError, receivedError);
         }
 
     }

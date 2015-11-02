@@ -13,12 +13,32 @@ namespace AsyncSocks
     /// <typeparam name="T">Type for the message object associated with the protocol that the AsyncClient instance is using.</typeparam>
     public class MessagePoller<T> : ThreadRunner, IMessagePoller<T>
     {
+        /// <summary>
+        /// This event fires whenever a new message has been obtained from the queue.
+        /// </summary>
+        public event NewMessageReceived<T> OnNewClientMessageReceived;
+
+        /// <summary>
+        /// Fires whenever a read error happened.
+        /// </summary>
+        public event ReadErrorEventHandler OnReadError;
+
         private IMessagePollerRunnable<T> runnable;
 
         public MessagePoller(IMessagePollerRunnable<T> runnable) : base(runnable)
         {
             this.runnable = runnable;
             runnable.OnNewMessageReceived += runnable_OnNewMessageReceived;
+            runnable.OnReadError += Runnable_OnReadError;
+        }
+
+        private void Runnable_OnReadError(object sender, ReadErrorEventArgs e)
+        {
+            var onReadError = OnReadError;
+            if (onReadError != null)
+            {
+                onReadError(this, e);
+            }
         }
 
         private void runnable_OnNewMessageReceived(object sender, NewMessageReceivedEventArgs<T> e)
@@ -28,11 +48,6 @@ namespace AsyncSocks
                 OnNewClientMessageReceived(this, e);
             }
         }
-
-        /// <summary>
-        /// This event fires whenever a new message has been obtained from the queue.
-        /// </summary>
-        public event NewMessageReceived<T> OnNewClientMessageReceived;
 
         /// <summary>
         /// Static factory that creates an instance of this class using the queue provided.

@@ -18,6 +18,7 @@ namespace AsyncSocks
 
         event NewMessageReceived<T> OnNewMessageReceived;
         event PeerDisconnected<T> OnPeerDisconnected;
+        event ReadErrorEventHandler OnReadError;
 
         ITcpClient TcpClient { get; }
         ClientConfig ClientConfig { get; }

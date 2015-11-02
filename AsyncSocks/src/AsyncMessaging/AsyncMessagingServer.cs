@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncMessaging
 {
     /// <summary>
     /// This creates a server for receiving and sending binary messages.

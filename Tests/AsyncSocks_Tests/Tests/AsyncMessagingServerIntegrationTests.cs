@@ -1,11 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AsyncSocks;
+using AsyncSocks.AsyncMessaging;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using AsyncSocks.Exceptions;
 using System.Collections.Generic;
+using AsyncSocks.AsyncMessaging.Exceptions;
 
 namespace AsyncSocks_Tests.Tests
 {

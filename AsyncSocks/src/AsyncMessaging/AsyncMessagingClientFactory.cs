@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncMessaging
 {
     /// <summary>
     /// Implementation of AsyncClientFactory that creates instances of AsyncMessagingClient <see cref="AsyncMessagingClient"/>
@@ -14,7 +14,7 @@ namespace AsyncSocks
         /// <summary>
         /// This version of the constructor will use the default ClientConfig instance from AsyncMessagingClientConfig.GetDefault()
         /// </summary>
-        public AsyncMessagingClientFactory() : base() { }
+        public AsyncMessagingClientFactory() : base(AsyncMessagingClientConfig.GetDefault()) { }
 
         /// <inheritdoc />
         public override IAsyncClient<byte[]> Create(IInboundMessageSpooler<byte[]> inboundSpooler, IOutboundMessageSpooler<byte[]> outboundSpooler, IMessagePoller<byte[]> messagePoller, IOutboundMessageFactory<byte[]> messageFactory, ITcpClient tcpClient)
@@ -26,7 +26,7 @@ namespace AsyncSocks
         public override IAsyncClient<byte[]> Create(ITcpClient tcpClient)
         {
             var writer = new NetworkMessageWriter(tcpClient);
-            var reader = new NetworkMessageReader(tcpClient, int.Parse(ClientConfig.GetProperty("MaxMessageSize"))); // FIXME: This ClientConfig object here is quite coupled if we plan to use it as a configuration object for every kind of implementation. It should be abstract, or just an interface
+            var reader = new NetworkMessageReader(tcpClient, int.Parse(ClientConfig.GetProperty("MaxMessageSize"))); 
             var inboundSpooler = InboundMessageSpooler<byte[]>.Create(reader); 
             var outboundSpooler = OutboundMessageSpooler<byte[]>.Create(writer);
             var messagePoller = MessagePoller<byte[]>.Create(inboundSpooler.Queue);

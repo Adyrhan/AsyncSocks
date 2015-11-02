@@ -2,8 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AsyncSocks;
 using Moq;
-using AsyncSocks.Exceptions;
 using System.Collections.Generic;
+using AsyncSocks.AsyncMessaging;
+using AsyncSocks.AsyncMessaging.Exceptions;
 
 namespace AsyncSocks_Tests.Tests
 {

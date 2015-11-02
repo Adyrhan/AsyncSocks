@@ -1,9 +1,9 @@
-﻿using AsyncSocks.Exceptions;
+﻿using AsyncSocks.AsyncMessaging.Exceptions;
 using System;
 using System.Net.Sockets;
 
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncMessaging
 {
     namespace Exceptions
     {

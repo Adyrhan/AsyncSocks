@@ -2,8 +2,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using AsyncSocks;
+using AsyncSocks.AsyncMessaging;
 using System.Text;
 using System.Net.Sockets;
+using AsyncSocks.AsyncMessaging.Exceptions;
 
 namespace AsyncSocks_Tests
 {
@@ -106,6 +108,28 @@ namespace AsyncSocks_Tests
         public void ShouldImplementINetworkMessageReader()
         {
             Assert.IsTrue(reader is INetworkMessageReader);
+        }
+
+        [TestMethod]
+        public void ReturnsErrorIfMessageIsTooBig()
+        {
+            int messageSize = 50 * 1024 * 1024;
+            Func<byte[], int, int, int> readImpl = (byte[] buffer, int offset, int length) =>
+            {
+                byte[] size = BitConverter.GetBytes(messageSize);
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    buffer[i] = size[i];
+                }
+                return size.Length;
+            };
+
+            tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), It.IsAny<int>(), 4)).
+                Callback((byte[] buffer, int offset, int length) => readImpl(buffer, offset, length)).Returns(readImpl);
+
+            ReadResult<byte[]> result = reader.Read();
+
+            Assert.IsInstanceOfType(result.Error, typeof(MessageTooBigException));
         }
     }
 }

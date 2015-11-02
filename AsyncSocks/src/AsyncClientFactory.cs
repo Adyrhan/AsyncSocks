@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsyncSocks.AsyncMessaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -21,12 +22,6 @@ namespace AsyncSocks
         public AsyncClientFactory(ClientConfig clientConfig)
         {
             ClientConfig = clientConfig;
-        }
-
-        // FIXME: This version of the constructor doesn't belong to the abstract class
-        public AsyncClientFactory()
-        {
-            ClientConfig = AsyncMessagingClientConfig.GetDefault();
         }
 
         /// <summary>

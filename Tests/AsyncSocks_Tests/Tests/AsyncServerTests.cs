@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AsyncSocks;
+using AsyncSocks.AsyncMessaging;
 using System.Collections.Generic;
 using System.Net;
 using Moq;

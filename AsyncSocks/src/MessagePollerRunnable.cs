@@ -18,6 +18,9 @@ namespace AsyncSocks
         private bool shouldStop;
         private bool running;
 
+        public event NewMessageReceived<T> OnNewMessageReceived;
+        public event ReadErrorEventHandler OnReadError;
+
         public MessagePollerRunnable(BlockingCollection<ReadResult<T>> queue)
         {
             this.queue = queue;
@@ -49,22 +52,44 @@ namespace AsyncSocks
             return startedEvent.WaitOne(2000);
         }
 
-        public event NewMessageReceived<T> OnNewMessageReceived;
+        
 
         public void Poll() // FIXME: This probably needs to take into account the error property of the ReadResult object and fire an error event instead of a new message event
         {
             try
             {
                 ReadResult<T> message = queue.Take();
-                if (OnNewMessageReceived != null)
+                
+                if (message.Error != null)
                 {
-                    var e = new NewMessageReceivedEventArgs<T>(null, message.Message);
-                    OnNewMessageReceived(this, e);
+                    RaiseReadError(message.Error);
+                }
+                else
+                {
+                    RaiseMessageReceived(message.Message);
                 }
             }
             catch (ThreadInterruptedException)
             {
                 
+            }
+        }
+
+        protected void RaiseMessageReceived(T message)
+        {
+            var onNewMessageReceived = OnNewMessageReceived;
+            if (onNewMessageReceived != null)
+            {
+                onNewMessageReceived(this, new NewMessageReceivedEventArgs<T>(null, message));
+            }
+        }
+
+        protected void RaiseReadError(Exception error)
+        {
+            var onReadError = OnReadError;
+            if (onReadError != null)
+            {
+                onReadError(this, new ReadErrorEventArgs(error));
             }
         }
 

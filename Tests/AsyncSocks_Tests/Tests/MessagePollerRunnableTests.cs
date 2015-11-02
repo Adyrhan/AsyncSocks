@@ -82,5 +82,19 @@ namespace AsyncSocks_Tests.Tests
 
             runner.Stop();
         }
+
+        [TestMethod]
+        public void ShouldFireOnErrorEventWheneverMessageObjectContainsError()
+        {
+            Exception receivedError = null;
+            var expectedError = new Exception("Fake test error");
+            runnable.OnReadError += (object sender, ReadErrorEventArgs e) =>
+            {
+                receivedError = e.Error;
+            };
+            queue.Add(new ReadResult<byte[]>(expectedError));
+            runnable.Poll();
+            Assert.AreSame(expectedError, receivedError);
+        }
     }
 }

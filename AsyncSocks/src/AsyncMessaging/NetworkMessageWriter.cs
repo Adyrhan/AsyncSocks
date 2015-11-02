@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncMessaging
 {
     /// <summary>
     /// Implementation of INetworkWriter that writes binary messages to the network, for the connected client to read.

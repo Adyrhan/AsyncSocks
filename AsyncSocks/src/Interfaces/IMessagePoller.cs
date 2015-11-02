@@ -8,6 +8,7 @@ namespace AsyncSocks
 {
     public interface IMessagePoller<T> : IThreadRunner
     {
+        event ReadErrorEventHandler OnReadError;
         event NewMessageReceived<T> OnNewClientMessageReceived;
     }
 }

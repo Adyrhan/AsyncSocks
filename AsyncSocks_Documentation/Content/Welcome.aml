@@ -2,49 +2,25 @@
 <topic id="07028c6e-a405-442a-b632-b44abf7d0adc" revisionNumber="1">
 	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<introduction>
-			<para>This is a sample conceptual topic.  You can use this as a starting point for adding more conceptual
-content to your help project.</para>
+			<para>This documentation includes an API reference, and also gives instructions on how to properly use the library classes.</para>
 		</introduction>
 
 		<section>
-			<title>Getting Started</title>
+			<title>How to use this library</title>
 			<content>
-				<para>To get started, add a documentation source to the project (a Visual Studio solution, project, or
-assembly and XML comments file).  See the <legacyBold>Getting Started</legacyBold> topics in the Sandcastle Help
-File Builder's help file for more information.  The following default items are included in this project:</para>
-
+				<para>This library is ready to be used in two ways. One can use one of two default implementations that allow the user to send 
+				binary messages and be notified when incoming messages are received.</para>
 				<list class="bullet">
 					<listItem>
-						<para><localUri>ContentLayout.content</localUri> - Use the content layout file to manage the
-conceptual content in the project and define its layout in the table of contents.</para>
+						<para>Binary messaging - allows to send and receive whole binary messages. It will send and receive 4 bytes prior to the 
+						data to indicate the message size. To use this way of network communication with the library, use the classes available in the <codeEntityReference>N:AsyncSocks.AsyncMessaging</codeEntityReference> namespace.</para>
 					</listItem>
-
+					
 					<listItem>
-						<para>The <localUri>.\media</localUri> folder - Place images in this folder that you will reference
-from conceptual content using <codeInline>medialLink</codeInline> or <codeInline>mediaLinkInline</codeInline>
-elements.  If you will not have any images in the file, you may remove this folder.</para>
-					</listItem>
-
-					<listItem>
-						<para>The <localUri>.\icons</localUri> folder - This contains a default logo for the help file.  You
-may replace it or remove it and the folder if not wanted.  If removed or if you change the file name, update
-the <ui>Transform Args</ui> project properties page by removing or changing the filename in the
-<codeInline>logoFile</codeInline> transform argument.  Note that unlike images referenced from conceptual topics,
-the logo file should have its <legacyBold>BuildAction</legacyBold> property set to <codeInline>Content</codeInline>.</para>
-					</listItem>
-
-					<listItem>
-						<para>The <localUri>.\Content</localUri> folder - Use this to store your conceptual topics.  You may
-name the files and organize them however you like.  One suggestion is to lay the files out on disk as you have
-them in the content layout file as shown in this project but the choice is yours.  Files can be added via the
-Solution Explorer or from within the content layout file editor.  Files must appear in the content layout file
-in order to be compiled into the help file.</para>
+						<para>Buffered reception - Handles binary messages as the later implementation but the reception of messages is buffered. The user will be notified when data has arrived, but data might be chunked depending on the buffer size.</para>
 					</listItem>
 				</list>
-
-				<para>See the <legacyBold>Conceptual Content</legacyBold> topics in the Sandcastle Help File Builder's
-help file for more information.  See the <legacyBold> Sandcastle MAML Guide</legacyBold> for details on Microsoft
-Assistance Markup Language (MAML) which is used to create these topics.</para>
+				<para>Alternatively there is a more powerful option to use this library that allows to provide an implementation of two interfaces that would allow the user to send and receive messages for any protocol desired.</para>
 			</content>
 		</section>
 

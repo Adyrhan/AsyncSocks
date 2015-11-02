@@ -3,7 +3,7 @@
     /// <summary>
     /// This class represents a server. It will handle messages of type T.
     /// <para>To create an instance, use the corresponding factories for the subclass that you want to use. 
-    /// <see cref="AsyncMessagingServer.Create(System.Net.IPEndPoint)"/> for how to create an instance of AsyncMessagingServer subclass.</para>
+    /// See <see cref="AsyncMessagingServer.Create(System.Net.IPEndPoint)"/> for how to create an instance of AsyncMessagingServer subclass.</para>
     /// </summary>
     /// <typeparam name="T">The type associated with the protocol that this instance will use to read and write messages.</typeparam>
     public class AsyncServer<T> : IAsyncServer<T>
