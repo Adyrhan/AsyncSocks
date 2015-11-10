@@ -99,7 +99,11 @@ namespace AsyncSocks_Tests
             tcpClientMock.Setup(x => x.Read(It.IsAny<byte[]>(), It.IsAny<int>(), size)).
                 Callback((byte[] buffer, int offset, int length) => readImpl2(buffer, offset, length)).Returns(readImpl2);
 
-            Assert.IsNull(reader.Read());
+
+            ReadResult<byte[]> result = reader.Read();
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result.Error, typeof(MessageTooBigException));
 
             tcpClientMock.Verify(x => x.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()), Times.Once());
         }
