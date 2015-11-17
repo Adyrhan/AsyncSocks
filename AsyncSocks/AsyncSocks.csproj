@@ -56,7 +56,7 @@
     <Compile Include="src\ClientConfig.cs" />
     <Compile Include="src\Interfaces\INetworkReader.cs" />
     <Compile Include="src\Interfaces\INetworkReaderFactory.cs" />
-    <Compile Include="src\Interfaces\INetworkStreamReader.cs" />
+    <Compile Include="src\AsyncBuffered\Interfaces\INetworkBufferedReader.cs" />
     <Compile Include="src\Interfaces\INetworkWriter.cs" />
     <Compile Include="src\Interfaces\INetworkWriterFactory.cs" />
     <Compile Include="src\Interfaces\IOutboundMessageFactory.cs" />
@@ -91,7 +91,7 @@
     <Compile Include="src\Interfaces\ITcpClient.cs" />
     <Compile Include="src\Interfaces\ITcpListener.cs" />
     <Compile Include="src\AsyncMessaging\NetworkMessageReader.cs" />
-    <Compile Include="src\NetworkStreamReader.cs" />
+    <Compile Include="src\AsyncBuffered\NetworkBufferedReader.cs" />
     <Compile Include="src\NewClientConnected.cs" />
     <Compile Include="src\NewMessageReceived.cs" />
     <Compile Include="src\OutboundMessage.cs" />

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncBuffered
 {
-    public interface INetworkStreamReader : INetworkReader<byte[]> { }
+    public interface INetworkBufferedReader : INetworkReader<byte[]> { }
 }

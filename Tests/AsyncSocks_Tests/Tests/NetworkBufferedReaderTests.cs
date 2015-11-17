@@ -1,4 +1,5 @@
 ﻿using AsyncSocks;
+using AsyncSocks.AsyncBuffered;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,16 @@ using System.Net.Sockets;
 namespace AsyncSocks_Tests.Tests
 {
     [TestClass]
-    public class NetworkStreamReaderTests
+    public class NetworkBufferedReaderTests
     {
-        private INetworkStreamReader reader;
+        private INetworkBufferedReader reader;
         private Mock<ITcpClient> tcpClientMock;
 
         [TestInitialize]
         public void BeforeEach()
         {
             tcpClientMock = new Mock<ITcpClient>();
-            reader = new NetworkStreamReader(tcpClientMock.Object, 1024 * 8);
+            reader = new NetworkBufferedReader(tcpClientMock.Object, 1024 * 8);
         }
 
         [TestMethod]

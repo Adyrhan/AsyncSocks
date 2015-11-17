@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsyncSocks
+namespace AsyncSocks.AsyncBuffered
 {
     /// <summary>
     /// Implementation of INetworkReader for buffered reads from a client.
     /// </summary>
-    public class NetworkStreamReader : INetworkStreamReader
+    public class NetworkBufferedReader : INetworkBufferedReader
     {
         private int bufferSize;
-        public NetworkStreamReader(ITcpClient tcpClient, int bufferSize)
+        public NetworkBufferedReader(ITcpClient tcpClient, int bufferSize)
         {
             this.bufferSize = bufferSize;
             Client = tcpClient;
