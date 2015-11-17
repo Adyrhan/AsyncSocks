@@ -48,7 +48,6 @@ namespace AsyncSocks.AsyncMessaging
         /// <param name="callback"><inheritdoc/></param>
         public override void SendMessage(byte[] message, Action<bool, SocketException> callback)
         {
-            
             if (message.Length > maxMessageSize)
             {
                 int maxSize = maxMessageSize;
@@ -57,6 +56,12 @@ namespace AsyncSocks.AsyncMessaging
             }
 
             base.SendMessage(message, callback);
+        }
+
+        protected override void RaiseOnReadError(object sender, ReadErrorEventArgs e)
+        {
+            base.RaiseOnReadError(sender, e);
+            Disconnect();
         }
 
     }

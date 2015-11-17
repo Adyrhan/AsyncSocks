@@ -59,7 +59,13 @@ namespace AsyncSocks
             poller.OnReadError += RaiseOnReadError;
         }
 
-        protected void RaiseOnReadError(object sender, ReadErrorEventArgs e)
+        private void saveEndPoints()
+        {
+            LocalEndPoint = tcpClient.Socket.LocalEndPoint;
+            RemoteEndPoint = tcpClient.Socket.RemoteEndPoint;
+        }
+
+        protected virtual void RaiseOnReadError(object sender, ReadErrorEventArgs e)
         {
             var onReadError = OnReadError;
             if (onReadError != null)
@@ -68,29 +74,27 @@ namespace AsyncSocks
             }
         }
 
-        private void saveEndPoints()
+        protected virtual void RaiseOnPeerDisconnected(object sender, PeerDisconnectedEventArgs<T> e)
         {
-            LocalEndPoint = tcpClient.Socket.LocalEndPoint;
-            RemoteEndPoint = tcpClient.Socket.RemoteEndPoint;
+            var onPeerDisconnected = OnPeerDisconnected;
+            if (onPeerDisconnected != null)
+            {
+                var ev = new PeerDisconnectedEventArgs<T>(this);
+                onPeerDisconnected(this, ev);
+            }
+
+            Disconnect();
         }
 
-        protected void RaiseOnPeerDisconnected(object sender, PeerDisconnectedEventArgs<T> e)
+        protected void Disconnect()
         {
             Task.Run(() =>
             {
-                var onPeerDisconnected = OnPeerDisconnected;
-                if (onPeerDisconnected != null)
-                {
-                    var ev = new PeerDisconnectedEventArgs<T>(this);
-                    onPeerDisconnected(this, ev);
-                }
-
-                if (!isClosing) Close();
+                Close();
             });
-            
         }
 
-        protected void RaiseOnNewMessage(object sender, NewMessageReceivedEventArgs<T> e)
+        protected virtual void RaiseOnNewMessage(object sender, NewMessageReceivedEventArgs<T> e)
         {
             if (OnNewMessage != null)
             {
@@ -135,11 +139,14 @@ namespace AsyncSocks
         /// </summary>
         public void Close()
         {
-            isClosing = true;
-            tcpClient.Close();
-            poller.Stop();
-            inboundSpooler.Stop();
-            outboundSpooler.Stop();
+            if (!isClosing)
+            {
+                isClosing = true;
+                tcpClient.Close();
+                poller.Stop();
+                inboundSpooler.Stop();
+                outboundSpooler.Stop();
+            }
         }
 
         /// <summary>
