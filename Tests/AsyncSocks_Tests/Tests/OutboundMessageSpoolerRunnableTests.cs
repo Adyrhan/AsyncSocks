@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncSocks_Tests.Helpers;
 using System.Net.Sockets;
+using System.IO;
 
 namespace AsyncSocks_Tests
 {
@@ -112,6 +113,7 @@ namespace AsyncSocks_Tests
             SocketException callbackException = null;
 
             var messageBytes = Encoding.ASCII.GetBytes("Test");
+
             Action<bool, SocketException> callback = (success, exception) =>
             {
                 callbackSuccess = success;
@@ -122,7 +124,7 @@ namespace AsyncSocks_Tests
 
             writerMock.
                 Setup(x => x.Write(It.IsAny<byte[]>())).
-                Throws(new SocketException());
+                Throws(new IOException("fake test exception", new SocketException()));
 
             spooler.Spool();
 

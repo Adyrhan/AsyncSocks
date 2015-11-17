@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -61,9 +62,13 @@ namespace AsyncSocks
                 writer.Write(message);
                 return null;
             }
-            catch (SocketException e)
+            catch (IOException e)
             {
-                return e;
+                if (e.InnerException is SocketException)
+                {
+                    return (SocketException)e.InnerException;
+                }
+                throw e;
             }
         }
 
