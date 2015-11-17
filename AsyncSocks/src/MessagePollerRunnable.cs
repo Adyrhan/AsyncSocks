@@ -52,8 +52,6 @@ namespace AsyncSocks
             return startedEvent.WaitOne(2000);
         }
 
-        
-
         public void Poll() // FIXME: This probably needs to take into account the error property of the ReadResult object and fire an error event instead of a new message event
         {
             try

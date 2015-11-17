@@ -43,9 +43,9 @@ namespace AsyncSocks.AsyncMessaging
                 }
                 int messageLength = BitConverter.ToInt32(buffer, 0);
 
-                if (messageLength > maxMessageSize)
+                if (messageLength > maxMessageSize || messageLength < 1)
                 {
-                    return new ReadResult<byte[]>(new MessageTooBigException("Received message of size "+messageLength.ToString()+". Max allowed is "+maxMessageSize));
+                    return new ReadResult<byte[]>(new MessageTooBigException("Received message of size "+messageLength.ToString()+" not in range 0 to "+maxMessageSize));
                 }
 
                 buffer = new byte[messageLength];

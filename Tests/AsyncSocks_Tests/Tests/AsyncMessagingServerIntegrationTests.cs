@@ -19,8 +19,11 @@ namespace AsyncSocks_Tests.Tests
         [TestInitialize]
         public void BeforeEach()
         {
+            var dict = new Dictionary<string, string>();
+            dict.Add("MaxMessageSize", (10 * 1024 * 1024).ToString());
+
             serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 40000);
-            server = AsyncMessagingServer.Create(serverEndPoint);
+            server = AsyncMessagingServer.Create(serverEndPoint, new ClientConfig(dict));
             server.Start();
         }
 
@@ -223,11 +226,20 @@ namespace AsyncSocks_Tests.Tests
         [TestMethod]
         public void ReceivingBigMessage()
         {
+
+            AsyncMessagingClient clientServerReference = null;
+            AutoResetEvent clientConnected = new AutoResetEvent(false);
+            server.OnNewClientConnected += (object o, NewClientConnectedEventArgs<byte[]> e) =>
+            {
+                clientServerReference = (AsyncMessagingClient)e.Client;
+                clientConnected.Set();
+            };
+
             var kvp = new Dictionary<string, string>();
             kvp.Add("MaxMessageSize", (60 * 1024 * 1024).ToString());
             var client = (AsyncMessagingClient)new AsyncMessagingClientFactory(new AsyncMessagingClientConfig(kvp)).Create(serverEndPoint); // It's not gonna reject the message on the client
 
-            int messageLength = 50 * 1024 * 1024;
+            int messageLength = 12 * 1024 * 1024;
             byte[] messageBytes = new byte[messageLength];
 
             for (int i = 0; i < messageLength; i++)
@@ -238,15 +250,19 @@ namespace AsyncSocks_Tests.Tests
             client.Start();
 
             AutoResetEvent disconnectedEvent = new AutoResetEvent(false);
+            AutoResetEvent errorEvent = new AutoResetEvent(false);
+            clientServerReference.OnReadError += (object o, ReadErrorEventArgs e) =>
+            {
+                errorEvent.Set();
+            };
             client.OnPeerDisconnected += (object sender, PeerDisconnectedEventArgs<byte[]> e) =>
             {
                 disconnectedEvent.Set();
             };
 
             client.SendMessage(messageBytes);
-
+            Assert.IsTrue(errorEvent.WaitOne(2000), "Server client reference didn't trigger error event");
             Assert.IsTrue(disconnectedEvent.WaitOne(2000), "Server didn't disconnect client when it sent the message");
-
         }
     }
 }

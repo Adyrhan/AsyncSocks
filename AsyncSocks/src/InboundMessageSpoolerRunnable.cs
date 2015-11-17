@@ -45,6 +45,10 @@ namespace AsyncSocks
                 else
                 {
                     queue.Add(message);
+                    if (message.Error != null)
+                    {
+                        shouldStop = true;
+                    }
                 }
             }
             catch (ThreadInterruptedException)
