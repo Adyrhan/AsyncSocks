@@ -30,6 +30,8 @@ namespace AsyncSocks
             this.runnable = runnable;
         }
 
+        public ThreadRunner() { }
+
         /// <summary>
         /// Indicates that the thread is running.
         /// </summary>
@@ -54,11 +56,26 @@ namespace AsyncSocks
         {
             if (thread == null || !thread.IsAlive)
             {
+                if (runnable == null)
+                {
+                    throw new ArgumentNullException("Constructor was called with null runnable. Call Start(IRunnable) instead");
+                }
+
                 thread = new Thread(runnable.Run);
                 thread.Name = ThreadName;
                 thread.Start();
                 runnable.WaitStarted();
             }
+        }
+
+        /// <summary>
+        /// Same as <see cref="Start"/>, but sets the runnable before starting the thread.
+        /// </summary>
+        /// <param name="runnable"></param>
+        public void Start(IRunnable runnable)
+        {
+            this.runnable = runnable;
+            Start();
         }
 
         /// <summary>
@@ -70,9 +87,11 @@ namespace AsyncSocks
             {
                 runnable.Stop();
                 thread.Interrupt();
-                thread.Join();
+                if (Thread.CurrentThread != thread)
+                {
+                    thread.Join();
+                }
             }
         }
-
     }
 }

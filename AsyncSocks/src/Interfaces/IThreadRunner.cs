@@ -11,6 +11,7 @@ namespace AsyncSocks
         bool IsRunning();
         Thread Thread { get; }
         void Start();
+        void Start(IRunnable runnable);
         void Stop();
         IRunnable Runnable { get; }
     }
