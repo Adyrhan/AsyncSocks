@@ -88,10 +88,10 @@ namespace AsyncSocks
 
         protected void Disconnect()
         {
-            Task.Run(() =>
-            {
+            //Task.Run(() =>
+            //{
                 Close();
-            });
+            //});
         }
 
         protected virtual void RaiseOnNewMessage(object sender, NewMessageReceivedEventArgs<T> e)

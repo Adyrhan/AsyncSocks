@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\AsyncBuffered\AsyncBufferedClient.cs" />
+    <Compile Include="src\AsyncBuffered\AsyncBufferedClientConfig.cs" />
     <Compile Include="src\AsyncBuffered\NetworkBufferedWriter.cs" />
     <Compile Include="src\AsyncBuffered\Interfaces\INetworkBufferedWriter.cs" />
     <Compile Include="src\ReadErrorEventHandler.cs" />

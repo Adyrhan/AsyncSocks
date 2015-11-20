@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Helpers\AsyncStoppingThreadRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\AsyncBufferedClientTests.cs" />
     <Compile Include="Tests\NetworkBufferedReaderTests.cs" />
     <Compile Include="Tests\NetworkBufferedWriterTests.cs" />
     <Compile Include="Tests\ThreadRunnerTest.cs" />
